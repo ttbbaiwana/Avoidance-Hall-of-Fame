@@ -31,28 +31,54 @@
 </head>
 <body>
 
-  <h1>My Custom Form</h1>
+  <h1>AHoF Public Stat Rankings</h1>
 
-  <details>
-    <summary>Section 1 – Basic Info</summary>
+  <p>
+    For each avoidance, I ask that you only rate the ones you have either
+    cleared, played for a very long time, or have reached the final attack.
+    Your opinion will be disregarded otherwise.
+  </p>
+
+  <p>
+    If you feel you are not experienced or knowledgeable enough to know,
+    then don't vote. I also ask that you have at least <strong>5 AHoF clears</strong>
+    so you have a better understanding of how to compare games at a high level.
+  </p>
+
+  <!-- PAGE 1 -->
+  <section id="page-1">
 
     <div class="field">
       <label>
-        Name<br />
-        <input type="text" name="name" />
+        <strong>What is your name on AHoF?</strong><br />
+        <input id="name" type="text" required />
       </label>
     </div>
 
     <div class="field">
       <label>
-        Age<br />
-        <input type="number" name="age" />
+        <strong>How many AHoF clears do you have?</strong><br />
+        <input id="clears" type="number" min="0" />
       </label>
     </div>
-  </details>
 
-  <button id="submitBtn">Submit</button>
+    <p id="gate-error" style="color: red; display: none;">
+      You must have at least 5 AHoF clears to continue.
+    </p>
+
+    <button id="nextBtn" disabled>
+      Next →
+    </button>
+
+  </section>
+
+  <!-- PAGE 2 (placeholder for now) -->
+  <section id="page-2" hidden>
+    <h2>Your Ratings</h2>
+    <p>This is where the rest of the form will go.</p>
+  </section>
 
   <script src="script.js"></script>
+
 </body>
 </html>

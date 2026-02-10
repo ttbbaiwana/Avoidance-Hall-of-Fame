@@ -96,6 +96,7 @@ function createAvoidanceSection(name) {
     </div>
 
     <div class="ratings hidden"></div>
+		<p>Rate the game based on the following criteria. (Refer to the "Category Information" for rating definitions)</p>
   `;
 
   const ratingsDiv = section.querySelector(".ratings");

@@ -72,22 +72,9 @@ function createAvoidanceSection(name) {
     block.innerHTML = `
       <label>${category}</label>
 			<div class="rating-buttons" data-category="${category}">
-			  ${Array.from({ length: 11 }, (_, i) => {
-			    const r = Math.round(128 + (255 - 128) * (i / 10));
-			    const g = 128;
-			    const b = Math.round(255 + (127 - 255) * (i / 10));
-			    const color = `rgb(${r}, ${g}, ${b})`;
-			
-			    return `
-			      <button
-			        type="button"
-			        data-value="${i}"
-			        style="background:${color}; border-color:${color};"
-			      >
-			        ${i}
-			      </button>
-			    `;
-			  }).join("")}
+			  ${Array.from({ length: 11 }, (_, i) =>
+			    `<button type="button" data-value="${i}">${i}</button>`
+			  ).join("")}
 			</div>
     `;
 
@@ -95,20 +82,27 @@ function createAvoidanceSection(name) {
   });
 
   // Single Select Logic
-  ratingsDiv.addEventListener("click", (e) => {
-    if (!e.target.matches("button[data-value]")) return;
-
-    const button = e.target;
-    const buttonGroup = button.parentElement;
-
-    // Clear previous selection in this category
-    buttonGroup.querySelectorAll("button").forEach(btn =>
-      btn.classList.remove("selected")
-    );
-
-    // Select the clicked button
-    button.classList.add("selected");
-  });
+	ratingsDiv.addEventListener("click", (e) => {
+	  if (!e.target.matches("button[data-value]")) return;
+	
+	  const button = e.target;
+	  const group = button.parentElement;
+	
+	  // Clear previous selection
+	  group.querySelectorAll("button").forEach(btn => {
+	    btn.classList.remove("selected");
+	    btn.style.background = "";
+	    btn.style.borderColor = "";
+	    btn.style.color = "";
+	  });
+	
+	  // Apply selection + color
+	  const color = button.dataset.color;
+	  button.classList.add("selected");
+	  button.style.background = color;
+	  button.style.borderColor = color;
+	  button.style.color = "#000";
+	});
 	
 	expButtons.forEach(btn => {
 	  btn.addEventListener("click", () => {

@@ -40,6 +40,14 @@ body {
 }
 
 .rating-buttons button {
-  margin: 2px;
-  padding: 4px 8px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rating-buttons button.selected {
+  background: #e7f7ec;
+  border-color: #6ccf8e;
+  font-weight: 600;
 }

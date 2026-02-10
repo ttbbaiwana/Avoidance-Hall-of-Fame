@@ -66,7 +66,10 @@ body {
   grid-template-columns: repeat(11, 1fr);
   font-size: 13px;
   text-align: center;
-  color: #333;
+}
+
+.rating-numbers span {
+  color: inherit;
 }
 
 .rating-radios {
@@ -88,9 +91,10 @@ body {
 .radio-dot {
   width: 16px;
   height: 16px;
-  border: 2px solid #9aa0a6;
+  border: 2px solid currentColor;
   border-radius: 50%;
   display: inline-block;
+  background: transparent;
 }
 
 /* Checked state */

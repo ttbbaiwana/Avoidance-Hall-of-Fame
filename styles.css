@@ -18,12 +18,19 @@ body {
   margin-bottom: 4px;
 }
 
-.yes-btn {
-  background: #e7f7ec;
-  border: 1px solid #b6e2c1;
+.exp-btn {
+  margin-right: 8px;
   padding: 6px 12px;
+  border: 1px solid #ddd;
   border-radius: 6px;
+  background: #fff;
   cursor: pointer;
+}
+
+.exp-btn.selected {
+  background: #e7f7ec;
+  border-color: #6ccf8e;
+  font-weight: 600;
 }
 
 .hidden {
@@ -39,11 +46,16 @@ body {
   margin-bottom: 4px;
 }
 
+.rating-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .rating-buttons button {
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 4px;
-  cursor: pointer;
+  min-width: 36px;
+  padding: 6px 0;
+  text-align: center;
 }
 
 .rating-buttons button.selected {

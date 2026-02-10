@@ -49,18 +49,20 @@ function createAvoidanceSection(name) {
 
   section.innerHTML = `
     <h3>${name}</h3>
-    <p>
-      By clicking Yes, you agree that you have enough experience with this
-      avoidance to rate it.
-    </p>
-
-    <button class="yes-btn">Yes</button>
-
-    <div class="ratings hidden"></div>
+		<p>
+		  <strong>Do you have enough experience with this avoidance to rate it?</strong>
+		</p>
+		
+		<div class="experience-buttons">
+		  <button type="button" class="exp-btn" data-answer="yes">Yes</button>
+		  <button type="button" class="exp-btn" data-answer="no">No</button>
+		</div>
+		
+		<div class="ratings hidden"></div>
   `;
 
   const ratingsDiv = section.querySelector(".ratings");
-  const yesBtn = section.querySelector(".yes-btn");
+  const expButtons = section.querySelectorAll(".exp-btn");
 
   // Build rating blocks
   ratingCategories.forEach(category => {
@@ -94,12 +96,23 @@ function createAvoidanceSection(name) {
     // Select the clicked button
     button.classList.add("selected");
   });
-
-  // Gate behavior (Yes button)
-  yesBtn.addEventListener("click", () => {
-    ratingsDiv.classList.remove("hidden");
-    yesBtn.disabled = true;
-  });
+	
+	expButtons.forEach(btn => {
+	  btn.addEventListener("click", () => {
+	    const answer = btn.dataset.answer;
+	
+	    // Visual state
+	    expButtons.forEach(b => b.classList.remove("selected"));
+	    btn.classList.add("selected");
+	
+	    // Show / hide ratings
+	    if (answer === "yes") {
+	      ratingsDiv.classList.remove("hidden");
+	    } else {
+	      ratingsDiv.classList.add("hidden");
+	    }
+	  });
+	});
 
   return section;
 }

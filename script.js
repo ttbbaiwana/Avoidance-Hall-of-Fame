@@ -84,20 +84,24 @@ function createAvoidanceSection(name) {
 
   // Base HTML
   section.innerHTML = `
-    <h3>${name}</h3>
-
-    <p>
-      <strong>Do you have enough experience with this avoidance to rate it?</strong>
-    </p>
-
-    <div class="experience-buttons">
-      <button type="button" class="exp-btn" data-answer="yes">Yes</button>
-      <button type="button" class="exp-btn" data-answer="no">No</button>
-    </div>
-		
-		<p class="hidden">Rate the game based on the following criteria. (Refer to the "Category Information" for rating definitions)</p>
-    <div class="ratings hidden"></div>
-  `;
+	  <h3>${name}</h3>
+	
+	  <p>
+	    <strong>Do you have enough experience with this avoidance to rate it?</strong>
+	  </p>
+	
+	  <div class="experience-buttons">
+	    <button type="button" class="exp-btn" data-answer="yes">Yes</button>
+	    <button type="button" class="exp-btn" data-answer="no">No</button>
+	  </div>
+	
+	  <div class="ratings hidden">
+	    <p class="rating-instructions">
+	        Rate the game based on the following criteria.
+	        (Refer to the "Category Information" for rating definitions)
+	    </p>
+	  </div>
+	`;
 
   const ratingsDiv = section.querySelector(".ratings");
   const expButtons = section.querySelectorAll(".exp-btn");

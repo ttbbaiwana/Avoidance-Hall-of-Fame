@@ -197,7 +197,7 @@ function createAvoidanceSection(name) {
   return section;
 }
 
-const avoidanceNames = [
+const avoidanceNames = {
   "Soulless Hard Mode": "#3a4052",
   "I wanna be the Last TIS": "#999999",
   "I wanna be the Music2 - Ninur 《INFINITE》 Perfect",
@@ -298,7 +298,7 @@ const avoidanceNames = [
 	"I wanna be the !!!ChaosTime!!! ",
 	"I Wanna Maker - Final Destination",
 	"Twisted Drop Party"
-];
+};
 
 Object.keys(avoidanceConfig).forEach(name => {
   avoidanceContainer.appendChild(createAvoidanceSection(name));

@@ -99,8 +99,7 @@ body {
 
 /* Checked state */
 .rating-radios input:checked + .radio-dot {
-  border-color: #000;
-  background: #000;
+  background: currentColor;
 }
 
 .avoidance button {

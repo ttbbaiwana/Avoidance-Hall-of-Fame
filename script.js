@@ -58,7 +58,8 @@ const ratingCategories = [
   "Density",
   "Pattern",
   "Gimmick",
-  "Luck"
+  "Luck",
+	"Quality"
 ];
 
 function createAvoidanceSection(name) {

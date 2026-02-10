@@ -96,7 +96,6 @@ function createAvoidanceSection(name) {
     </div>
 
     <div class="ratings hidden"></div>
-		<p>Rate the game based on the following criteria. (Refer to the "Category Information" for rating definitions)</p>
   `;
 
   const ratingsDiv = section.querySelector(".ratings");
@@ -110,6 +109,7 @@ function createAvoidanceSection(name) {
     const groupName = `${name}-${category}`.replace(/\s+/g, "_");
 
     block.innerHTML = `
+			<p>Rate the game based on the following criteria. (Refer to the "Category Information" for rating definitions)</p>
       <label class="rating-label">${category}</label>
 
       <div class="rating-scale">

@@ -105,13 +105,42 @@ function createAvoidanceSection(name) {
 	    expButtons.forEach(b => b.classList.remove("selected"));
 	    btn.classList.add("selected");
 	
-	    // Show / hide ratings
 	    if (answer === "yes") {
 	      ratingsDiv.classList.remove("hidden");
 	    } else {
+	      // Hide ratings
 	      ratingsDiv.classList.add("hidden");
+	
+	      // Clear all radios in this avoidance
+	      const radios = ratingsDiv.querySelectorAll('input[type="radio"]');
+	      radios.forEach(radio => {
+	        radio.checked = false;
+	        radio.dataset.wasChecked = "false";
+	      });
 	    }
 	  });
+	});
+
+	// Allow radio buttons to be toggled off by clicking again
+	ratingsDiv.addEventListener("click", (e) => {
+	  if (e.target.type !== "radio") return;
+	
+	  const radio = e.target;
+	
+	  // If this radio was already checked, uncheck it
+	  if (radio.dataset.wasChecked === "true") {
+	    radio.checked = false;
+	    radio.dataset.wasChecked = "false";
+	  } else {
+	    // Mark all radios in this group as unchecked
+	    const group = ratingsDiv.querySelectorAll(
+	      `input[name="${radio.name}"]`
+	    );
+	    group.forEach(r => (r.dataset.wasChecked = "false"));
+	
+	    // Mark this one as checked
+	    radio.dataset.wasChecked = "true";
+	  }
 	});
 
   return section;

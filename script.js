@@ -71,11 +71,24 @@ function createAvoidanceSection(name) {
 
     block.innerHTML = `
       <label>${category}</label>
-      <div class="rating-buttons" data-category="${category}">
-        ${Array.from({ length: 11 }, (_, i) =>
-          `<button type="button" data-value="${i}">${i}</button>`
-        ).join("")}
-      </div>
+			<div class="rating-buttons" data-category="${category}">
+			  ${Array.from({ length: 11 }, (_, i) => {
+			    const r = Math.round(128 + (255 - 128) * (i / 10));
+			    const g = 128;
+			    const b = Math.round(255 + (127 - 255) * (i / 10));
+			    const color = `rgb(${r}, ${g}, ${b})`;
+			
+			    return `
+			      <button
+			        type="button"
+			        data-value="${i}"
+			        style="background:${color}; border-color:${color};"
+			      >
+			        ${i}
+			      </button>
+			    `;
+			  }).join("")}
+			</div>
     `;
 
     ratingsDiv.appendChild(block);

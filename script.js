@@ -17,7 +17,6 @@ function validateGate() {
   const clears = Number(clearsInput.value);
   const nameFilled = nameInput.value.trim().length > 0;
 	responses.meta.name = nameInput.value.trim();
-	responses.meta.clears = Number(clearsInput.value);
 
   if (nameFilled && clears >= 5) {
     nextBtn.disabled = false;

@@ -98,3 +98,23 @@ body {
   border-color: #000;
   background: #000;
 }
+
+.avoidance button {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ccc;
+}
+
+.avoidance .exp-btn.selected[data-answer="yes"] {
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+.avoidance .exp-btn.selected[data-answer="no"] {
+  background: #c62828;
+  color: #ffffff;
+}
+
+.avoidance .radio-dot {
+  border-color: currentColor;
+}

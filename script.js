@@ -94,7 +94,8 @@ function createAvoidanceSection(name) {
       <button type="button" class="exp-btn" data-answer="yes">Yes</button>
       <button type="button" class="exp-btn" data-answer="no">No</button>
     </div>
-
+		
+		<p class="hidden">Rate the game based on the following criteria. (Refer to the "Category Information" for rating definitions)</p>
     <div class="ratings hidden"></div>
   `;
 
@@ -109,7 +110,6 @@ function createAvoidanceSection(name) {
     const groupName = `${name}-${category}`.replace(/\s+/g, "_");
 
     block.innerHTML = `
-			<p>Rate the game based on the following criteria. (Refer to the "Category Information" for rating definitions)</p>
       <label class="rating-label">${category}</label>
 
       <div class="rating-scale">

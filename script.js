@@ -280,10 +280,39 @@ avoidanceNames.forEach(name => {
 
 const submitBtn = document.getElementById("submitBtn");
 const submitStatus = document.getElementById("submitStatus");
-
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
 
+function validateBeforeSubmit() {
+  let ratedAvoidanceCount = 0;
+
+  for (const [name, data] of Object.entries(responses.avoidances)) {
+    if (data.experience === "yes") {
+      const ratingCount = Object.keys(data.ratings).length;
+
+      // Rule A: Yes → must have ≥1 rating
+      if (ratingCount === 0) {
+        alert(
+          `You selected "Yes" for "${name}" but did not provide any ratings.`
+        );
+        return false;
+      }
+
+      ratedAvoidanceCount++;
+    }
+  }
+
+  // Rule B: Must rate at least N avoidances
+  if (ratedAvoidanceCount < 1) {
+    alert("You must rate at least 1 avoidance before submitting.");
+    return false;
+  }
+
+  return true;
+}
+
 submitBtn.addEventListener("click", async () => {
+  if (!validateBeforeSubmit()) return;
+
   submitBtn.disabled = true;
   submitStatus.innerText = "Submitting...";
 

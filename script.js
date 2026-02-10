@@ -7,10 +7,17 @@ const errorMsg = document.getElementById("gate-error");
 
 const avoidanceContainer = document.getElementById("avoidance-container");
 
+const responses = {
+  meta: {},
+  avoidances: {}
+};
+
 // ---------- PAGE 1 GATE ----------
 function validateGate() {
   const clears = Number(clearsInput.value);
   const nameFilled = nameInput.value.trim().length > 0;
+	responses.meta.name = nameInput.value.trim();
+	responses.meta.clears = Number(clearsInput.value);
 
   if (nameFilled && clears >= 5) {
     nextBtn.disabled = false;
@@ -105,19 +112,24 @@ function createAvoidanceSection(name) {
 	    expButtons.forEach(b => b.classList.remove("selected"));
 	    btn.classList.add("selected");
 	
-	    if (answer === "yes") {
-	      ratingsDiv.classList.remove("hidden");
-	    } else {
-	      // Hide ratings
-	      ratingsDiv.classList.add("hidden");
-	
-	      // Clear all radios in this avoidance
-	      const radios = ratingsDiv.querySelectorAll('input[type="radio"]');
-	      radios.forEach(radio => {
-	        radio.checked = false;
-	        radio.dataset.wasChecked = "false";
-	      });
-	    }
+			if (answer === "yes") {
+			  responses.avoidances[name].experience = "yes";
+			  ratingsDiv.classList.remove("hidden");
+			} else {
+			  responses.avoidances[name].experience = "no";
+			
+			  // Clear ratings in UI
+			  ratingsDiv.classList.add("hidden");
+			
+			  const radios = ratingsDiv.querySelectorAll('input[type="radio"]');
+			  radios.forEach(radio => {
+			    radio.checked = false;
+			    radio.dataset.wasChecked = "false";
+			  });
+			
+			  // Clear ratings in data
+			  responses.avoidances[name].ratings = {};
+			}
 	  });
 	});
 
@@ -126,22 +138,36 @@ function createAvoidanceSection(name) {
 	  if (e.target.type !== "radio") return;
 	
 	  const radio = e.target;
+	  const category = radio
+	    .closest(".rating")
+	    .querySelector(".rating-label")
+	    .innerText;
 	
-	  // If this radio was already checked, uncheck it
+	  const avoidance = responses.avoidances[name];
+	
 	  if (radio.dataset.wasChecked === "true") {
+	    // Unselect
 	    radio.checked = false;
 	    radio.dataset.wasChecked = "false";
+	    delete avoidance.ratings[category];
 	  } else {
-	    // Mark all radios in this group as unchecked
+	    // Clear toggle state for this group
 	    const group = ratingsDiv.querySelectorAll(
 	      `input[name="${radio.name}"]`
 	    );
 	    group.forEach(r => (r.dataset.wasChecked = "false"));
 	
-	    // Mark this one as checked
+	    // Select new value
 	    radio.dataset.wasChecked = "true";
+	    avoidance.ratings[category] = Number(radio.value);
 	  }
 	});
+
+	// Initialize avoidance entry
+	responses.avoidances[name] = {
+	  experience: null,
+	  ratings: {}
+	};
 
   return section;
 }

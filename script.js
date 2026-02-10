@@ -12,6 +12,18 @@ const responses = {
   avoidances: {}
 };
 
+function getContrastTextColor(hex) {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substr(0, 2), 16);
+  const g = parseInt(c.substr(2, 2), 16);
+  const b = parseInt(c.substr(4, 2), 16);
+
+  // Perceived luminance (WCAG-ish)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  return luminance > 0.6 ? "#000000" : "#ffffff";
+}
+
 // ---------- PAGE 1 GATE ----------
 function validateGate() {
   const clears = Number(clearsInput.value);
@@ -50,21 +62,40 @@ const ratingCategories = [
 ];
 
 function createAvoidanceSection(name) {
+  // Initialize data model
+  responses.avoidances[name] = {
+    experience: null,
+    ratings: {}
+  };
+
+  // Create container
   const section = document.createElement("div");
   section.className = "avoidance";
 
+  // Background + contrast text
+  const bgColor = avoidanceConfig[name] || "#f5f5f5";
+  const textColor = getContrastTextColor(bgColor);
+
+  section.style.backgroundColor = bgColor;
+  section.style.color = textColor;
+  section.style.padding = "20px";
+  section.style.borderRadius = "12px";
+  section.style.marginBottom = "24px";
+
+  // Base HTML
   section.innerHTML = `
     <h3>${name}</h3>
-		<p>
-		  <strong>Do you have enough experience with this avoidance to rate it?</strong>
-		</p>
-		
-		<div class="experience-buttons">
-		  <button type="button" class="exp-btn" data-answer="yes">Yes</button>
-		  <button type="button" class="exp-btn" data-answer="no">No</button>
-		</div>
-		
-		<div class="ratings hidden"></div>
+
+    <p>
+      <strong>Do you have enough experience with this avoidance to rate it?</strong>
+    </p>
+
+    <div class="experience-buttons">
+      <button type="button" class="exp-btn" data-answer="yes">Yes</button>
+      <button type="button" class="exp-btn" data-answer="no">No</button>
+    </div>
+
+    <div class="ratings hidden"></div>
   `;
 
   const ratingsDiv = section.querySelector(".ratings");
@@ -76,104 +107,99 @@ function createAvoidanceSection(name) {
     block.className = "rating";
 
     const groupName = `${name}-${category}`.replace(/\s+/g, "_");
-		
-		block.innerHTML = `
-		  <label class="rating-label">${category}</label>
-		
-		  <div class="rating-scale">
-		    <div class="rating-numbers">
-		      ${Array.from({ length: 11 }, (_, i) => `<span>${i}</span>`).join("")}
-		    </div>
-		
-		    <div class="rating-radios">
-		      ${Array.from({ length: 11 }, (_, i) => `
-		        <label>
-		          <input
-		            type="radio"
-		            name="${groupName}"
-		            value="${i}"
-		          />
-		          <span class="radio-dot"></span>
-		        </label>
-		      `).join("")}
-		    </div>
-		  </div>
-		`;
+
+    block.innerHTML = `
+      <label class="rating-label">${category}</label>
+
+      <div class="rating-scale">
+        <div class="rating-numbers">
+          ${Array.from({ length: 11 }, (_, i) => `<span>${i}</span>`).join("")}
+        </div>
+
+        <div class="rating-radios">
+          ${Array.from({ length: 11 }, (_, i) => `
+            <label>
+              <input
+                type="radio"
+                name="${groupName}"
+                value="${i}"
+              />
+              <span class="radio-dot"></span>
+            </label>
+          `).join("")}
+        </div>
+      </div>
+    `;
 
     ratingsDiv.appendChild(block);
   });
-	
-	expButtons.forEach(btn => {
-	  btn.addEventListener("click", () => {
-	    const answer = btn.dataset.answer;
-	
-	    // Visual state
-	    expButtons.forEach(b => b.classList.remove("selected"));
-	    btn.classList.add("selected");
-	
-			if (answer === "yes") {
-			  responses.avoidances[name].experience = "yes";
-			  ratingsDiv.classList.remove("hidden");
-			} else {
-			  responses.avoidances[name].experience = "no";
-			
-			  // Clear ratings in UI
-			  ratingsDiv.classList.add("hidden");
-			
-			  const radios = ratingsDiv.querySelectorAll('input[type="radio"]');
-			  radios.forEach(radio => {
-			    radio.checked = false;
-			    radio.dataset.wasChecked = "false";
-			  });
-			
-			  // Clear ratings in data
-			  responses.avoidances[name].ratings = {};
-			}
-	  });
-	});
 
-	// Allow radio buttons to be toggled off by clicking again
-	ratingsDiv.addEventListener("click", (e) => {
-	  if (e.target.type !== "radio") return;
-	
-	  const radio = e.target;
-	  const category = radio
-	    .closest(".rating")
-	    .querySelector(".rating-label")
-	    .innerText;
-	
-	  const avoidance = responses.avoidances[name];
-	
-	  if (radio.dataset.wasChecked === "true") {
-	    // Unselect
-	    radio.checked = false;
-	    radio.dataset.wasChecked = "false";
-	    delete avoidance.ratings[category];
-	  } else {
-	    // Clear toggle state for this group
-	    const group = ratingsDiv.querySelectorAll(
-	      `input[name="${radio.name}"]`
-	    );
-	    group.forEach(r => (r.dataset.wasChecked = "false"));
-	
-	    // Select new value
-	    radio.dataset.wasChecked = "true";
-	    avoidance.ratings[category] = Number(radio.value);
-	  }
-	});
+  // Yes / No toggle logic
+  expButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const answer = btn.dataset.answer;
 
-	// Initialize avoidance entry
-	responses.avoidances[name] = {
-	  experience: null,
-	  ratings: {}
-	};
+      // visual state
+      expButtons.forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      if (answer === "yes") {
+        responses.avoidances[name].experience = "yes";
+        ratingsDiv.classList.remove("hidden");
+      } else {
+        responses.avoidances[name].experience = "no";
+
+        // hide UI
+        ratingsDiv.classList.add("hidden");
+
+        // clear radios
+        const radios = ratingsDiv.querySelectorAll('input[type="radio"]');
+        radios.forEach(radio => {
+          radio.checked = false;
+          radio.dataset.wasChecked = "false";
+        });
+
+        // clear data
+        responses.avoidances[name].ratings = {};
+      }
+    });
+  });
+
+  // Toggleable radio behavior + data sync
+  ratingsDiv.addEventListener("click", (e) => {
+    if (e.target.type !== "radio") return;
+
+    const radio = e.target;
+    const category = radio
+      .closest(".rating")
+      .querySelector(".rating-label")
+      .innerText;
+
+    const avoidance = responses.avoidances[name];
+
+    if (radio.dataset.wasChecked === "true") {
+      // unselect
+      radio.checked = false;
+      radio.dataset.wasChecked = "false";
+      delete avoidance.ratings[category];
+    } else {
+      // clear group toggle state
+      const group = ratingsDiv.querySelectorAll(
+        `input[name="${radio.name}"]`
+      );
+      group.forEach(r => (r.dataset.wasChecked = "false"));
+
+      radio.dataset.wasChecked = "true";
+      avoidance.ratings[category] = Number(radio.value);
+    }
+  });
 
   return section;
 }
 
 const avoidanceNames = [
-  "Soulless Hard Mode",
-  "I wanna be the Last TIS",
+  "Soulless Hard Mode": "#3a4052",
+  "I wanna be the Last TIS": "#999999",
   "I wanna be the Music2 - Ninur 《INFINITE》 Perfect",
 	"I wanna be the Music2 - シュレーディンガーの猫《INFINITE》 Perfect",
 	"I wanna be the Music2 - ロンゲーナカンタータ 《INFINITE》 Perfect",
@@ -274,7 +300,7 @@ const avoidanceNames = [
 	"Twisted Drop Party"
 ];
 
-avoidanceNames.forEach(name => {
+Object.keys(avoidanceConfig).forEach(name => {
   avoidanceContainer.appendChild(createAvoidanceSection(name));
 });
 

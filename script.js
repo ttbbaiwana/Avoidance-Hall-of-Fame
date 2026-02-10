@@ -282,7 +282,7 @@ avoidanceNames.forEach(name => {
 const submitBtn = document.getElementById("submitBtn");
 const submitStatus = document.getElementById("submitStatus");
 
-const GOOGLE_SCRIPT_URL = "https://docs.google.com/spreadsheets/d/1IDam2gGWEIlffuiz7hFEnLr96afkMVrCpL_0f3v8-wk/edit?gid=1646278027#gid=1646278027";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
 
 submitBtn.addEventListener("click", async () => {
   submitBtn.disabled = true;

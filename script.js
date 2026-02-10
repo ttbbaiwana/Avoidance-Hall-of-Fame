@@ -278,3 +278,35 @@ const avoidanceNames = [
 avoidanceNames.forEach(name => {
   avoidanceContainer.appendChild(createAvoidanceSection(name));
 });
+
+const submitBtn = document.getElementById("submitBtn");
+const submitStatus = document.getElementById("submitStatus");
+
+const GOOGLE_SCRIPT_URL = "https://docs.google.com/spreadsheets/d/1IDam2gGWEIlffuiz7hFEnLr96afkMVrCpL_0f3v8-wk/edit?gid=1646278027#gid=1646278027";
+
+submitBtn.addEventListener("click", async () => {
+  submitBtn.disabled = true;
+  submitStatus.innerText = "Submitting...";
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(responses)
+    });
+
+    const result = await res.json();
+
+    if (result.status === "ok") {
+      submitStatus.innerText = "Submitted successfully. Thank you!";
+    } else {
+      throw new Error("Submission failed");
+    }
+  } catch (err) {
+    submitStatus.innerText = "Submission failed. Please try again.";
+    submitBtn.disabled = false;
+    console.error(err);
+  }
+});

@@ -62,39 +62,40 @@ function createAvoidanceSection(name) {
   const ratingsDiv = section.querySelector(".ratings");
   const yesBtn = section.querySelector(".yes-btn");
 
-	ratingsDiv.addEventListener("click", (e) => {
-		  if (!e.target.matches("button[data-value]")) return;
-		
-		  const button = e.target;
-		  const buttonGroup = button.parentElement;
-		
-		  // Clear previous selection in this category
-		  buttonGroup.querySelectorAll("button").forEach(btn =>
-		    btn.classList.remove("selected")
-		  );
-		
-		  // Select the clicked button
-		  button.classList.add("selected");
-	});
-
   // Build rating blocks
   ratingCategories.forEach(category => {
     const block = document.createElement("div");
     block.className = "rating";
 
-	block.innerHTML = `
-	  <label>${category}</label>
-	  <div class="rating-buttons" data-category="${category}">
-	    ${Array.from({ length: 11 }, (_, i) =>
-	      `<button type="button" data-value="${i}">${i}</button>`
-	    ).join("")}
-	  </div>
+    block.innerHTML = `
+      <label>${category}</label>
+      <div class="rating-buttons" data-category="${category}">
+        ${Array.from({ length: 11 }, (_, i) =>
+          `<button type="button" data-value="${i}">${i}</button>`
+        ).join("")}
+      </div>
     `;
 
     ratingsDiv.appendChild(block);
   });
 
-  // Gate behavior
+  // Single Select Logic
+  ratingsDiv.addEventListener("click", (e) => {
+    if (!e.target.matches("button[data-value]")) return;
+
+    const button = e.target;
+    const buttonGroup = button.parentElement;
+
+    // Clear previous selection in this category
+    buttonGroup.querySelectorAll("button").forEach(btn =>
+      btn.classList.remove("selected")
+    );
+
+    // Select the clicked button
+    button.classList.add("selected");
+  });
+
+  // Gate behavior (Yes button)
   yesBtn.addEventListener("click", () => {
     ratingsDiv.classList.remove("hidden");
     yesBtn.disabled = true;

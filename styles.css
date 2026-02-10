@@ -67,7 +67,7 @@ body {
 }
 
 .rating-buttons button.selected {
-  outline: 3px solid #000;
+  outline: 3px solid #6ccf8e;
   outline-offset: -2px;
   font-weight: 700;
 }

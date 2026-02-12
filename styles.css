@@ -175,8 +175,9 @@ body {
 }
 
 .ahof-table td:first-child {
-  text-align: left;
+  text-align: center;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .na {

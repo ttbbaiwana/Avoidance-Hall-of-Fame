@@ -314,8 +314,7 @@ body {
   display: flex;
   flex-direction: column;
   max-width: 1200px;
-  margin: 30px auto;
-  padding: 0 20px;
+  margin-bottom: 10px;
   width: 100%;
 }
 

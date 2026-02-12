@@ -16,6 +16,13 @@ fetch(API_URL)
     headers = json.headers;
     tableData = json.data.filter(row => row[0] !== "");
     renderTable();
+    document.getElementById("loader").classList.add("hidden");
+    document.getElementById("leaderboard").classList.remove("hidden");
+  })
+  .catch(err => {
+    document.getElementById("loader").innerHTML =
+      "<p style='color:red;'>Failed to load leaderboard.</p>";
+    console.error(err);
   });
 
 function renderTable() {

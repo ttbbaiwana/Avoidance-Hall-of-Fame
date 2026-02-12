@@ -129,12 +129,6 @@ html, body {
 /* =========================
    AHoF Styles
 ========================= */
-
-.ahof-container {
-  padding: 40px;
-  background: #ffffff;
-}
-
 .ahof-title {
   text-align: center;
   margin-bottom: 30px;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>The Avoidance Hall of Fame</title>
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 
 <body class="ahof-container">
@@ -16,10 +16,18 @@
   <thead></thead>
   <tbody></tbody>
 </table>
+  
+<script src="config.js"></script>
 
 <script>
 
 const API_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
+
+const avoidanceColorMap = Object.fromEntries(
+  avoidanceConfig.map(a => [a.name, a.color])
+);
+
+/* ---------- Table Logic ---------- */
 
 let tableData = [];
 let headers = [];
@@ -40,57 +48,63 @@ function renderTable() {
   thead.innerHTML = "";
   tbody.innerHTML = "";
 
-  // Header row
   const headerRow = document.createElement("tr");
-  // Add Rank column
+
+  // Rank column
   const rankTh = document.createElement("th");
   rankTh.textContent = "#";
   headerRow.appendChild(rankTh);
-  
+
   headers.forEach((header, i) => {
     const th = document.createElement("th");
     th.textContent = header;
     th.onclick = () => sortTable(i);
     headerRow.appendChild(th);
   });
+
   thead.appendChild(headerRow);
 
-  // Body rows
-  tableData.forEach(row => {
+  tableData.forEach((row, rowIndex) => {
     const tr = document.createElement("tr");
+
     // Rank cell
     const rankTd = document.createElement("td");
-    rankTd.textContent = tbody.children.length + 1;
-    rankTd.style.fontWeight = "600";
+    rankTd.textContent = rowIndex + 1;
+    rankTd.classList.add("stat-colored");
     tr.appendChild(rankTd);
 
     row.forEach((cell, i) => {
       const td = document.createElement("td");
 
+      // Game Name Column
       if (i === 0) {
         td.textContent = cell;
-        const bg = avoidanceConfig[cell];
-      
+
+        const bg = avoidanceColorMap[cell];
         if (bg) {
           td.style.backgroundColor = bg;
           td.style.color = getContrastTextColor(bg);
           td.style.fontWeight = "600";
         }
-      
+
         tr.appendChild(td);
         return;
       }
 
+      // N/A handling
       if (cell === "N/A") {
         td.textContent = "N/A";
         td.classList.add("na");
+        tr.appendChild(td);
+        return;
       }
-      else if (!isNaN(cell) && cell !== "") {
+
+      // Numeric handling
+      if (!isNaN(cell) && cell !== "") {
         const num = parseFloat(cell);
         td.textContent = num.toFixed(2);
-        applyColor(td, i, num);
-      }
-      else {
+        applyColor(td, i + 1, num); // +1 because of Rank column
+      } else {
         td.textContent = cell;
       }
 
@@ -130,7 +144,7 @@ function sortTable(index) {
   renderTable();
 }
 
-/* ---------- COLOR INTERPOLATION ---------- */
+/* ---------- Color Interpolation ---------- */
 
 function applyColor(td, columnIndex, value) {
   
@@ -160,6 +174,7 @@ function interpolateRedGreen(val) {
   const b = Math.round(0 + (23 - 0) * ratio);
   return `rgb(${r},${g},${b})`;
 }
+
 </script>
 
 </body>

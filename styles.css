@@ -235,3 +235,46 @@ body {
 .landing-button:hover {
   background: #333;
 }
+
+
+/* =========================
+   Navigation Header
+========================= */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  background: #000;
+  color: #fff;
+  padding: 12px 24px;
+  z-index: 1000;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-weight: 700;
+  font-size: 18px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  color: #ccc;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #fff;
+}

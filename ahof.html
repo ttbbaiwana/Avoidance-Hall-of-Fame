@@ -3,24 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <title>The Avoidance Hall of Fame</title>
-  <style>
-    body { font-family: system-ui; padding: 40px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { padding: 8px; border-bottom: 1px solid #ddd; }
-    th { cursor: pointer; text-align: left; }
-    th:hover { background: #f0f0f0; }
-  </style>
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
-<body>
 
-<h1>The Avoidance Hall of Fame</h1>
+<body class="ahof-container">
 
-<table id="leaderboard">
+<h1 class="ahof-title">
+  The Avoidance Hall of Fame
+</h1>
+
+<table id="ahof" class="ahof-table">
   <thead></thead>
   <tbody></tbody>
 </table>
 
 <script>
+
 const API_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
 
 let tableData = [];
@@ -36,13 +34,13 @@ fetch(API_URL)
   });
 
 function renderTable() {
-  const thead = document.querySelector("#leaderboard thead");
-  const tbody = document.querySelector("#leaderboard tbody");
+  const thead = document.querySelector("#ahof thead");
+  const tbody = document.querySelector("#ahof tbody");
 
   thead.innerHTML = "";
   tbody.innerHTML = "";
 
-  // headers
+  // Header row
   const headerRow = document.createElement("tr");
   headers.forEach((header, i) => {
     const th = document.createElement("th");
@@ -52,14 +50,29 @@ function renderTable() {
   });
   thead.appendChild(headerRow);
 
-  // rows
+  // Body rows
   tableData.forEach(row => {
     const tr = document.createElement("tr");
-    row.forEach(cell => {
+
+    row.forEach((cell, i) => {
       const td = document.createElement("td");
-      td.textContent = cell;
+
+      if (cell === "N/A") {
+        td.textContent = "N/A";
+        td.classList.add("na");
+      }
+      else if (!isNaN(cell) && cell !== "") {
+        const num = parseFloat(cell);
+        td.textContent = num.toFixed(2);
+        applyColor(td, i, num);
+      }
+      else {
+        td.textContent = cell;
+      }
+
       tr.appendChild(td);
     });
+
     tbody.appendChild(tr);
   });
 }
@@ -76,8 +89,13 @@ function sortTable(index) {
     const valA = a[index];
     const valB = b[index];
 
+    if (valA === "N/A") return 1;
+    if (valB === "N/A") return -1;
+
     if (!isNaN(valA) && !isNaN(valB)) {
-      return currentSort.asc ? valA - valB : valB - valA;
+      return currentSort.asc
+        ? parseFloat(valA) - parseFloat(valB)
+        : parseFloat(valB) - parseFloat(valA);
     }
 
     return currentSort.asc
@@ -87,6 +105,44 @@ function sortTable(index) {
 
   renderTable();
 }
+
+/* ---------- COLOR INTERPOLATION ---------- */
+
+function applyColor(td, columnIndex, value) {
+
+  // Column layout:
+  // 0 = Game Name
+  // 1–6 = Reading → Luck (blue → red)
+  // 8 = Total (blue → red)
+  // 9 = Quality (red → green)
+
+  if ([1,2,3,4,5,6,8].includes(columnIndex)) {
+    td.style.color = interpolateBlueRed(value);
+    td.classList.add("stat-colored");
+  }
+
+  if (columnIndex === 9) {
+    td.style.color = interpolateRedGreen(value);
+    td.classList.add("stat-colored");
+  }
+}
+
+function interpolateBlueRed(val) {
+  const ratio = Math.max(0, Math.min(10, val)) / 10;
+  const r = Math.round(255 * ratio);
+  const g = 0;
+  const b = Math.round(255 * (1 - ratio));
+  return `rgb(${r},${g},${b})`;
+}
+
+function interpolateRedGreen(val) {
+  const ratio = Math.max(0, Math.min(10, val)) / 10;
+  const r = Math.round(255 + (32 - 255) * ratio);
+  const g = Math.round(0 + (172 - 0) * ratio);
+  const b = Math.round(0 + (23 - 0) * ratio);
+  return `rgb(${r},${g},${b})`;
+}
+
 </script>
 
 </body>

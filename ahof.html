@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>The Avoidance Hall of Fame</title>
+  <style>
+    body { font-family: system-ui; padding: 40px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: 8px; border-bottom: 1px solid #ddd; }
+    th { cursor: pointer; text-align: left; }
+    th:hover { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+<h1>The Avoidance Hall of Fame</h1>
+
+<table id="leaderboard">
+  <thead></thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
+
+let tableData = [];
+let headers = [];
+let currentSort = { index: null, asc: false };
+
+fetch(API_URL)
+  .then(res => res.json())
+  .then(json => {
+    headers = json.headers;
+    tableData = json.data.filter(row => row[0] !== "");
+    renderTable();
+  });
+
+function renderTable() {
+  const thead = document.querySelector("#leaderboard thead");
+  const tbody = document.querySelector("#leaderboard tbody");
+
+  thead.innerHTML = "";
+  tbody.innerHTML = "";
+
+  // headers
+  const headerRow = document.createElement("tr");
+  headers.forEach((header, i) => {
+    const th = document.createElement("th");
+    th.textContent = header;
+    th.onclick = () => sortTable(i);
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+
+  // rows
+  tableData.forEach(row => {
+    const tr = document.createElement("tr");
+    row.forEach(cell => {
+      const td = document.createElement("td");
+      td.textContent = cell;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function sortTable(index) {
+  if (currentSort.index === index) {
+    currentSort.asc = !currentSort.asc;
+  } else {
+    currentSort.index = index;
+    currentSort.asc = false;
+  }
+
+  tableData.sort((a, b) => {
+    const valA = a[index];
+    const valB = b[index];
+
+    if (!isNaN(valA) && !isNaN(valB)) {
+      return currentSort.asc ? valA - valB : valB - valA;
+    }
+
+    return currentSort.asc
+      ? String(valA).localeCompare(String(valB))
+      : String(valB).localeCompare(String(valA));
+  });
+
+  renderTable();
+}
+</script>
+
+</body>
+</html>

@@ -9,56 +9,57 @@
 <body>
   <div id="header-placeholder"></div>
 
-  <h1>AHoF Rating Poll</h1>
-
-  <p>
-    For each avoidance, I ask that you only rate the ones you have either
-    cleared, played for a very long time, or have reached the final attack.
-    Your opinion will be disregarded otherwise.
-  </p>
-
-  <p>
-    If you feel you are not experienced or knowledgeable enough to know,
-    then don't vote. I also ask that you have at least <strong>5 AHoF clears</strong>
-    so you have a better understanding of how to compare games at a high level.
-  </p>
-
-  <!-- PAGE 1 -->
-  <section id="page-1">
-
-    <div class="field">
-      <label>
-        <strong>What is your name on AHoF? (Enter it exactly how it appears on AHoF)</strong><br />
-        <input id="name" type="text" required />
-      </label>
-    </div>
-
-    <div class="field">
-      <label>
-        <strong>How many AHoF clears do you have?</strong><br />
-        <input id="clears" type="number" min="0" />
-      </label>
-    </div>
-
-    <p id="gate-error" style="color: red; display: none;">
-      You must have at least 5 AHoF clears to continue.
-    </p>
-
-    <button id="nextBtn" disabled>
-      Next →
-    </button>
-
-  </section>
-
-  <!-- PAGE 2 -->
-  <section id="page-2" hidden>
-    <h2>Your Ratings</h2>
-    <div id="avoidance-container"></div>
-  </section>
-
-  <button id="submitBtn">Submit</button>
-  <p id="submitStatus"></p>
+  <div class="page-content">
+    <h1>AHoF Rating Poll</h1>
   
+    <p>
+      For each avoidance, I ask that you only rate the ones you have either
+      cleared, played for a very long time, or have reached the final attack.
+      Your opinion will be disregarded otherwise.
+    </p>
+  
+    <p>
+      If you feel you are not experienced or knowledgeable enough to know,
+      then don't vote. I also ask that you have at least <strong>5 AHoF clears</strong>
+      so you have a better understanding of how to compare games at a high level.
+    </p>
+  
+    <!-- PAGE 1 -->
+    <section id="page-1">
+  
+      <div class="field">
+        <label>
+          <strong>What is your name on AHoF? (Enter it exactly how it appears on AHoF)</strong><br />
+          <input id="name" type="text" required />
+        </label>
+      </div>
+  
+      <div class="field">
+        <label>
+          <strong>How many AHoF clears do you have?</strong><br />
+          <input id="clears" type="number" min="0" />
+        </label>
+      </div>
+  
+      <p id="gate-error" style="color: red; display: none;">
+        You must have at least 5 AHoF clears to continue.
+      </p>
+  
+      <button id="nextBtn" disabled>
+        Next →
+      </button>
+  
+    </section>
+  
+    <!-- PAGE 2 -->
+    <section id="page-2" hidden>
+      <h2>Your Ratings</h2>
+      <div id="avoidance-container"></div>
+    </section>
+  
+    <button id="submitBtn">Submit</button>
+    <p id="submitStatus"></p>
+  </div>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/script.js"></script>
   <script src="assets/js/layout.js"></script>

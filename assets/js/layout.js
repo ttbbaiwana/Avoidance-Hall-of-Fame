@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadHeader() {
-  fetch("header.html")
+  fetch("assets/components/header.html")
     .then(response => response.text())
     .then(data => {
       const placeholder = document.getElementById("header-placeholder");

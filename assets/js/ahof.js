@@ -17,11 +17,11 @@ fetch(API_URL)
     tableData = json.data.filter(row => row[0] !== "");
     renderTable();
     document.getElementById("loader").classList.add("hidden");
-    document.getElementById("leaderboard").classList.remove("hidden");
+    document.getElementById("ahof").classList.remove("hidden");
   })
   .catch(err => {
     document.getElementById("loader").innerHTML =
-      "<p style='color:red;'>Failed to load leaderboard.</p>";
+      "<p style='color:red;'>Failed to load table.</p>";
     console.error(err);
   });
 

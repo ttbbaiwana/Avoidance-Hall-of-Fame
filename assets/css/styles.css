@@ -302,3 +302,31 @@ html, body {
     margin: 20px auto;
   }
 }
+
+/* =========================
+   Loading Indicator
+========================= */
+
+.loader {
+  text-align: center;
+  padding: 60px 0;
+  color: #666;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 20px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none;
+}

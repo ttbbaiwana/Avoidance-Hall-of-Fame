@@ -278,3 +278,8 @@ body {
 .nav-link:hover {
   color: #fff;
 }
+
+.nav-active {
+  color: #fff !important;
+  font-weight: 700;
+}

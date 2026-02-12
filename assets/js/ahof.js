@@ -1,0 +1,153 @@
+const API_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
+
+const avoidanceColorMap = Object.fromEntries(
+  avoidanceConfig.map(a => [a.name, a.color])
+);
+
+/* ---------- Table Logic ---------- */
+
+let tableData = [];
+let headers = [];
+let currentSort = { index: null, asc: false };
+
+fetch(API_URL)
+  .then(res => res.json())
+  .then(json => {
+    headers = json.headers;
+    tableData = json.data.filter(row => row[0] !== "");
+    renderTable();
+  });
+
+function renderTable() {
+  const thead = document.querySelector("#ahof thead");
+  const tbody = document.querySelector("#ahof tbody");
+
+  thead.innerHTML = "";
+  tbody.innerHTML = "";
+
+  const headerRow = document.createElement("tr");
+
+  // Rank column
+  const rankTh = document.createElement("th");
+  rankTh.textContent = "#";
+  headerRow.appendChild(rankTh);
+
+  headers.forEach((header, i) => {
+    const th = document.createElement("th");
+    th.textContent = header;
+    th.onclick = () => sortTable(i);
+    headerRow.appendChild(th);
+  });
+
+  thead.appendChild(headerRow);
+
+  tableData.forEach((row, rowIndex) => {
+    const tr = document.createElement("tr");
+
+    // Rank cell
+    const rankTd = document.createElement("td");
+    rankTd.textContent = rowIndex + 1;
+    rankTd.classList.add("stat-colored");
+    tr.appendChild(rankTd);
+
+    row.forEach((cell, i) => {
+      const td = document.createElement("td");
+
+      // Game Name Column
+      if (i === 0) {
+        td.textContent = cell;
+
+        const bg = avoidanceColorMap[cell];
+        if (bg) {
+          td.style.backgroundColor = bg;
+          td.style.color = getContrastTextColor(bg);
+          td.style.fontWeight = "600";
+        }
+
+        tr.appendChild(td);
+        return;
+      }
+
+      // N/A handling
+      if (cell === "N/A") {
+        td.textContent = "N/A";
+        td.classList.add("na");
+        tr.appendChild(td);
+        return;
+      }
+
+      // Numeric handling
+      if (!isNaN(cell) && cell !== "") {
+        const num = parseFloat(cell);
+        td.textContent = num.toFixed(2);
+        applyColor(td, i + 1, num); // +1 because of Rank column
+      } else {
+        td.textContent = cell;
+      }
+
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+function sortTable(index) {
+  if (currentSort.index === index) {
+    currentSort.asc = !currentSort.asc;
+  } else {
+    currentSort.index = index;
+    currentSort.asc = false;
+  }
+
+  tableData.sort((a, b) => {
+    const valA = a[index];
+    const valB = b[index];
+
+    if (valA === "N/A") return 1;
+    if (valB === "N/A") return -1;
+
+    if (!isNaN(valA) && !isNaN(valB)) {
+      return currentSort.asc
+        ? parseFloat(valA) - parseFloat(valB)
+        : parseFloat(valB) - parseFloat(valA);
+    }
+
+    return currentSort.asc
+      ? String(valA).localeCompare(String(valB))
+      : String(valB).localeCompare(String(valA));
+  });
+
+  renderTable();
+}
+
+/* ---------- Color Interpolation ---------- */
+
+function applyColor(td, columnIndex, value) {
+  
+  if ([2,3,4,5,6,7,8].includes(columnIndex)) {
+    td.style.color = interpolateBlueRed(value);
+    td.classList.add("stat-colored");
+  }
+
+  if (columnIndex === 10) {
+    td.style.color = interpolateRedGreen(value);
+    td.classList.add("stat-colored");
+  }
+}
+
+function interpolateBlueRed(val) {
+  const ratio = Math.max(0, Math.min(10, val)) / 10;
+  const r = Math.round(255 * ratio);
+  const g = 0;
+  const b = Math.round(255 * (1 - ratio));
+  return `rgb(${r},${g},${b})`;
+}
+
+function interpolateRedGreen(val) {
+  const ratio = Math.max(0, Math.min(10, val)) / 10;
+  const r = Math.round(255 + (32 - 255) * ratio);
+  const g = Math.round(0 + (172 - 0) * ratio);
+  const b = Math.round(0 + (23 - 0) * ratio);
+  return `rgb(${r},${g},${b})`;
+}

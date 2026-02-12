@@ -67,6 +67,20 @@ function renderTable() {
     row.forEach((cell, i) => {
       const td = document.createElement("td");
 
+      if (i === 0) {
+        td.textContent = cell;
+        const bg = avoidanceConfig[cell];
+      
+        if (bg) {
+          td.style.backgroundColor = bg;
+          td.style.color = getContrastTextColor(bg);
+          td.style.fontWeight = "600";
+        }
+      
+        tr.appendChild(td);
+        return;
+      }
+
       if (cell === "N/A") {
         td.textContent = "N/A";
         td.classList.add("na");
@@ -119,14 +133,13 @@ function sortTable(index) {
 /* ---------- COLOR INTERPOLATION ---------- */
 
 function applyColor(td, columnIndex, value) {
-
-  // Blue → Red for Reading → Length
-  if ([1,2,3,4,5,6,7].includes(columnIndex)) {
+  
+  if ([2,3,4,5,6,7,8].includes(columnIndex)) {
     td.style.color = interpolateBlueRed(value);
     td.classList.add("stat-colored");
   }
-  
-  if (columnIndex === 9) {
+
+  if (columnIndex === 10) {
     td.style.color = interpolateRedGreen(value);
     td.classList.add("stat-colored");
   }
@@ -147,7 +160,6 @@ function interpolateRedGreen(val) {
   const b = Math.round(0 + (23 - 0) * ratio);
   return `rgb(${r},${g},${b})`;
 }
-
 </script>
 
 </body>

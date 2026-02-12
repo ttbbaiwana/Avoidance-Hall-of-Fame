@@ -186,6 +186,20 @@ html, body {
   font-weight: 600;
 }
 
+.table-wrapper {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+}
+
+.ahof-table thead th {
+  position: sticky;
+  top: 0;
+  background: #000;
+  z-index: 2;
+}
+
 /* =========================
    Landing Page
 ========================= */

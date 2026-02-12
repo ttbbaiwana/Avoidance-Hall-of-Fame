@@ -42,6 +42,11 @@ function renderTable() {
 
   // Header row
   const headerRow = document.createElement("tr");
+  // Add Rank column
+  const rankTh = document.createElement("th");
+  rankTh.textContent = "#";
+  headerRow.appendChild(rankTh);
+  
   headers.forEach((header, i) => {
     const th = document.createElement("th");
     th.textContent = header;
@@ -53,6 +58,11 @@ function renderTable() {
   // Body rows
   tableData.forEach(row => {
     const tr = document.createElement("tr");
+    // Rank cell
+    const rankTd = document.createElement("td");
+    rankTd.textContent = tbody.children.length + 1;
+    rankTd.style.fontWeight = "600";
+    tr.appendChild(rankTd);
 
     row.forEach((cell, i) => {
       const td = document.createElement("td");
@@ -110,17 +120,12 @@ function sortTable(index) {
 
 function applyColor(td, columnIndex, value) {
 
-  // Column layout:
-  // 0 = Game Name
-  // 1–6 = Reading → Luck (blue → red)
-  // 8 = Total (blue → red)
-  // 9 = Quality (red → green)
-
-  if ([1,2,3,4,5,6,8].includes(columnIndex)) {
+  // Blue → Red for Reading → Length
+  if ([1,2,3,4,5,6,7].includes(columnIndex)) {
     td.style.color = interpolateBlueRed(value);
     td.classList.add("stat-colored");
   }
-
+  
   if (columnIndex === 9) {
     td.style.color = interpolateRedGreen(value);
     td.classList.add("stat-colored");

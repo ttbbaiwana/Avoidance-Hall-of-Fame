@@ -291,8 +291,20 @@ html, body {
   font-weight: 700;
 }
 
+/* =========================
+   Page Layout
+========================= */
+
 .page-content {
+  width: 100%;
   max-width: 1100px;
-  margin: 40px auto;
+  margin: 30px auto;
   padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 0 16px;
+    margin: 20px auto;
+  }
 }

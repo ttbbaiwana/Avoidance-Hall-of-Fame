@@ -49,6 +49,8 @@ nameInput.addEventListener("input", validateGate);
 nextBtn.addEventListener("click", () => {
   page1.hidden = true;
   page2.hidden = false;
+
+	document.getElementById("submitBtn").classList.remove("hidden");
 });
 
 // ---------- AVOIDANCE TEMPLATE ----------

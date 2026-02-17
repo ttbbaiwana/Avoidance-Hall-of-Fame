@@ -396,20 +396,36 @@ body {
 
 .pagination {
   margin-top: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .pagination button {
-  padding: 6px 12px;
-  margin: 0 10px;
-  border: none;
-  background: #000;
-  color: #fff;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #000;
   border-radius: 6px;
   cursor: pointer;
+  min-width: 36px;
+  font-size: 14px;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #000;
+  color: #fff;
 }
 
 .pagination button:disabled {
-  background: #aaa;
+  opacity: 0.4;
   cursor: not-allowed;
+}
+
+.pagination .active-page {
+  background: #000;
+  color: #fff;
+  font-weight: 600;
+  border-color: #000;
 }

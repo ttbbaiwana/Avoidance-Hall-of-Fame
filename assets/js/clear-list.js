@@ -155,7 +155,7 @@ function prefetchPage(page) {
   if (page < 1 || page > totalPages) return;
   if (pageCache[page]) return;
 
-  fetch(`${API_URL}?view=clear-list&page=${page}&pageSize=${PAGE_SIZE}&sort=${currentSort}&order=${currentOrder}`)
+  fetch(`${API_URL}?view=clear-list&page=${page}&pageSize=${PAGE_SIZE}`)
     .then(res => res.json())
     .then(json => {
       pageCache[page] = json;

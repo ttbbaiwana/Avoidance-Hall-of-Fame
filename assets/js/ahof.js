@@ -10,7 +10,7 @@ let tableData = [];
 let headers = [];
 let currentSort = { index: null, asc: false };
 
-fetch(API_URL)
+fetch(`${API_URL}?view=ahof`)
   .then(res => res.json())
   .then(json => {
     headers = json.headers;

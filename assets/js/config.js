@@ -92,7 +92,6 @@ const avoidanceConfig = [
   { name: "I wanna be the Penger", color: "#1b2be7" },
   { name: "I wanna be the 2006", color: "#000000" },
   { name: "I wanna be the semantic compositions on death and its meaning - Right Warp", color: "#f08d55" },
-  { name: "I wanna be the Hidden++", color: "#666666" },
   { name: "DEATH GRIPS IS ONLINE", color: "#2ed863" },
   { name: "I wanna Touch the Ripper", color: "#660000" },
   { name: "I wanna be the Odyssey - Final Boss", color: "#16244e" },

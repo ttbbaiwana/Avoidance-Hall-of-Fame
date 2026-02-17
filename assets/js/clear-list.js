@@ -207,3 +207,6 @@ function addButton(container, label, onClick, disabled = false, active = false) 
 
   container.appendChild(btn);
 }
+
+pageCache = {};
+loadPage(1);

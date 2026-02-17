@@ -40,7 +40,8 @@ function renderTable(headers, data) {
           currentSort = selectedSort;
           currentOrder = "asc";
         }
-  
+        
+        pageCache = {};
         loadPage(1);
       };
     }
@@ -112,18 +113,22 @@ function loadPage(page) {
     page = Math.max(1, Math.min(page, totalPages));
   }
 
+  const cacheKey = `${currentSort}-${currentOrder}-${page}`;
+
   document.getElementById("loader").classList.remove("hidden");
   document.getElementById("clear-table").classList.add("hidden");
 
-  if (pageCache[page]) {
-    renderTable(pageCache[page].headers, pageCache[page].data);
+  if (pageCache[cacheKey]) {
+    renderTable(
+      pageCache[cacheKey].headers,
+      pageCache[cacheKey].data
+    );
 
     currentPage = page;
     renderPagination();
 
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("clear-table").classList.remove("hidden");
-
     return;
   }
 
@@ -131,11 +136,10 @@ function loadPage(page) {
     .then(res => res.json())
     .then(json => {
 
-      pageCache[page] = json;
+      pageCache[cacheKey] = json;
 
       totalRows = json.total;
       totalPages = Math.ceil(totalRows / PAGE_SIZE);
-
       currentPage = page;
 
       renderTable(json.headers, json.data);
@@ -143,7 +147,7 @@ function loadPage(page) {
 
       document.getElementById("loader").classList.add("hidden");
       document.getElementById("clear-table").classList.remove("hidden");
-      
+
       if (totalPages > 1) {
         prefetchPage(page + 1);
         prefetchPage(page - 1);
@@ -152,13 +156,17 @@ function loadPage(page) {
 }
 
 function prefetchPage(page) {
-  if (page < 1 || page > totalPages) return;
-  if (pageCache[page]) return;
 
-  fetch(`${API_URL}?view=clear-list&page=${page}&pageSize=${PAGE_SIZE}`)
+  if (page < 1 || page > totalPages) return;
+
+  const cacheKey = `${currentSort}-${currentOrder}-${page}`;
+
+  if (pageCache[cacheKey]) return;
+
+  fetch(`${API_URL}?view=clear-list&page=${page}&pageSize=${PAGE_SIZE}&sort=${currentSort}&order=${currentOrder}`)
     .then(res => res.json())
     .then(json => {
-      pageCache[page] = json;
+      pageCache[cacheKey] = json;
     });
 }
 
@@ -199,5 +207,3 @@ function addButton(container, label, onClick, disabled = false, active = false) 
 
   container.appendChild(btn);
 }
-
-loadPage(1);

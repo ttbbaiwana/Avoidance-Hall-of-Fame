@@ -45,6 +45,10 @@
 	let currentPage = 1;
 	let totalRows = 0;
 	let totalPages = 1;
+
+	const avoidanceColorMap = Object.fromEntries(
+	  avoidanceConfig.map(a => [a.name, a.color])
+	);
 	
 	function renderTable(headers, data) {
 	  const thead = document.querySelector("#clear-table thead");
@@ -70,6 +74,22 @@
 	      // DATE
 				if (index === 0) {
 					td.textContent = cell;
+				}
+
+				// GAME
+				if (index === 1) {
+				  td.textContent = cell;
+				
+				  const bg = avoidanceColorMap[cell];
+				
+				  if (bg) {
+				    td.style.backgroundColor = bg;
+				    td.style.color = getContrastTextColor(bg);
+				    td.style.fontWeight = "600";
+				  }
+				
+				  tr.appendChild(td);
+				  return;
 				}
 			
 				// DEATH

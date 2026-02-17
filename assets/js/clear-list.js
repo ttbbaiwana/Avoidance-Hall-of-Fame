@@ -13,14 +13,17 @@ fetch(`${API_URL}?view=clear-list`)
 
     sortData();
     renderTable();
+
+    document.getElementById("loader").classList.add("hidden");
+    document.getElementById("clear-table").classList.remove("hidden");
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("loader").innerHTML =
+      "<p style='color:red;'>Failed to load data.</p>";
   });
 
-/* =============================
-   Sorting
-============================= */
-
 function sortData() {
-
   const sortMap = {
     date: 0,
     game: 1,

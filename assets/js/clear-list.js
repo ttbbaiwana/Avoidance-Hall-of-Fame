@@ -7,6 +7,9 @@ let currentPage = 1;
 let totalRows = 0;
 let totalPages = 1;
 
+let currentSort = "date";
+let currentOrder = "desc";
+
 const avoidanceColorMap = Object.fromEntries(
   avoidanceConfig.map(a => [a.name, a.color])
 );
@@ -19,9 +22,29 @@ function renderTable(headers, data) {
   tbody.innerHTML = "";
 
   const headerRow = document.createElement("tr");
-  headers.forEach(h => {
+  headers.forEach((h, index) => {
     const th = document.createElement("th");
     th.textContent = h;
+  
+    // Enable sorting only for Date (0), Game (1), Time (4)
+    if ([0, 1, 4].includes(index)) {
+      th.style.cursor = "pointer";
+  
+      th.onclick = () => {
+        const sortKeys = ["date", "game", null, null, "time"];
+        const selectedSort = sortKeys[index];
+  
+        if (currentSort === selectedSort) {
+          currentOrder = currentOrder === "asc" ? "desc" : "asc";
+        } else {
+          currentSort = selectedSort;
+          currentOrder = "asc";
+        }
+  
+        loadPage(1);
+      };
+    }
+  
     headerRow.appendChild(th);
   });
   thead.appendChild(headerRow);
@@ -104,7 +127,7 @@ function loadPage(page) {
     return;
   }
 
-  fetch(`${API_URL}?view=clear-list&page=${page}&pageSize=${PAGE_SIZE}`)
+  fetch(`${API_URL}?view=clear-list&page=${page}&pageSize=${PAGE_SIZE}&sort=${currentSort}&order=${currentOrder}`)
     .then(res => res.json())
     .then(json => {
 
@@ -132,7 +155,7 @@ function prefetchPage(page) {
   if (page < 1 || page > totalPages) return;
   if (pageCache[page]) return;
 
-  fetch(`${API_URL}?view=clear-list&page=${page}&pageSize=${PAGE_SIZE}`)
+  fetch(`${API_URL}?view=clear-list&page=${page}&pageSize=${PAGE_SIZE}&sort=${currentSort}&order=${currentOrder}`)
     .then(res => res.json())
     .then(json => {
       pageCache[page] = json;

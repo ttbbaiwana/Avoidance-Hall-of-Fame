@@ -37,6 +37,15 @@
 <script src="assets/js/layout.js"></script>
 
 <script>
+	const pageCache = {};
+	const API_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
+	const PAGE_SIZE = 50;
+	const PAGE_WINDOW = 5;
+	
+	let currentPage = 1;
+	let totalRows = 0;
+	let totalPages = 1;
+	
 	function renderTable(headers, data) {
 	  const thead = document.querySelector("#clear-table thead");
 	  const tbody = document.querySelector("#clear-table tbody");
@@ -93,33 +102,46 @@
 	  });
 	}
 	
-	const API_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
-	const PAGE_SIZE = 50;
-	const PAGE_WINDOW = 5;
-	
-	let currentPage = 1;
-	let totalRows = 0;
-	let totalPages = 1;
-	
 	function loadPage(page) {
 	  page = Math.max(1, Math.min(page, totalPages));
 	
 	  document.getElementById("loader").classList.remove("hidden");
 	  document.getElementById("clear-table").classList.add("hidden");
 	
+		if (pageCache[page]) {
+		  renderTable(pageCache[page].headers, pageCache[page].data);
+		  currentPage = page;
+		  renderPagination();
+		  return;
+		}
+		
+		fetch(`${API_URL}?page=${page}&pageSize=${PAGE_SIZE}`)
+		  .then(res => res.json())
+		  .then(json => {
+		
+		    pageCache[page] = json;
+		
+		    renderTable(json.headers, json.data);
+		
+		    totalRows = json.total;
+		    totalPages = Math.ceil(totalRows / PAGE_SIZE);
+		    currentPage = page;
+		
+		    renderPagination();
+		
+		    prefetchPage(page + 1);
+		    prefetchPage(page - 1);
+		  });
+	}
+
+	function prefetchPage(page) {
+	  if (page < 1 || page > totalPages) return;
+	  if (pageCache[page]) return;
+	
 	  fetch(`${API_URL}?page=${page}&pageSize=${PAGE_SIZE}`)
 	    .then(res => res.json())
 	    .then(json => {
-	      renderTable(json.headers, json.data);
-	
-	      totalRows = json.total;
-	      totalPages = Math.ceil(totalRows / PAGE_SIZE);
-	      currentPage = page;
-	
-	      renderPagination();
-	
-	      document.getElementById("loader").classList.add("hidden");
-	      document.getElementById("clear-table").classList.remove("hidden");
+	      pageCache[page] = json;
 	    });
 	}
 	

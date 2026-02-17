@@ -18,7 +18,7 @@
     <p>Loading clear list...</p>
   </div>
 	
-	<div class="pagination" id="pagination"></div>
+	<div class="pagination" id="pagination-top"></div>
 	<br/>
 	
   <div class="table-wrapper">
@@ -28,7 +28,7 @@
     </table>
   </div>
 
-<div class="pagination" id="pagination"></div>
+<div class="pagination" id="pagination-bottom"></div>
 <br/>
 
 </div>
@@ -124,43 +124,42 @@
 	}
 	
 	function renderPagination() {
-	  const container = document.getElementById("pagination");
-	  container.innerHTML = "";
-	
-	  // First button
-	  addButton("First", () => loadPage(1), currentPage === 1);
-	
-	  // Jump back 10
-	  addButton("<<", () => loadPage(currentPage - 10), currentPage <= 10);
-	
-	  const start = Math.max(1, currentPage - PAGE_WINDOW);
-	  const end = Math.min(totalPages, currentPage + PAGE_WINDOW);
-	
-	  for (let i = start; i <= end; i++) {
-	    const isCurrent = i === currentPage;
-	    addButton(i, () => loadPage(i), false, isCurrent);
-	  }
-	
-	  // Jump forward 10
-	  addButton(">>", () => loadPage(currentPage + 10), currentPage + 10 > totalPages);
-	
-	  // Last button
-	  addButton("Last", () => loadPage(totalPages), currentPage === totalPages);
-	}
-	
-	function addButton(label, onClick, disabled = false, active = false) {
-	  const btn = document.createElement("button");
-	  btn.textContent = label;
-	
-	  if (active) {
-	    btn.classList.add("active-page");
-	  }
-	
-	  btn.disabled = disabled;
-	  btn.onclick = onClick;
-	
-	  document.getElementById("pagination").appendChild(btn);
-	}
+    renderPaginationInto("pagination-top");
+    renderPaginationInto("pagination-bottom");
+  }
+  
+  function renderPaginationInto(containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+  
+    addButton(container, "First", () => loadPage(1), currentPage === 1);
+    addButton(container, "<<", () => loadPage(currentPage - 10), currentPage <= 10);
+  
+    const start = Math.max(1, currentPage - PAGE_WINDOW);
+    const end = Math.min(totalPages, currentPage + PAGE_WINDOW);
+  
+    for (let i = start; i <= end; i++) {
+      const isCurrent = i === currentPage;
+      addButton(container, i, () => loadPage(i), false, isCurrent);
+    }
+  
+    addButton(container, ">>", () => loadPage(currentPage + 10), currentPage + 10 > totalPages);
+    addButton(container, "Last", () => loadPage(totalPages), currentPage === totalPages);
+  }
+  
+  function addButton(container, label, onClick, disabled = false, active = false) {
+    const btn = document.createElement("button");
+    btn.textContent = label;
+  
+    if (active) {
+      btn.classList.add("active-page");
+    }
+  
+    btn.disabled = disabled;
+    btn.onclick = onClick;
+  
+    container.appendChild(btn);
+  }
 	
 	loadPage(1);
 </script>

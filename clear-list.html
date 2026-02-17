@@ -103,35 +103,48 @@
 	}
 	
 	function loadPage(page) {
-	  page = Math.max(1, Math.min(page, totalPages));
+
+	  if (totalPages > 1) {
+	    page = Math.max(1, Math.min(page, totalPages));
+	  }
 	
 	  document.getElementById("loader").classList.remove("hidden");
 	  document.getElementById("clear-table").classList.add("hidden");
 	
-		if (pageCache[page]) {
-		  renderTable(pageCache[page].headers, pageCache[page].data);
-		  currentPage = page;
-		  renderPagination();
-		  return;
-		}
-		
-		fetch(`${API_URL}?page=${page}&pageSize=${PAGE_SIZE}`)
-		  .then(res => res.json())
-		  .then(json => {
-		
-		    pageCache[page] = json;
-		
-		    renderTable(json.headers, json.data);
-		
-		    totalRows = json.total;
-		    totalPages = Math.ceil(totalRows / PAGE_SIZE);
-		    currentPage = page;
-		
-		    renderPagination();
-		
-		    prefetchPage(page + 1);
-		    prefetchPage(page - 1);
-		  });
+	  if (pageCache[page]) {
+	    renderTable(pageCache[page].headers, pageCache[page].data);
+	
+	    currentPage = page;
+	    renderPagination();
+	
+	    document.getElementById("loader").classList.add("hidden");
+	    document.getElementById("clear-table").classList.remove("hidden");
+	
+	    return;
+	  }
+	
+	  fetch(`${API_URL}?page=${page}&pageSize=${PAGE_SIZE}`)
+	    .then(res => res.json())
+	    .then(json => {
+	
+	      pageCache[page] = json;
+	
+	      totalRows = json.total;
+	      totalPages = Math.ceil(totalRows / PAGE_SIZE);
+	
+	      currentPage = page;
+	
+	      renderTable(json.headers, json.data);
+	      renderPagination();
+	
+	      document.getElementById("loader").classList.add("hidden");
+	      document.getElementById("clear-table").classList.remove("hidden");
+				
+	      if (totalPages > 1) {
+	        prefetchPage(page + 1);
+	        prefetchPage(page - 1);
+	      }
+	    });
 	}
 
 	function prefetchPage(page) {

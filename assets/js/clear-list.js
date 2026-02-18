@@ -49,6 +49,8 @@ function sortData() {
   const sortMap = {
     date: 0,
     game: 1,
+    player: 2,
+    death: 3,
     time: 4
   };
 

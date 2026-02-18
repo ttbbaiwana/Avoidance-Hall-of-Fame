@@ -135,8 +135,8 @@ function sortTable(index) {
 
   tableData.sort((a, b) => {
 
-    const valA = a[index - 1];
-    const valB = b[index - 1];
+    const valA = a[index];
+    const valB = b[index];
 
     if (valA === "N/A") return 1;
     if (valB === "N/A") return -1;

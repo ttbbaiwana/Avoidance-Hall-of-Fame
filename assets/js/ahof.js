@@ -103,12 +103,16 @@ function renderTable() {
   });
 }
 
-function sortTable(index) {
-  
-  if (index === 0) return;
+function sortTable(headerIndex) {
 
-  if (index === 1) {
+  // Rank
+  if (headerIndex === 0) return;
+
+  // Game
+  if (headerIndex === 1) {
+
     tableData.sort((a, b) => {
+
       const diffA = avoidanceDifficultyMap[a[0]];
       const diffB = avoidanceDifficultyMap[b[0]];
 
@@ -116,27 +120,26 @@ function sortTable(index) {
       if (diffA === undefined) return 1;
       if (diffB === undefined) return -1;
 
-      return diffA - diffB;
+      return diffA - diffB; // hardest first
     });
-
-    currentSort.index = 1;
-    currentSort.asc = false; // fixed descending
 
     renderTable();
     return;
   }
   
-  if (currentSort.index === index) {
+  const dataIndex = headerIndex - 1;
+
+  if (currentSort.index === headerIndex) {
     currentSort.asc = !currentSort.asc;
   } else {
-    currentSort.index = index;
+    currentSort.index = headerIndex;
     currentSort.asc = false;
   }
 
   tableData.sort((a, b) => {
 
-    const valA = a[index - 1];
-    const valB = b[index - 1];
+    const valA = a[dataIndex];
+    const valB = b[dataIndex];
 
     if (valA === "N/A") return 1;
     if (valB === "N/A") return -1;
@@ -149,7 +152,7 @@ function sortTable(index) {
 
     return currentSort.asc
       ? String(valA).localeCompare(String(valB))
-      : String(valB).localeCompare(String(valA));
+      : String(valB).localeCompare(String(valA);
   });
 
   renderTable();

@@ -137,22 +137,22 @@ function sortTable(headerIndex) {
   }
 
   tableData.sort((a, b) => {
-
+  
     const valA = a[dataIndex];
     const valB = b[dataIndex];
-
+  
     if (valA === "N/A") return 1;
     if (valB === "N/A") return -1;
-
+  
     if (!isNaN(valA) && !isNaN(valB)) {
       return currentSort.asc
         ? parseFloat(valA) - parseFloat(valB)
         : parseFloat(valB) - parseFloat(valA);
     }
-
+  
     return currentSort.asc
       ? String(valA).localeCompare(String(valB))
-      : String(valB).localeCompare(String(valA);
+      : String(valB).localeCompare(String(valA));
   });
 
   renderTable();

@@ -9,6 +9,7 @@ const avoidanceDifficultyMap = Object.fromEntries(
 );
 
 let fullData = [];
+let filteredData = [];
 let headers = [];
 let currentSort = "date";
 let currentOrder = "desc";
@@ -18,9 +19,11 @@ fetch(`${API_URL}?view=clear-list`)
   .then(json => {
     headers = json.headers;
     fullData = json.data;
-
+    filteredData = [...fullData];
+    
     sortData();
     renderTable();
+    setupSearch();
 
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("clear-table").classList.remove("hidden");
@@ -56,7 +59,7 @@ function sortData() {
 
   const col = sortMap[currentSort];
 
-  fullData.sort((a, b) => {
+  filteredData.sort((a, b) => {
 
     const valA = a[col];
     const valB = b[col];
@@ -170,7 +173,7 @@ function renderTable() {
 
   thead.appendChild(headerRow);
 
-  fullData.forEach(row => {
+  filteredData.forEach(row => {
 
     const tr = document.createElement("tr");
 
@@ -212,4 +215,50 @@ function renderTable() {
 
     tbody.appendChild(tr);
   });
+}
+
+function setupSearch() {
+  const input = document.getElementById("search-input");
+  const columnSelect = document.getElementById("search-column");
+  const clearBtn = document.getElementById("clear-search");
+
+  input.addEventListener("input", applyFilter);
+  columnSelect.addEventListener("change", applyFilter);
+
+  clearBtn.addEventListener("click", () => {
+    input.value = "";
+    filteredData = [...];
+    sortData();
+    renderTable();
+  });
+}
+
+function applyFilter() {
+  const query = document
+    .getElementById("search-input")
+    .value
+    .toLowerCase()
+    .trim();
+
+  const column = document.getElementById("search-column").value;
+
+  if (!query) {
+    filteredData = [...];
+  } else {
+    const columnIndexMap = {
+      date: 0,
+      game: 1,
+      player: 2
+    };
+
+    const colIndex = columnIndexMap[column];
+
+    filteredData = .filter(row => {
+      const cell = row[colIndex];
+      return cell && cell.toString().toLowerCase().includes(query);
+    });
+  }
+
+  sortData();
+  renderTable();
 }

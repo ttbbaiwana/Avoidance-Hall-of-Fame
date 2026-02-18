@@ -13,6 +13,23 @@
 <div class="page-content">
   <h1>Clear List</h1>
 
+	<div class="filter-bar">
+		<select id="search-column">
+			<option value="date">Date</option>
+			<option value="game">Game</option>
+			<option value="player">Player</option>
+		</select>
+	
+		<input
+			type="text"
+			id="search-input"
+			placeholder="Search..."
+		/>
+	
+		<button id="clear-search">Clear</button>
+	</div>
+	<br/>
+
   <div id="loader" class="loader">
     <div class="spinner"></div>
     <p>Loading clear list...</p>

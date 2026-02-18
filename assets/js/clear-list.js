@@ -70,14 +70,22 @@ function sortData() {
       const diffA = avoidanceDifficultyMap[valA];
       const diffB = avoidanceDifficultyMap[valB];
     
-      // If game not found in config, push to bottom
+      // Handle missing games safely
       if (diffA === undefined && diffB === undefined) return 0;
       if (diffA === undefined) return 1;
       if (diffB === undefined) return -1;
     
-      return currentOrder === "asc"
-        ? diffA - diffB
-        : diffB - diffA;
+      // Primary: difficulty
+      if (diffA !== diffB) {
+        return currentOrder === "asc"
+          ? diffA - diffB
+          : diffB - diffA;
+      }
+      
+      const dateA = new Date(a[0]);
+      const dateB = new Date(b[0]);
+    
+      return dateA - dateB;
     }
 
     if (currentSort === "time") {

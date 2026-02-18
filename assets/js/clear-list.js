@@ -1,5 +1,9 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
 
+const avoidanceColorMap = Object.fromEntries(
+  avoidanceConfig.map(a => [a.name, a.color])
+);
+
 let fullData = [];
 let headers = [];
 let currentSort = "date";
@@ -23,6 +27,20 @@ fetch(`${API_URL}?view=clear-list`)
       "<p style='color:red;'>Failed to load data.</p>";
   });
 
+function timeToSeconds(timeStr) {
+
+  if (!timeStr || timeStr === "-") return 0;
+
+  const parts = timeStr.split(":").map(Number);
+
+  // H:M:S
+  if (parts.length === 3) {
+    return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  }
+
+  return 0;
+}
+
 function sortData() {
   const sortMap = {
     date: 0,
@@ -44,9 +62,13 @@ function sortData() {
     }
 
     if (currentSort === "time") {
+    
+      const secondsA = timeToSeconds(valA);
+      const secondsB = timeToSeconds(valB);
+    
       return currentOrder === "asc"
-        ? valA.localeCompare(valB)
-        : valB.localeCompare(valA);
+        ? secondsA - secondsB
+        : secondsB - secondsA;
     }
 
     return currentOrder === "asc"
@@ -105,6 +127,21 @@ function renderTable() {
     row.forEach((cell, index) => {
 
       const td = document.createElement("td");
+      
+      if (index === 1) {
+        td.textContent = cell;
+      
+        const bg = avoidanceColorMap[cell];
+      
+        if (bg) {
+          td.style.backgroundColor = bg;
+          td.style.color = getContrastTextColor(bg);
+          td.style.fontWeight = "600";
+        }
+      
+        tr.appendChild(td);
+        return;
+      }
 
       if (index === 3 || index === 4) {
         td.textContent = cell ? cell.replace(".000", "") : "-";

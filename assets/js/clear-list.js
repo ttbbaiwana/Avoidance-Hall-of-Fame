@@ -243,7 +243,7 @@ function applyFilter() {
   const column = document.getElementById("search-column").value;
 
   if (!query) {
-    filteredData = [...];
+    filteredData = [...fullData];
   } else {
     const columnIndexMap = {
       date: 0,

@@ -46,7 +46,7 @@ function renderTable() {
   headers.forEach((header, i) => {
     const th = document.createElement("th");
     th.textContent = header;
-    th.onclick = () => sortTable(i);
+    th.onclick = () => sortTable(i + 1);
     headerRow.appendChild(th);
   });
 

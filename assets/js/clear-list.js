@@ -227,7 +227,7 @@ function setupSearch() {
 
   clearBtn.addEventListener("click", () => {
     input.value = "";
-    filteredData = [...];
+    filteredData = [...fullData];
     sortData();
     renderTable();
   });

@@ -4,6 +4,10 @@ const avoidanceColorMap = Object.fromEntries(
   avoidanceConfig.map(a => [a.name, a.color])
 );
 
+const avoidanceDifficultyMap = Object.fromEntries(
+  avoidanceConfig.map((a, index) => [a.name, index])
+);
+
 let fullData = [];
 let headers = [];
 let currentSort = "date";
@@ -61,6 +65,21 @@ function sortData() {
       return currentOrder === "asc" ? dA - dB : dB - dA;
     }
 
+    if (currentSort === "game") {
+    
+      const diffA = avoidanceDifficultyMap[valA];
+      const diffB = avoidanceDifficultyMap[valB];
+    
+      // If game not found in config, push to bottom
+      if (diffA === undefined && diffB === undefined) return 0;
+      if (diffA === undefined) return 1;
+      if (diffB === undefined) return -1;
+    
+      return currentOrder === "asc"
+        ? diffA - diffB
+        : diffB - diffA;
+    }
+
     if (currentSort === "time") {
     
       const secondsA = timeToSeconds(valA);
@@ -70,16 +89,8 @@ function sortData() {
         ? secondsA - secondsB
         : secondsB - secondsA;
     }
-
-    return currentOrder === "asc"
-      ? valA.localeCompare(valB)
-      : valB.localeCompare(valA);
   });
 }
-
-/* =============================
-   Table Rendering
-============================= */
 
 function renderTable() {
 

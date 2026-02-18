@@ -215,6 +215,8 @@ function renderTable() {
 
     tbody.appendChild(tr);
   });
+  
+  updateRowCount();
 }
 
 function setupSearch() {
@@ -261,4 +263,13 @@ function applyFilter() {
 
   sortData();
   renderTable();
+}
+
+function updateRowCount() {
+  const rowCountElement = document.getElementById("row-count");
+
+  if (!rowCountElement) return;
+
+  const count = filteredData.length;
+  rowCountElement.textContent = `Returned ${count} row${count === 1 ? "" : "s"}`;
 }

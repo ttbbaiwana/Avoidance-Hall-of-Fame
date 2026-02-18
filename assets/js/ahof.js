@@ -4,6 +4,10 @@ const avoidanceColorMap = Object.fromEntries(
   avoidanceConfig.map(a => [a.name, a.color])
 );
 
+const avoidanceDifficultyMap = Object.fromEntries(
+  avoidanceConfig.map((a, index) => [a.name, index])
+);
+
 /* ---------- Table Logic ---------- */
 
 let tableData = [];
@@ -100,6 +104,28 @@ function renderTable() {
 }
 
 function sortTable(index) {
+  
+  if (index === 0) return;
+
+  if (index === 1) {
+    tableData.sort((a, b) => {
+      const diffA = avoidanceDifficultyMap[a[0]];
+      const diffB = avoidanceDifficultyMap[b[0]];
+
+      if (diffA === undefined && diffB === undefined) return 0;
+      if (diffA === undefined) return 1;
+      if (diffB === undefined) return -1;
+
+      return diffA - diffB;
+    });
+
+    currentSort.index = 1;
+    currentSort.asc = false; // fixed descending
+
+    renderTable();
+    return;
+  }
+  
   if (currentSort.index === index) {
     currentSort.asc = !currentSort.asc;
   } else {
@@ -108,8 +134,9 @@ function sortTable(index) {
   }
 
   tableData.sort((a, b) => {
-    const valA = a[index];
-    const valB = b[index];
+
+    const valA = a[index - 1];
+    const valB = b[index - 1];
 
     if (valA === "N/A") return 1;
     if (valB === "N/A") return -1;

@@ -253,7 +253,7 @@ function applyFilter() {
 
     const colIndex = columnIndexMap[column];
 
-    filteredData = .filter(row => {
+    filteredData = fullData.filter(row => {
       const cell = row[colIndex];
       return cell && cell.toString().toLowerCase().includes(query);
     });

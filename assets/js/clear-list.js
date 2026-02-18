@@ -88,6 +88,20 @@ function sortData() {
       return dateA - dateB;
     }
 
+    if (currentSort === "death") {
+    
+      const isEmptyA = !valA || valA === "-" || valA.trim() === "";
+      const isEmptyB = !valB || valB === "-" || valB.trim() === "";
+      
+      if (isEmptyA && isEmptyB) return 0;
+      if (isEmptyA) return 1;
+      if (isEmptyB) return -1;
+      
+      return currentOrder === "asc"
+        ? valA - valB
+        : valB - valA;
+    }
+
     if (currentSort === "time") {
     
       const isEmptyA = !valA || valA === "-" || valA.trim() === "";

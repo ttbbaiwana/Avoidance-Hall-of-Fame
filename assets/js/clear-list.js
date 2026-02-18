@@ -138,12 +138,12 @@ function renderTable() {
     const th = document.createElement("th");
     th.textContent = h;
 
-    // Enable sorting for Date, Game, Time
-    if ([0, 1, 4].includes(index)) {
+    // Enable sorting for Date, Game, Death, Time
+    if ([0, 1, 3, 4].includes(index)) {
       th.style.cursor = "pointer";
 
       th.onclick = () => {
-        const sortKeys = ["date", "game", null, null, "time"];
+        const sortKeys = ["date", "game", null, "death", "time"];
         const selected = sortKeys[index];
 
         if (currentSort === selected) {

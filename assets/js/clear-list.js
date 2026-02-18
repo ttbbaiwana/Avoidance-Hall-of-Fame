@@ -90,6 +90,13 @@ function sortData() {
 
     if (currentSort === "time") {
     
+      const isEmptyA = !valA || valA === "-" || valA.trim() === "";
+      const isEmptyB = !valB || valB === "-" || valB.trim() === "";
+      
+      if (isEmptyA && isEmptyB) return 0;
+      if (isEmptyA) return 1;
+      if (isEmptyB) return -1;
+    
       const secondsA = timeToSeconds(valA);
       const secondsB = timeToSeconds(valB);
     
@@ -97,6 +104,7 @@ function sortData() {
         ? secondsA - secondsB
         : secondsB - secondsA;
     }
+    
   });
 }
 

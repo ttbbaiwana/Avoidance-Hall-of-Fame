@@ -284,6 +284,12 @@ body {
   text-decoration: none;
 }
 
+.nav-logo-img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+
 .nav-links {
   display: flex;
   gap: 20px;

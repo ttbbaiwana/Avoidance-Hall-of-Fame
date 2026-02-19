@@ -147,7 +147,7 @@ const avoidanceConfig = [
 ];
 
 const API_CONFIG = {
-  BASE_URL: "https://script.google.com/macros/s/AKfycbx7zdc8jqnicPIB9bcludBNjpHAMV1f6K8FEFrGIe2MeFP04rHFeR7gLNcoCCpl_zC--w/exec"
+  BASE_URL: "https://script.google.com/macros/s/AKfycbxHXhpmIeGkBJsFQj0YXet5bvKwEaRyo5XQYGhaMGgiJERENpK2xEZ_3K33W4m7tJMDOQ/exec"
 };
 
 function getContrastTextColor(hex) {

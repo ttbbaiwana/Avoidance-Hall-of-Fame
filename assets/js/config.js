@@ -146,6 +146,10 @@ const avoidanceConfig = [
   { name: "I Wanna Be The Lucky Final", color: "#fff1d9" }
 ];
 
+const API_CONFIG = {
+  BASE_URL: "https://script.google.com/macros/s/AKfycbx7zdc8jqnicPIB9bcludBNjpHAMV1f6K8FEFrGIe2MeFP04rHFeR7gLNcoCCpl_zC--w/exec"
+};
+
 function getContrastTextColor(hex) {
   if (!hex) return "#000000";
 

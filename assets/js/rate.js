@@ -1,3 +1,4 @@
+const GOOGLE_SCRIPT_URL = API_CONFIG.BASE_URL;
 const page1 = document.getElementById("page-1");
 const page2 = document.getElementById("page-2");
 const nextBtn = document.getElementById("nextBtn");
@@ -211,7 +212,6 @@ avoidanceConfig.forEach(({ name }) => {
 
 const submitBtn = document.getElementById("submitBtn");
 const submitStatus = document.getElementById("submitStatus");
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNjbI5YyD4jA4_sFj6IqZ4uyVOJ7U2b31dIaqOH7rNkvs8hhB5BF4ZOxVcxFjkjcCr/exec";
 
 function validateBeforeSubmit() {
   let ratedAvoidanceCount = 0;

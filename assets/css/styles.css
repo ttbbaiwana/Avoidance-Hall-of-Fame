@@ -474,3 +474,12 @@ body {
 .tester-badge {
   background-color: #ef6c00; /* orange */
 }
+
+/* =========================
+   Row Numbers
+========================= */
+.number-cell {
+  font-weight: 600;
+  width: 40px;
+  text-align: center;
+}

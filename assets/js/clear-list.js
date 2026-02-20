@@ -195,6 +195,32 @@ function renderTable() {
         tr.appendChild(td);
         return;
       }
+      
+      if (index === 2) {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("player-cell");
+      
+        const img = document.createElement("img");
+        const normalizedName = cell.trim();
+        img.src = `assets/images/avatars/${normalizedName}.jpg`;
+        img.loading = "lazy";
+        img.classList.add("avatar-img");
+      
+        // Fallback to default if missing
+        img.onerror = function() {
+          this.src = "assets/images/avatars/Default.jpg";
+        };
+      
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = cell;
+      
+        wrapper.appendChild(img);
+        wrapper.appendChild(nameSpan);
+      
+        td.appendChild(wrapper);
+        tr.appendChild(td);
+        return;
+      }
 
       if (index === 3 || index === 4) {
         td.textContent = cell ? cell.replace(".000", "") : "-";

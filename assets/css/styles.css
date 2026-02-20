@@ -484,3 +484,10 @@ body {
   text-align: center;
   border-right: 1px solid #DDD;
 }
+
+/* =========================
+   Dividers
+========================= */
+.game-divider td {
+  border-top: 3px solid #555;
+}

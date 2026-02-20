@@ -162,20 +162,27 @@ function renderTable() {
 
   thead.innerHTML = "";
   tbody.innerHTML = "";
-
-  const firstClearMap = {};
+  
   const searchColumn = document.getElementById("search-column").value;
   const isGameSorted = currentSort === "game" && clearMode === "all";
+  const firstClearMap = {};
 
   filteredData.forEach(row => {
     const game = row[1];
     const date = new Date(row[0]);
-
+    const type = row[7];
+  
+    const isHiddenRole =
+      (type === "M" && !showMakers) ||
+      (type === "T" && !showTesters);
+  
+    if (isHiddenRole) return;
+  
     if (!firstClearMap[game] || date < new Date(firstClearMap[game][0])) {
       firstClearMap[game] = row;
     }
   });
-
+  
   const headerRow = document.createElement("tr");
 
   const numberTh = document.createElement("th");
@@ -252,11 +259,23 @@ function renderTable() {
     let displayNumber;
 
     if (isGameSorted) {
+    
+      const type = row[7];
+      const isHiddenRole =
+        (type === "M" && !showMakers) ||
+        (type === "T" && !showTesters);
+    
       if (game !== lastGame) {
         gameCounter = 1;
         lastGame = game;
       }
-      displayNumber = gameCounter++;
+    
+      if (!isHiddenRole) {
+        displayNumber = gameCounter++;
+      } else {
+        displayNumber = "";
+      }
+    
     } else {
       displayNumber = rowIndex + 1;
     }
@@ -267,6 +286,15 @@ function renderTable() {
     tr.appendChild(numberTd);
 
     row.forEach((cell, index) => {
+
+      const type = row[7];
+
+      if (
+        (type === "M" && !showMakers) ||
+        (type === "T" && !showTesters)
+      ) {
+        tr.classList.add("role-hidden-row");
+      }
 
       if (index === 7) return;
 
@@ -371,7 +399,7 @@ function setupSearch() {
 
   document.getElementById("show-makers")
     .addEventListener("change", function(e) {
-      showMakers = e.target.checked;
+       = e.target.checked;
       applyFilter();
     });
   
@@ -470,8 +498,7 @@ function applyFilter() {
       });
     }
   }
-
-  applyRoleFilter();
+  
   applyClearMode();
   sortData();
   renderTable();
@@ -534,19 +561,6 @@ function applyClearMode() {
   });
 
   filteredData = Object.values(gameMap);
-}
-
-function applyRoleFilter() {
-
-  filteredData = filteredData.filter(row => {
-
-    const type = row[7]; // Type column
-
-    if (type === "M" && !showMakers) return false;
-    if (type === "T" && !showTesters) return false;
-
-    return true;
-  });
 }
 
 function applyExactFilter(columnIndex, value) {

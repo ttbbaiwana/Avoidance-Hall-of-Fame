@@ -14,6 +14,8 @@ let headers = [];
 let currentSort = "date";
 let currentOrder = "desc";
 let clearMode = "all";
+let showMakers = true;
+let showTesters = true;
 
 fetch(`${API_URL}?view=clear-list`)
   .then(res => res.json())
@@ -185,7 +187,7 @@ function renderTable() {
         renderTable();
       };
     }
-
+    if (index === 7) return;
     headerRow.appendChild(th);
   });
 
@@ -198,6 +200,8 @@ function renderTable() {
     row.forEach((cell, index) => {
 
       const td = document.createElement("td");
+      
+      if (index === 7) return;
       
       if (index === 1) {
         td.textContent = cell;
@@ -293,6 +297,18 @@ function setupSearch() {
       applyFilter();
     });
   });
+
+  document.getElementById("show-makers")
+    .addEventListener("change", function(e) {
+      showMakers = e.target.checked;
+      applyFilter();
+    });
+  
+  document.getElementById("show-testers")
+    .addEventListener("change", function(e) {
+      showTesters = e.target.checked;
+      applyFilter();
+    });
   
   input.addEventListener("input", applyFilter);
   countrySelect.addEventListener("change", applyFilter);
@@ -357,6 +373,7 @@ function applyFilter() {
     }
   }
 
+  applyRoleFilter();
   applyClearMode();
   sortData();
   renderTable();
@@ -419,4 +436,17 @@ function applyClearMode() {
   });
 
   filteredData = Object.values(gameMap);
+}
+
+function applyRoleFilter() {
+
+  filteredData = filteredData.filter(row => {
+
+    const type = row[7]; // Type column
+
+    if (type === "M" && !showMakers) return false;
+    if (type === "T" && !showTesters) return false;
+
+    return true;
+  });
 }

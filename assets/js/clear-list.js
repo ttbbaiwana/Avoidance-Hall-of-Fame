@@ -164,8 +164,18 @@ function renderTable() {
   tbody.innerHTML = "";
   
   const searchColumn = document.getElementById("search-column").value;
-  const isGameSorted = currentSort === "game" && clearMode === "all";
+  const input = document.getElementById("search-input");
   const firstClearMap = {};
+
+  const isPlayerFilterActive =
+    searchColumn === "player" &&
+    input &&
+    input.value.trim() !== "";
+  
+  const isGameSorted =
+    currentSort === "game" &&
+    clearMode === "all" &&
+    !isPlayerFilterActive;
 
   filteredData.forEach(row => {
     const game = row[1];

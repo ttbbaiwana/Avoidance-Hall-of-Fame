@@ -399,7 +399,7 @@ function setupSearch() {
 
   document.getElementById("show-makers")
     .addEventListener("change", function(e) {
-       = e.target.checked;
+      showMakers = e.target.checked;
       applyFilter();
     });
   

@@ -13,6 +13,7 @@ let filteredData = [];
 let headers = [];
 let currentSort = "date";
 let currentOrder = "desc";
+let clearMode = "all";
 
 fetch(`${API_URL}?view=clear-list`)
   .then(res => res.json())
@@ -286,6 +287,13 @@ function setupSearch() {
   const countrySelect = document.getElementById("country-select");
   const clearBtn = document.getElementById("clear-search");
 
+  document.querySelectorAll('input[name="clear-mode"]').forEach(radio => {
+    radio.addEventListener("change", (e) => {
+      clearMode = e.target.value;
+      applyFilter();
+    });
+  });
+  
   input.addEventListener("input", applyFilter);
   countrySelect.addEventListener("change", applyFilter);
 
@@ -299,7 +307,7 @@ function setupSearch() {
     }
     applyFilter();
   });
-
+  
   clearBtn.addEventListener("click", () => {
     input.value = "";
     countrySelect.value = "";
@@ -351,6 +359,7 @@ function applyFilter() {
 
   sortData();
   renderTable();
+  applyClearMode();
 }
 
 function updateRowCount() {
@@ -377,4 +386,37 @@ function populateCountryDropdown() {
     option.textContent = country;
     select.appendChild(option);
   });
+}
+
+function applyClearMode() {
+
+  if (clearMode === "all") return;
+
+  const gameMap = {};
+
+  filteredData.forEach(row => {
+    const game = row[1];
+    const date = new Date(row[0]);
+
+    if (!gameMap[game]) {
+      gameMap[game] = row;
+    } else {
+
+      const existingDate = new Date(gameMap[game][0]);
+
+      if (clearMode === "first") {
+        if (date < existingDate) {
+          gameMap[game] = row;
+        }
+      }
+
+      if (clearMode === "latest") {
+        if (date > existingDate) {
+          gameMap[game] = row;
+        }
+      }
+    }
+  });
+
+  filteredData = Object.values(gameMap);
 }

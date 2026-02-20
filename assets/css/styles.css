@@ -423,13 +423,19 @@ body {
 }
 
 /* =========================
-   Avatars
+   Avatars/Flags
 ========================= */
+.flag-img {
+  width: 26px;
+  height: 18px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
 .player-cell {
   display: flex;
   align-items: center;
   gap: 8px;
-  justify-content: center;
 }
 
 .avatar-img {

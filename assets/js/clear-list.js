@@ -54,8 +54,8 @@ function sortData() {
     game: 1,
     country: 2,
     player: 3,
-    death: 3,
-    time: 4
+    death: 4,
+    time: 5
   };
 
   const col = sortMap[currentSort];
@@ -92,6 +92,12 @@ function sortData() {
       const dateB = new Date(b[0]);
     
       return dateA - dateB;
+    }
+
+    if (currentSort === "country") {
+      return currentOrder === "asc"
+        ? valA.localeCompare(valB)
+        : valB.localeCompare(valA);
     }
 
     if (currentSort === "player") {
@@ -149,7 +155,7 @@ function renderTable() {
     const th = document.createElement("th");
     th.textContent = h;
 
-    // Enable sorting for Date, Game, Player, Death, Time
+    // Enable sorting for Date, Game, Country, Player, Death, Time
     if ([0, 1, 2, 3, 4, 5].includes(index)) {
       th.style.cursor = "pointer";
 
@@ -267,13 +273,26 @@ function renderTable() {
 function setupSearch() {
   const input = document.getElementById("search-input");
   const columnSelect = document.getElementById("search-column");
+  const countrySelect = document.getElementById("country-select");
   const clearBtn = document.getElementById("clear-search");
 
   input.addEventListener("input", applyFilter);
-  columnSelect.addEventListener("change", applyFilter);
+  countrySelect.addEventListener("change", applyFilter);
+
+  columnSelect.addEventListener("change", () => {
+    if (columnSelect.value === "country") {
+      input.classList.add("hidden");
+      countrySelect.classList.remove("hidden");
+    } else {
+      input.classList.remove("hidden");
+      countrySelect.classList.add("hidden");
+    }
+    applyFilter();
+  });
 
   clearBtn.addEventListener("click", () => {
     input.value = "";
+    countrySelect.value = "";
     filteredData = [...fullData];
     sortData();
     renderTable();
@@ -281,30 +300,43 @@ function setupSearch() {
 }
 
 function applyFilter() {
-  const query = document
-    .getElementById("search-input")
-    .value
-    .toLowerCase()
-    .trim();
 
   const column = document.getElementById("search-column").value;
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
 
-  if (!query) {
-    filteredData = [...fullData];
+  if (column === "country") {
+
+    const selectedCountry = countrySelect.value;
+
+    if (!selectedCountry) {
+      filteredData = [...fullData];
+    } else {
+      filteredData = fullData.filter(row =>
+        row[2] === selectedCountry
+      );
+    }
+
   } else {
-    const columnIndexMap = {
-      date: 0,
-      game: 1,
-      country: 2,
-      player: 3
-    };
 
-    const colIndex = columnIndexMap[column];
+    const query = input.value.toLowerCase().trim();
 
-    filteredData = fullData.filter(row => {
-      const cell = row[colIndex];
-      return cell && cell.toString().toLowerCase().includes(query);
-    });
+    if (!query) {
+      filteredData = [...fullData];
+    } else {
+      const columnIndexMap = {
+        date: 0,
+        game: 1,
+        player: 3
+      };
+
+      const colIndex = columnIndexMap[column];
+
+      filteredData = fullData.filter(row => {
+        const cell = row[colIndex];
+        return cell && cell.toLowerCase().includes(query);
+      });
+    }
   }
 
   sortData();
@@ -318,4 +350,21 @@ function updateRowCount() {
 
   const count = filteredData.length;
   rowCountElement.textContent = `Returned ${count} row${count === 1 ? "" : "s"}`;
+}
+
+function populateCountryDropdown() {
+  const select = document.getElementById("country-select");
+
+  const countries = [...new Set(fullData.map(row => row[2]))]
+    .filter(Boolean)
+    .sort();
+
+  select.innerHTML = "<option value=''>Select country</option>";
+
+  countries.forEach(country => {
+    const option = document.createElement("option");
+    option.value = country;
+    option.textContent = country;
+    select.appendChild(option);
+  });
 }

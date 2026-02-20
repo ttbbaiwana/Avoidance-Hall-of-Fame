@@ -237,25 +237,51 @@ function renderTable() {
       }
       
       if (index === 3) {
+      
         const wrapper = document.createElement("div");
         wrapper.classList.add("player-cell");
       
         const img = document.createElement("img");
-        const normalizedName = cell.trim();
-        img.src = `assets/images/avatars/${normalizedName}.jpg`;
         img.loading = "lazy";
         img.classList.add("avatar-img");
       
-        // Fallback to default if missing
-        img.onerror = function() {
-          this.src = "assets/images/avatars/Default.jpg";
-        };
+        const normalizedName = cell.trim();
+      
+        const basePath = "assets/images/avatars/";
+        const extensions = ["jpg", "jpeg", "png"];
+      
+        let attempt = 0;
+      
+        function tryNextExtension() {
+          if (attempt < extensions.length) {
+            img.src = `${basePath}${normalizedName}.${extensions[attempt]}`;
+            attempt++;
+          } else {
+            img.src = `${basePath}default.jpg`;
+          }
+        }
+      
+        img.onerror = tryNextExtension;
+        tryNextExtension();
       
         const nameSpan = document.createElement("span");
         nameSpan.textContent = cell;
       
         wrapper.appendChild(img);
         wrapper.appendChild(nameSpan);
+        
+        const type = row[7];
+      
+        if (type === "M" || type === "T") {
+          const badge = document.createElement("span");
+          badge.textContent = type;
+          badge.classList.add("role-badge");
+      
+          if (type === "M") badge.classList.add("maker-badge");
+          if (type === "T") badge.classList.add("tester-badge");
+      
+          wrapper.appendChild(badge);
+        }
       
         td.appendChild(wrapper);
         tr.appendChild(td);

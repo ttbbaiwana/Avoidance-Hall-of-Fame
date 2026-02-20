@@ -206,11 +206,6 @@ body {
   z-index: 2;
 }
 
-.ahof-table th:nth-child(3),
-.ahof-table td:nth-child(3) {
-  width: 650px;
-}
-
 /* =========================
    Landing Page
 ========================= */

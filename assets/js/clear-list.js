@@ -28,7 +28,7 @@ fetch(`${API_URL}?view=clear-list`)
     sortData();
     renderTable();
     setupSearch();
-
+    
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("clear-table").classList.remove("hidden");
   })
@@ -305,6 +305,8 @@ function setupSearch() {
   const countrySelect = document.getElementById("country-select");
   const clearBtn = document.getElementById("clear-search");
 
+  input.placeholder = `Search ${columnSelect.options[columnSelect.selectedIndex].text}...`;
+
   document.querySelectorAll('input[name="clear-mode"]').forEach(radio => {
     radio.addEventListener("change", (e) => {
       clearMode = e.target.value;
@@ -328,13 +330,27 @@ function setupSearch() {
   countrySelect.addEventListener("change", applyFilter);
 
   columnSelect.addEventListener("change", () => {
-    if (columnSelect.value === "country") {
+  
+    const selected = columnSelect.value;
+  
+    if (selected === "country") {
       input.classList.add("hidden");
       countrySelect.classList.remove("hidden");
     } else {
       input.classList.remove("hidden");
       countrySelect.classList.add("hidden");
+      
+      if (selected === "date") {
+        input.placeholder = "Search Date...";
+      }
+      else if (selected === "game") {
+        input.placeholder = "Search Game...";
+      }
+      else if (selected === "player") {
+        input.placeholder = "Search Player...";
+      }
     }
+  
     applyFilter();
   });
   

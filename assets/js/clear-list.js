@@ -329,11 +329,14 @@ function renderTable() {
 
       else if (index === 2) {
         const img = document.createElement("img");
-        img.src = `assets/images/flags/${cell.trim()}.png`;
-        img.classList.add("flag-img");
-        img.loading = "lazy";
-        img.onerror = function () { this.style.display = "none"; };
-        td.appendChild(img);
+        
+        if (AVAILABLE_FLAGS.has(cell.trim())) {
+          img.src = `assets/images/flags/${cell.trim()}.png`;
+          img.classList.add("flag-img");
+          img.loading = "lazy";
+          img.onerror = function () { this.style.display = "none"; };
+          td.appendChild(img);
+        }
       }
 
       else if (index === 3) {
@@ -343,10 +346,12 @@ function renderTable() {
         const img = document.createElement("img");
         img.loading = "lazy";
         img.classList.add("avatar-img");
-        img.src = `assets/images/avatars/${cell.trim()}.jpg`;
-        img.onerror = function () {
-          this.src = "assets/images/avatars/Default.jpg";
-        };
+        
+        if (AVAILABLE_AVATARS.has(cell.trim())) {
+          img.src = `assets/images/avatars/${cell.trim()}.jpg`;
+        } else {
+          img.src = "assets/images/avatars/Default.jpg";
+        }
 
         const nameSpan = document.createElement("span");
         nameSpan.textContent = cell;

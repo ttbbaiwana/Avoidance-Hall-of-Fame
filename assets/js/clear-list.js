@@ -52,7 +52,8 @@ function sortData() {
   const sortMap = {
     date: 0,
     game: 1,
-    player: 2,
+    country: 2,
+    player: 3,
     death: 3,
     time: 4
   };
@@ -149,11 +150,11 @@ function renderTable() {
     th.textContent = h;
 
     // Enable sorting for Date, Game, Player, Death, Time
-    if ([0, 1, 2, 3, 4].includes(index)) {
+    if ([0, 1, 2, 3, 4, 5].includes(index)) {
       th.style.cursor = "pointer";
 
       th.onclick = () => {
-        const sortKeys = ["date", "game", "player", "death", "time"];
+        const sortKeys = ["date", "game", "country", "player", "death", "time"];
         const selected = sortKeys[index];
 
         if (currentSort === selected) {
@@ -197,6 +198,24 @@ function renderTable() {
       }
       
       if (index === 2) {
+      
+        const countryCode = cell.trim();
+      
+        const img = document.createElement("img");
+        img.src = `assets/images/flags/${countryCode}.png`;
+        img.classList.add("flag-img");
+        img.loading = "lazy";
+      
+        img.onerror = function() {
+          this.style.display = "none";
+        };
+      
+        td.appendChild(img);
+        tr.appendChild(td);
+        return;
+      }
+      
+      if (index === 3) {
         const wrapper = document.createElement("div");
         wrapper.classList.add("player-cell");
       
@@ -222,10 +241,10 @@ function renderTable() {
         return;
       }
 
-      if (index === 3 || index === 4) {
+      if (index === 4 || index === 5) {
         td.textContent = cell ? cell.replace(".000", "") : "-";
       }
-      else if (index === 5 && cell && cell.startsWith("http")) {
+      else if (index === 6 && cell && cell.startsWith("http")) {
         const a = document.createElement("a");
         a.href = cell;
         a.textContent = "Video";
@@ -276,7 +295,8 @@ function applyFilter() {
     const columnIndexMap = {
       date: 0,
       game: 1,
-      player: 2
+      country: 2,
+      player: 3
     };
 
     const colIndex = columnIndexMap[column];

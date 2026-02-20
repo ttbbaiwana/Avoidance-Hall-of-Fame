@@ -96,6 +96,15 @@ function sortData() {
     }
 
     if (currentSort === "country") {
+    
+      const emptyA = !valA || valA.trim() === "";
+      const emptyB = !valB || valB.trim() === "";
+      
+      if (emptyA && emptyB) return 0;
+      
+      if (emptyA) return 1;
+      if (emptyB) return -1;
+      
       return currentOrder === "asc"
         ? valA.localeCompare(valB)
         : valB.localeCompare(valA);

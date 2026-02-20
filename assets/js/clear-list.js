@@ -246,23 +246,11 @@ function renderTable() {
         img.classList.add("avatar-img");
       
         const normalizedName = cell.trim();
-      
-        const basePath = "assets/images/avatars/";
-        const extensions = ["jpg", "jpeg", "png"];
-      
-        let attempt = 0;
-      
-        function tryNextExtension() {
-          if (attempt < extensions.length) {
-            img.src = `${basePath}${normalizedName}.${extensions[attempt]}`;
-            attempt++;
-          } else {
-            img.src = `${basePath}default.jpg`;
-          }
-        }
-      
-        img.onerror = tryNextExtension;
-        tryNextExtension();
+        img.src = `assets/images/avatars/${normalizedName}.jpg`;
+        
+        img.onerror = function () {
+          this.src = "assets/images/avatars/Default.jpg";
+        };
       
         const nameSpan = document.createElement("span");
         nameSpan.textContent = cell;

@@ -475,6 +475,11 @@ body {
   background-color: #ef6c00; /* orange */
 }
 
+.role-hidden-row td {
+  opacity: 0.4;
+  filter: grayscale(60%);
+}
+
 /* =========================
    Row Numbers
 ========================= */

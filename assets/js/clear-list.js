@@ -155,7 +155,8 @@ function sortData() {
 }
 
 function renderTable() {
-
+  
+  const firstClearMap = {};
   const thead = document.querySelector("#clear-table thead");
   const tbody = document.querySelector("#clear-table tbody");
 
@@ -201,12 +202,31 @@ function renderTable() {
   let rowNumber = 1;
   let gameCounter = 1;
   let lastGame = null;
+
+  filteredData.forEach(row => {
+    const game = row[1];
+    const date = new Date(row[0]);
+  
+    if (!firstClearMap[game]) {
+      firstClearMap[game] = row;
+    } else {
+      const existingDate = new Date(firstClearMap[game][0]);
+      if (date < existingDate) {
+        firstClearMap[game] = row;
+      }
+    }
+  });
   
   filteredData.forEach((row, rowIndex) => {
 
     const tr = document.createElement("tr");
+    const game = row[1];
     const currentGame = row[1]; 
     let displayNumber;
+    
+    if (firstClearMap[game] === row) {
+      tr.classList.add("first-clear-row");
+    }
     
     const isGameSorted =
       currentSort === "game" &&

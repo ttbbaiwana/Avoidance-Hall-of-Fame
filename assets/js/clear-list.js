@@ -219,10 +219,24 @@ function renderTable() {
     const tr = document.createElement("tr");
     const game = row[1];
 
+    const input = document.getElementById("search-input");
+    const countrySelect = document.getElementById("country-select");
+    
+    const isDateFilterActive =
+      searchColumn === "date" &&
+      input &&
+      input.value.trim() !== "";
+    
+    const isPlayerFilterActive =
+      searchColumn === "player" &&
+      input &&
+      input.value.trim() !== "";
+    
     if (
-      isGameSorted &&
-      searchColumn !== "date" &&
-      searchColumn !== "player" &&
+      currentSort === "game" &&
+      clearMode === "all" &&
+      !isDateFilterActive &&
+      !isPlayerFilterActive &&
       firstClearMap[game] === row
     ) {
       tr.classList.add("first-clear-row");

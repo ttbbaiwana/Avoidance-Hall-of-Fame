@@ -224,7 +224,7 @@ function renderTable() {
     const currentGame = row[1]; 
     let displayNumber;
     
-    if (firstClearMap[game] === row) {
+    if (currentSort === "game" && clearMode === "all" && firstClearMap[game] === row) {
       tr.classList.add("first-clear-row");
     }
     

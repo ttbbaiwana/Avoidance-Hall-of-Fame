@@ -156,29 +156,40 @@ function sortData() {
 }
 
 function renderTable() {
-  
-  const firstClearMap = {};
+
   const thead = document.querySelector("#clear-table thead");
   const tbody = document.querySelector("#clear-table tbody");
 
   thead.innerHTML = "";
   tbody.innerHTML = "";
 
+  const firstClearMap = {};
+  const searchColumn = document.getElementById("search-column").value;
+  const isGameSorted = currentSort === "game" && clearMode === "all";
+
+  filteredData.forEach(row => {
+    const game = row[1];
+    const date = new Date(row[0]);
+
+    if (!firstClearMap[game] || date < new Date(firstClearMap[game][0])) {
+      firstClearMap[game] = row;
+    }
+  });
+
   const headerRow = document.createElement("tr");
 
-  // Add # column header
   const numberTh = document.createElement("th");
   numberTh.textContent = "#";
   headerRow.appendChild(numberTh);
 
   headers.forEach((h, index) => {
+    if (index === 7) return;
+
     const th = document.createElement("th");
     th.textContent = h;
 
-    // Enable sorting for Date, Game, Country, Player, Death, Time
     if ([0, 1, 2, 3, 4, 5].includes(index)) {
       th.style.cursor = "pointer";
-
       th.onclick = () => {
         const sortKeys = ["date", "game", "country", "player", "death", "time"];
         const selected = sortKeys[index];
@@ -194,67 +205,48 @@ function renderTable() {
         renderTable();
       };
     }
-    if (index === 7) return;
+
     headerRow.appendChild(th);
   });
 
   thead.appendChild(headerRow);
 
-  let rowNumber = 1;
-  let gameCounter = 1;
   let lastGame = null;
+  let gameCounter = 1;
 
-  filteredData.forEach(row => {
-    const game = row[1];
-    const date = new Date(row[0]);
-  
-    if (!firstClearMap[game]) {
-      firstClearMap[game] = row;
-    } else {
-      const existingDate = new Date(firstClearMap[game][0]);
-      if (date < existingDate) {
-        firstClearMap[game] = row;
-      }
-    }
-  });
-  
   filteredData.forEach((row, rowIndex) => {
 
     const tr = document.createElement("tr");
     const game = row[1];
-    const currentGame = row[1]; 
-    let displayNumber;
-    
-    if (currentSort === "game" && clearMode === "all" && firstClearMap[game] === row) {
+
+    if (
+      isGameSorted &&
+      searchColumn !== "date" &&
+      searchColumn !== "player" &&
+      firstClearMap[game] === row
+    ) {
       tr.classList.add("first-clear-row");
     }
-    
-    const isGameSorted =
-      currentSort === "game" &&
-      clearMode === "all";
 
-    if (currentSort === "game" && clearMode === "all" && rowIndex > 0) {
-      const previousGame = filteredData[rowIndex - 1][1];
-    
-      if (currentGame !== previousGame) {
+    if (isGameSorted && rowIndex > 0) {
+      const prevGame = filteredData[rowIndex - 1][1];
+      if (game !== prevGame) {
         tr.classList.add("game-divider");
       }
     }
-    
+
+    let displayNumber;
+
     if (isGameSorted) {
-      
-      if (currentGame !== lastGame) {
+      if (game !== lastGame) {
         gameCounter = 1;
-        lastGame = currentGame;
+        lastGame = game;
       }
-  
-      displayNumber = gameCounter;
-      gameCounter++;
-  
+      displayNumber = gameCounter++;
     } else {
       displayNumber = rowIndex + 1;
     }
-    
+
     const numberTd = document.createElement("td");
     numberTd.textContent = displayNumber;
     numberTd.classList.add("number-cell");
@@ -262,95 +254,71 @@ function renderTable() {
 
     row.forEach((cell, index) => {
 
+      if (index === 7) return;
+
       const td = document.createElement("td");
 
       if ([0, 1, 2, 3].includes(index)) {
-
         td.style.cursor = "pointer";
-      
         td.addEventListener("click", () => {
           applyExactFilter(index, cell);
         });
       }
-      
-      if (index === 7) return;
-      
+
       if (index === 1) {
         td.textContent = cell;
-      
         const bg = avoidanceColorMap[cell];
-      
         if (bg) {
           td.style.backgroundColor = bg;
           td.style.color = getContrastTextColor(bg);
           td.style.fontWeight = "600";
         }
-      
-        tr.appendChild(td);
-        return;
       }
-      
-      if (index === 2) {
-      
-        const countryCode = cell.trim();
-      
+
+      else if (index === 2) {
         const img = document.createElement("img");
-        img.src = `assets/images/flags/${countryCode}.png`;
+        img.src = `assets/images/flags/${cell.trim()}.png`;
         img.classList.add("flag-img");
         img.loading = "lazy";
-      
-        img.onerror = function() {
-          this.style.display = "none";
-        };
-      
+        img.onerror = function () { this.style.display = "none"; };
         td.appendChild(img);
-        tr.appendChild(td);
-        return;
       }
-      
-      if (index === 3) {
-      
+
+      else if (index === 3) {
         const wrapper = document.createElement("div");
         wrapper.classList.add("player-cell");
-      
+
         const img = document.createElement("img");
         img.loading = "lazy";
         img.classList.add("avatar-img");
-      
-        const normalizedName = cell.trim();
-        img.src = `assets/images/avatars/${normalizedName}.jpg`;
-        
+        img.src = `assets/images/avatars/${cell.trim()}.jpg`;
         img.onerror = function () {
           this.src = "assets/images/avatars/Default.jpg";
         };
-      
+
         const nameSpan = document.createElement("span");
         nameSpan.textContent = cell;
-      
+
         wrapper.appendChild(img);
         wrapper.appendChild(nameSpan);
-        
+
         const type = row[7];
-      
         if (type === "M" || type === "T") {
           const badge = document.createElement("span");
           badge.textContent = type;
           badge.classList.add("role-badge");
-      
           if (type === "M") badge.classList.add("maker-badge");
           if (type === "T") badge.classList.add("tester-badge");
-      
           wrapper.appendChild(badge);
         }
-      
+
         td.appendChild(wrapper);
-        tr.appendChild(td);
-        return;
       }
 
-      if (index === 4 || index === 5) {
+      else if (index === 4 || index === 5) {
         td.textContent = cell ? cell.replace(".000", "") : "-";
       }
+
       else if (index === 6 && cell && cell.startsWith("http")) {
         const a = document.createElement("a");
         a.href = cell;
@@ -358,6 +326,7 @@ function renderTable() {
         a.target = "_blank";
         td.appendChild(a);
       }
+
       else {
         td.textContent = cell;
       }
@@ -367,7 +336,7 @@ function renderTable() {
 
     tbody.appendChild(tr);
   });
-  
+
   updateRowCount();
 }
 

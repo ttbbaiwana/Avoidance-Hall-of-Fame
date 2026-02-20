@@ -357,9 +357,9 @@ function applyFilter() {
     }
   }
 
+  applyClearMode();
   sortData();
   renderTable();
-  applyClearMode();
 }
 
 function updateRowCount() {

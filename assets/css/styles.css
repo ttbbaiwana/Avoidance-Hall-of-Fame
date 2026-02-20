@@ -444,3 +444,14 @@ body {
   border-radius: 50%;
   object-fit: cover;
 }
+
+/* =========================
+   Clear Mode Options
+========================= */
+.clear-mode {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 14px;
+}

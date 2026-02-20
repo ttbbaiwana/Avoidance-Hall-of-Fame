@@ -21,6 +21,7 @@ fetch(`${API_URL}?view=clear-list`)
     fullData = json.data;
     filteredData = [...fullData];
     
+    populateCountryDropdown();
     sortData();
     renderTable();
     setupSearch();

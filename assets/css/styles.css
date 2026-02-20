@@ -421,3 +421,20 @@ body {
 .filter-bar button {
   padding: 6px;
 }
+
+/* =========================
+   Avatars
+========================= */
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}

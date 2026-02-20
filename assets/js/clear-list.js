@@ -205,27 +205,23 @@ function renderTable() {
   filteredData.forEach((row, rowIndex) => {
 
     const tr = document.createElement("tr");
-    const currentGame = row[1];
-    const isGameSorted = currentSort === "game";
-
+    const currentGame = row[1]; 
     let displayNumber;
-  
-    if (isGameSorted && rowIndex > 0) {
+    
+    const isGameSorted =
+      currentSort === "game" &&
+      clearMode === "all";
+
+    if (currentSort === "game" && rowIndex > 0) {
       const previousGame = filteredData[rowIndex - 1][1];
-  
+    
       if (currentGame !== previousGame) {
         tr.classList.add("game-divider");
       }
     }
     
-    const isGameSorted =
-      currentSort === "game" &&
-      clearMode === "all";
-  
     if (isGameSorted) {
-  
-      const currentGame = row[1];
-  
+      
       if (currentGame !== lastGame) {
         gameCounter = 1;
         lastGame = currentGame;

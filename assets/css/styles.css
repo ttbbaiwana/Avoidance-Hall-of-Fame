@@ -427,7 +427,7 @@ body {
 ========================= */
 .flag-img {
   width: 26px;
-  height: 18px;
+  height: 26px;
   object-fit: cover;
   border-radius: 2px;
 }

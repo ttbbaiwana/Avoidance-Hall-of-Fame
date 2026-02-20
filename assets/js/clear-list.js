@@ -16,6 +16,7 @@ let currentOrder = "desc";
 let clearMode = "all";
 let showMakers = true;
 let showTesters = true;
+let exactMatchMode = false;
 
 fetch(`${API_URL}?view=clear-list`)
   .then(res => res.json())
@@ -262,6 +263,15 @@ function renderTable() {
     row.forEach((cell, index) => {
 
       const td = document.createElement("td");
+
+      if ([0, 1, 2, 3].includes(index)) {
+
+        td.style.cursor = "pointer";
+      
+        td.addEventListener("click", () => {
+          applyExactFilter(index, cell);
+        });
+      }
       
       if (index === 7) return;
       
@@ -388,8 +398,15 @@ function setupSearch() {
       applyFilter();
     });
   
-  input.addEventListener("input", applyFilter);
-  countrySelect.addEventListener("change", applyFilter);
+  input.addEventListener("input", () => {
+    exactMatchMode = false;
+    applyFilter();
+  });
+  
+  countrySelect.addEventListener("change", () => {
+    exactMatchMode = false;
+    applyFilter();
+  });
 
   columnSelect.addEventListener("change", () => {
   
@@ -460,7 +477,13 @@ function applyFilter() {
 
       filteredData = fullData.filter(row => {
         const cell = row[colIndex];
-        return cell && cell.toLowerCase().includes(query);
+        if (!cell) return false;
+
+        if (exactMatchMode) {
+          return cell.toLowerCase() === query;
+        }
+        
+        return cell.toLowerCase().includes(query);
       });
     }
   }
@@ -541,4 +564,40 @@ function applyRoleFilter() {
 
     return true;
   });
+}
+
+function applyExactFilter(columnIndex, value) {
+
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
+
+  const columnMap = {
+    0: "date",
+    1: "game",
+    2: "country",
+    3: "player"
+  };
+
+  const selectedColumn = columnMap[columnIndex];
+  
+  columnSelect.value = selectedColumn;
+  
+  if (selectedColumn === "country") {
+
+    input.classList.add("hidden");
+    countrySelect.classList.remove("hidden");
+
+    countrySelect.value = value;
+
+  } else {
+
+    input.classList.remove("hidden");
+    countrySelect.classList.add("hidden");
+
+    input.value = value;
+  }
+  
+  exactMatchMode = true;
+  applyFilter();
 }

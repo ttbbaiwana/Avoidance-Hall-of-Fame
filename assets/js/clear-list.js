@@ -164,6 +164,11 @@ function renderTable() {
 
   const headerRow = document.createElement("tr");
 
+  // Add # column header
+  const numberTh = document.createElement("th");
+  numberTh.textContent = "#";
+  headerRow.appendChild(numberTh);
+
   headers.forEach((h, index) => {
     const th = document.createElement("th");
     th.textContent = h;
@@ -193,9 +198,40 @@ function renderTable() {
 
   thead.appendChild(headerRow);
 
-  filteredData.forEach(row => {
-
+  let rowNumber = 1;
+  let gameCounter = 1;
+  let lastGame = null;
+  
+  filteredData.forEach((row, rowIndex) => {
+  
     const tr = document.createElement("tr");
+  
+    let displayNumber;
+  
+    const isGameSorted =
+      currentSort === "game" &&
+      clearMode === "all";
+  
+    if (isGameSorted) {
+  
+      const currentGame = row[1];
+  
+      if (currentGame !== lastGame) {
+        gameCounter = 1;
+        lastGame = currentGame;
+      }
+  
+      displayNumber = gameCounter;
+      gameCounter++;
+  
+    } else {
+      displayNumber = rowIndex + 1;
+    }
+    
+    const numberTd = document.createElement("td");
+    numberTd.textContent = displayNumber;
+    numberTd.classList.add("number-cell");
+    tr.appendChild(numberTd);
 
     row.forEach((cell, index) => {
 

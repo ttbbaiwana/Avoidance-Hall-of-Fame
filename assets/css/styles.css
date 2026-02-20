@@ -489,8 +489,8 @@ body {
    Dividers
 ========================= */
 .game-divider td {
-  border-top: 4px solid;
-  border-image: linear-gradient(to right, #000, transparent) 1;
+  border-top: 3px solid #000;
+  padding-top: 8px;
 }
 
 .first-clear-row td {

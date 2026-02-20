@@ -600,4 +600,9 @@ function applyExactFilter(columnIndex, value) {
   
   exactMatchMode = true;
   applyFilter();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }

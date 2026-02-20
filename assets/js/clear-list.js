@@ -232,7 +232,7 @@ function renderTable() {
       currentSort === "game" &&
       clearMode === "all";
 
-    if (currentSort === "game" && rowIndex > 0) {
+    if (currentSort === "game" && clearMode === "all" && rowIndex > 0) {
       const previousGame = filteredData[rowIndex - 1][1];
     
       if (currentGame !== previousGame) {

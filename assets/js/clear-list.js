@@ -203,11 +203,21 @@ function renderTable() {
   let lastGame = null;
   
   filteredData.forEach((row, rowIndex) => {
-  
+
     const tr = document.createElement("tr");
-  
+    const currentGame = row[1];
+    const isGameSorted = currentSort === "game";
+
     let displayNumber;
   
+    if (isGameSorted && rowIndex > 0) {
+      const previousGame = filteredData[rowIndex - 1][1];
+  
+      if (currentGame !== previousGame) {
+        tr.classList.add("game-divider");
+      }
+    }
+    
     const isGameSorted =
       currentSort === "game" &&
       clearMode === "all";

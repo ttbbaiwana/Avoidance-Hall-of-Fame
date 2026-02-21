@@ -551,7 +551,8 @@ body {
 }
 
 .player-card {
-  background: #fff;
+  background: #f5f6f8;
+  border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -579,6 +580,7 @@ body {
   width: 24px;
   height: 16px;
   object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.15);
 }
 
 .player-links {

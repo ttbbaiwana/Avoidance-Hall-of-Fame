@@ -56,10 +56,10 @@ nextBtn.addEventListener("click", () => {
 
 // ---------- AVOIDANCE TEMPLATE ----------
 const ratingCategories = [
-  "Reading Intricacy",
-  "Speed",
-  "Density",
-  "Pattern",
+  "Reading Intricacy (RNG)",
+  "Speed (RNG)",
+  "Density (RNG)",
+  "Pattern (FIXED)",
   "Gimmick",
   "Luck",
 	"Quality"
@@ -102,7 +102,7 @@ function createAvoidanceSection(name) {
 	  <div class="ratings hidden">
 	    <p class="rating-instructions">
 	        Rate the game based on the following criteria.
-	        (Refer to the "Category Information" for rating definitions)
+	        (Refer to the <strong>"Category Information"</strong> sheet for rating definitions)
 	    </p>
 	  </div>
 	`;
@@ -219,8 +219,7 @@ function validateBeforeSubmit() {
   for (const [name, data] of Object.entries(responses.avoidances)) {
     if (data.experience === "yes") {
       const ratingCount = Object.keys(data.ratings).length;
-
-      // Rule A: Yes → must have ≥1 rating
+			
       if (ratingCount === 0) {
         alert(
           `You selected "Yes" for "${name}" but did not provide any ratings.`
@@ -231,8 +230,7 @@ function validateBeforeSubmit() {
       ratedAvoidanceCount++;
     }
   }
-
-  // Rule B: Must rate at least N avoidances
+	
   if (ratedAvoidanceCount < 1) {
     alert("You must rate at least 1 avoidance before submitting.");
     return false;

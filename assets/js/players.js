@@ -1,9 +1,20 @@
 const API_URL = API_CONFIG.BASE_URL;
 
+let playersFullData = [];
+let playersFilteredData = [];
+let playersExactMatchMode = false;
+
 fetch(`${API_URL}?view=players`)
   .then(res => res.json())
   .then(json => {
-    renderPlayers(json.data);
+    playersFullData = json.data;
+    playersFilteredData = [...playersFullData];
+
+    populateCountryDropdown();
+    setupPlayersSearch();
+    setupPlayersAutocomplete();
+
+    renderPlayers(playersFilteredData);
   })
   .catch(err => console.error(err));
 
@@ -116,4 +127,171 @@ function getPlatformInfo(url) {
   if (lower.includes("bsky.app")) return { name: "BlueSky", key: "bsky" };
 
   return { name: "Link", key: null };
+}
+
+function populateCountryDropdown() {
+  const select = document.getElementById("players-country-select");
+
+  const countries = [...new Set(playersFullData.map(row => row[0]))]
+    .filter(Boolean)
+    .sort();
+
+  select.innerHTML = "<option value=''>Select country</option>";
+
+  countries.forEach(country => {
+    const option = document.createElement("option");
+    option.value = country;
+    option.textContent = country;
+    select.appendChild(option);
+  });
+}
+
+function setupPlayersSearch() {
+
+  const columnSelect = document.getElementById("players-search-column");
+  const input = document.getElementById("players-search-input");
+  const countrySelect = document.getElementById("players-country-select");
+  const clearBtn = document.getElementById("players-clear-search");
+
+  columnSelect.addEventListener("change", () => {
+
+    playersExactMatchMode = false;
+    input.value = "";
+    countrySelect.value = "";
+
+    if (columnSelect.value === "country") {
+      input.classList.add("hidden");
+      countrySelect.classList.remove("hidden");
+    } else {
+      countrySelect.classList.add("hidden");
+      input.classList.remove("hidden");
+    }
+
+    updatePlayersPlaceholder();
+    applyPlayersFilter();
+  });
+
+  input.addEventListener("input", () => {
+    playersExactMatchMode = false;
+    applyPlayersFilter();
+  });
+
+  countrySelect.addEventListener("change", () => {
+    playersExactMatchMode = false;
+    applyPlayersFilter();
+  });
+
+  clearBtn.addEventListener("click", () => {
+    input.value = "";
+    countrySelect.value = "";
+    playersExactMatchMode = false;
+    updatePlayersPlaceholder();
+    applyPlayersFilter();
+  });
+
+  updatePlayersPlaceholder();
+}
+
+function updatePlayersPlaceholder() {
+  const columnSelect = document.getElementById("players-search-column");
+  const input = document.getElementById("players-search-input");
+
+  const text = columnSelect.options[columnSelect.selectedIndex].text;
+  input.placeholder = `Search ${text}...`;
+}
+
+function applyPlayersFilter() {
+
+  const column = document.getElementById("players-search-column").value;
+  const input = document.getElementById("players-search-input");
+  const countrySelect = document.getElementById("players-country-select");
+
+  if (column === "country") {
+
+    const selected = countrySelect.value;
+
+    if (!selected) {
+      playersFilteredData = [...playersFullData];
+    } else {
+      playersFilteredData = playersFullData.filter(row =>
+        row[0] === selected
+      );
+    }
+
+  } else {
+
+    const query = input.value.toLowerCase().trim();
+
+    if (!query) {
+      playersFilteredData = [...playersFullData];
+    } else if (playersExactMatchMode) {
+      playersFilteredData = playersFullData.filter(row =>
+        row[1].toLowerCase() === query
+      );
+    } else {
+      playersFilteredData = playersFullData.filter(row =>
+        row[1].toLowerCase().includes(query)
+      );
+    }
+  }
+
+  renderPlayers(playersFilteredData);
+}
+
+function setupPlayersAutocomplete() {
+
+  const input = document.getElementById("players-search-input");
+  const list = document.getElementById("players-autocomplete-list");
+
+  input.addEventListener("input", () => {
+
+    const value = input.value.toLowerCase();
+    list.innerHTML = "";
+
+    if (!value) {
+      list.classList.add("hidden");
+      return;
+    }
+
+    const source = [...new Set(playersFullData.map(row => row[1]))].sort();
+
+    const startsWith = [];
+    const includes = [];
+
+    source.forEach(name => {
+      const lower = name.toLowerCase();
+      if (lower.startsWith(value)) startsWith.push(name);
+      else if (lower.includes(value)) includes.push(name);
+    });
+
+    const matches = [...startsWith, ...includes].slice(0, 10);
+
+    if (matches.length === 0) {
+      list.classList.add("hidden");
+      return;
+    }
+
+    matches.forEach(match => {
+      const div = document.createElement("div");
+      div.classList.add("autocomplete-item");
+      div.textContent = match;
+
+      div.addEventListener("click", () => {
+        input.value = match;
+        playersExactMatchMode = true;
+        list.classList.add("hidden");
+        applyPlayersFilter();
+      });
+
+      list.appendChild(div);
+    });
+
+    list.classList.remove("hidden");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".autocomplete-wrapper")) {
+      list.classList.add("hidden");
+    }
+  });
 }

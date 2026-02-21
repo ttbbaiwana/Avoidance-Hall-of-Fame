@@ -650,9 +650,29 @@ function setupAutocomplete() {
       return;
     }
 
-    const matches = source
-      .filter(item => item.toLowerCase().includes(value))
-      .slice(0, 10);
+    const lowerValue = value.toLowerCase();
+    
+    const startsWithMatches = [];
+    const includesMatches = [];
+    
+    source.forEach(item => {
+      const lowerItem = item.toLowerCase();
+    
+      if (lowerItem.startsWith(lowerValue)) {
+        startsWithMatches.push(item);
+      }
+      else if (lowerItem.includes(lowerValue)) {
+        includesMatches.push(item);
+      }
+    });
+
+    startsWithMatches.sort();
+    includesMatches.sort();
+    
+    const matches = [
+      ...startsWithMatches,
+      ...includesMatches
+    ].slice(0, 10);
 
     if (matches.length === 0) {
       list.classList.add("hidden");

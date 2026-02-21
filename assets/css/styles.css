@@ -501,3 +501,32 @@ body {
 .first-clear-row td {
   background-color: rgba(255, 215, 0, 0.12);
 }
+
+.autocomplete-wrapper {
+  position: relative;
+  width: 250px;
+}
+
+/* =========================
+   Autosuggest
+========================= */
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+.autocomplete-item {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover {
+  background: #f0f0f0;
+}

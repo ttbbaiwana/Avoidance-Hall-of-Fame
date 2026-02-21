@@ -15,8 +15,8 @@ function renderPlayers(data) {
   data.forEach(row => {
 
     const country = row[0];
-    const player = row[1];
-    const channels = row.slice(2, 6).filter(Boolean);
+    const player = row[2];
+    const channels = row.slice(3, 6).filter(Boolean);
     const socials = row[7];
 
     const card = document.createElement("div");

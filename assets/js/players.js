@@ -28,10 +28,9 @@ function renderPlayers(data) {
 
     const avatar = document.createElement("img");
     avatar.classList.add("player-avatar");
-    const key = player.toLowerCase();
     
-    if (PLAYER_LIST.has(key)) {
-      avatar.src = `assets/images/avatars/${key}.jpg`;
+    if (PLAYER_LIST.has(player)) {
+      avatar.src = `assets/images/avatars/${player}.jpg`;
     } else {
       avatar.src = "assets/images/avatars/Default.jpg";
     }
@@ -40,7 +39,7 @@ function renderPlayers(data) {
     flag.classList.add("flag-img");
     
     if (FLAG_LIST.has(country)) {
-      flag.src = `assets/images/flags/${code}.png`;
+      flag.src = `assets/images/flags/${country}.png`;
       header.appendChild(flag);
     }
 

@@ -60,7 +60,21 @@ function renderPlayers(data) {
       const a = document.createElement("a");
       a.href = url;
       a.target = "_blank";
-      a.textContent = getPlatformName(url);
+      const platform = getPlatformInfo(url);
+
+      if (platform.key && PLATFORM_ICONS[platform.key]) {
+      
+        const icon = document.createElement("img");
+        icon.src = `assets/images/icons/${PLATFORM_ICONS[platform.key]}`;
+        icon.classList.add("platform-icon");
+      
+        a.appendChild(icon);
+      }
+      
+      const text = document.createElement("span");
+      text.textContent = platform.name;
+      
+      a.appendChild(text);
       linksContainer.appendChild(a);
     });
 
@@ -68,7 +82,18 @@ function renderPlayers(data) {
       const a = document.createElement("a");
       a.href = socials;
       a.target = "_blank";
-      a.textContent = getPlatformName(socials);
+      const platform = getPlatformInfo(socials);
+
+      if (platform.key && PLATFORM_ICONS[platform.key]) {
+        const icon = document.createElement("img");
+        icon.src = `assets/images/icons/${PLATFORM_ICONS[platform.key]}`;
+        icon.classList.add("platform-icon");
+        a.appendChild(icon);
+      }
+      
+      const text = document.createElement("span");
+      text.textContent = platform.name;
+      a.appendChild(text);
       linksContainer.appendChild(a);
     }
 
@@ -78,14 +103,17 @@ function renderPlayers(data) {
   });
 }
 
-function getPlatformName(url) {
-  if (url.includes("youtube")) return "YouTube";
-  if (url.includes("twitch")) return "Twitch";
-  if (url.includes("nicovideo")) return "NicoNico";
-  if (url.includes("bilibili")) return "Bilibili";
-  if (url.includes("naver")) return "Naver";
-  if (url.includes("soop")) return "SOOP";
-  if (url.includes("twitter")) return "Twitter";
-  if (url.includes("bsky")) return "BlueSky";
-  return "Link";
+function getPlatformInfo(url) {
+  const lower = url.toLowerCase();
+
+  if (lower.includes("youtube")) return { name: "YouTube", key: "youtube" };
+  if (lower.includes("twitch")) return { name: "Twitch", key: "twitch" };
+  if (lower.includes("nicovideo")) return { name: "NicoNico", key: "nicovideo" };
+  if (lower.includes("bilibili")) return { name: "Bilibili", key: "bilibili" };
+  if (lower.includes("naver")) return { name: "Naver", key: "naver" };
+  if (lower.includes("soop")) return { name: "SOOP", key: "soop" };
+  if (lower.includes("twitter")) return { name: "Twitter", key: "twitter" };
+  if (lower.includes("bsky")) return { name: "BlueSky", key: "bsky" };
+
+  return { name: "Link", key: null };
 }

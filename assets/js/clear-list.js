@@ -200,30 +200,41 @@ function renderTable() {
   numberTh.textContent = "#";
   headerRow.appendChild(numberTh);
 
+  const sortKeys = ["date", "game", "country", "player", "death", "time"];
+  
   headers.forEach((h, index) => {
+  
     if (index === 7) return;
-
+  
     const th = document.createElement("th");
+    const columnKey = sortKeys[index];
+  
     th.textContent = h;
-
-    if ([0, 1, 2, 3, 4, 5].includes(index)) {
+  
+    if (sortKeys[index] !== undefined) {
       th.style.cursor = "pointer";
+  
+      if (columnKey === currentSort) {
+        const arrow = document.createElement("span");
+        arrow.classList.add("sort-arrow");
+        arrow.textContent = currentOrder === "asc" ? " ▲" : " ▼";
+        th.appendChild(arrow);
+      }
+  
       th.onclick = () => {
-        const sortKeys = ["date", "game", "country", "player", "death", "time"];
-        const selected = sortKeys[index];
-
-        if (currentSort === selected) {
+  
+        if (currentSort === columnKey) {
           currentOrder = currentOrder === "asc" ? "desc" : "asc";
         } else {
-          currentSort = selected;
+          currentSort = columnKey;
           currentOrder = "asc";
         }
-
+  
         sortData();
         renderTable();
       };
     }
-
+  
     headerRow.appendChild(th);
   });
 

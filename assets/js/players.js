@@ -1,3 +1,5 @@
+const API_URL = API_CONFIG.BASE_URL;
+
 fetch(`${API_URL}?view=players`)
   .then(res => res.json())
   .then(json => {

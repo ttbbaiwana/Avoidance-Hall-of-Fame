@@ -14,7 +14,29 @@
 <div class="page-content">
   <h1>Players</h1>
 
+  <div class="filter-bar">
+  <select id="players-search-column">
+    <option value="player">Player</option>
+    <option value="country">Country</option>
+  </select>
+
+  <div class="autocomplete-wrapper">
+    <input
+      type="text"
+      id="players-search-input"
+      placeholder="Search Player..."
+      autocomplete="off"
+    />
+    <div id="players-autocomplete-list" class="autocomplete-list hidden"></div>
+  </div>
+
+  <select id="players-country-select" class="hidden"></select>
+
+  <button id="players-clear-search">Clear</button>
+</div>
+
   <div id="players-grid" class="players-grid"></div>
+  <br/>
 </div>
 
 <script src="assets/js/config.js"></script>

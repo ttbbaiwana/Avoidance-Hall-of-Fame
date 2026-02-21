@@ -448,27 +448,7 @@ function setupSearch() {
   });
 
   columnSelect.addEventListener("change", () => {
-  
-    const selected = columnSelect.value;
-  
-    if (selected === "country") {
-      input.classList.add("hidden");
-      countrySelect.classList.remove("hidden");
-    } else {
-      input.classList.remove("hidden");
-      countrySelect.classList.add("hidden");
-      
-      if (selected === "date") {
-        input.placeholder = "Search Date...";
-      }
-      else if (selected === "game") {
-        input.placeholder = "Search Game...";
-      }
-      else if (selected === "player") {
-        input.placeholder = "Search Player...";
-      }
-    }
-  
+    updateSearchPlaceholder();
     applyFilter();
   });
   
@@ -476,6 +456,7 @@ function setupSearch() {
     input.value = "";
     countrySelect.value = "";
     filteredData = [...fullData];
+    updateSearchPlaceholder();
     sortData();
     renderTable();
   });
@@ -607,19 +588,15 @@ function applyExactFilter(columnIndex, value) {
   const selectedColumn = columnMap[columnIndex];
   
   columnSelect.value = selectedColumn;
+  updateSearchPlaceholder();
   
   if (selectedColumn === "country") {
-
     input.classList.add("hidden");
     countrySelect.classList.remove("hidden");
-
     countrySelect.value = value;
-
   } else {
-
     input.classList.remove("hidden");
     countrySelect.classList.add("hidden");
-
     input.value = value;
   }
   
@@ -748,4 +725,14 @@ function updateFilterSummary() {
   }
 
   summaryEl.textContent = `Showing: ${parts.join(" | ")}`;
+}
+
+function updateSearchPlaceholder() {
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+
+  const selectedText =
+    columnSelect.options[columnSelect.selectedIndex].text;
+
+  input.placeholder = `Search ${selectedText}...`;
 }

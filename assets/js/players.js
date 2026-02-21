@@ -106,14 +106,14 @@ function renderPlayers(data) {
 function getPlatformInfo(url) {
   const lower = url.toLowerCase();
 
-  if (lower.includes("youtube")) return { name: "YouTube", key: "youtube" };
-  if (lower.includes("twitch")) return { name: "Twitch", key: "twitch" };
-  if (lower.includes("nicovideo")) return { name: "NicoNico", key: "nicovideo" };
-  if (lower.includes("bilibili")) return { name: "Bilibili", key: "bilibili" };
-  if (lower.includes("naver")) return { name: "Naver", key: "naver" };
-  if (lower.includes("soop")) return { name: "SOOP", key: "soop" };
-  if (lower.includes("twitter")) return { name: "Twitter", key: "twitter" };
-  if (lower.includes("bsky")) return { name: "BlueSky", key: "bsky" };
+  if (lower.includes("youtube.com")) return { name: "YouTube", key: "youtube" };
+  if (lower.includes("twitch.tv")) return { name: "Twitch", key: "twitch" };
+  if (lower.includes("nicovideo.jp")) return { name: "NicoNico", key: "nicovideo" };
+  if (lower.includes("bilibili.com")) return { name: "Bilibili", key: "bilibili" };
+  if (lower.includes("naver.com")) return { name: "Naver", key: "naver" };
+  if (lower.includes("soop.co.kr")) return { name: "SOOP", key: "soop" };
+  if (lower.includes("twitter.com")) return { name: "Twitter", key: "twitter" };
+  if (lower.includes("bsky.app")) return { name: "BlueSky", key: "bsky" };
 
   return { name: "Link", key: null };
 }

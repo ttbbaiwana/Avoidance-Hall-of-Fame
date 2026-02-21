@@ -448,7 +448,21 @@ function setupSearch() {
   });
 
   columnSelect.addEventListener("change", () => {
-    updateSearchPlaceholder();
+    const selected = columnSelect.value;
+    
+    exactMatchMode = false;
+    input.value = "";
+    countrySelect.value = "";
+  
+    if (selected === "country") {
+      input.classList.add("hidden");
+      countrySelect.classList.remove("hidden");
+    } else {
+      countrySelect.classList.add("hidden");
+      input.classList.remove("hidden");
+      updateSearchPlaceholder();
+    }
+  
     applyFilter();
   });
   

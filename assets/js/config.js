@@ -566,6 +566,17 @@ const FLAG_LIST = new Set([
   "VN"
 ]);
 
+const PLATFORM_ICONS = {
+  youtube: "youtube.png",
+  twitch: "twitch.png",
+  nicovideo: "niconico.png",
+  bilibili: "bilibili.png",
+  naver: "naver.png",
+  soop: "soop.png",
+  twitter: "twitter.png",
+  bsky: "bluesky.png"
+};
+
 const API_CONFIG = {
   BASE_URL: "https://script.google.com/macros/s/AKfycbxHXhpmIeGkBJsFQj0YXet5bvKwEaRyo5XQYGhaMGgiJERENpK2xEZ_3K33W4m7tJMDOQ/exec"
 };

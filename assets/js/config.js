@@ -146,7 +146,7 @@ const avoidanceConfig = [
   { name: "I Wanna Be The Lucky Final", color: "#fff1d9" }
 ];
 
-const AVAILABLE_AVATARS = new Set([
+const PLAYER_LIST = new Set([
   "83",
   "Adamcake",
   "Adrián",
@@ -519,7 +519,7 @@ const AVAILABLE_AVATARS = new Set([
   "초볼"
 ]);
 
-const AVAILABLE_FLAGS = new Set([
+const FLAG_LIST = new Set([
   "AR",
   "AT",
   "AU",

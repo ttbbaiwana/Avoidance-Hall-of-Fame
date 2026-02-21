@@ -29,6 +29,7 @@ fetch(`${API_URL}?view=clear-list`)
     sortData();
     renderTable();
     setupSearch();
+    setupAutocomplete();
     
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("clear-table").classList.remove("hidden");
@@ -330,7 +331,7 @@ function renderTable() {
       else if (index === 2) {
         const img = document.createElement("img");
         
-        if (AVAILABLE_FLAGS.has(cell.trim())) {
+        if (FLAG_LIST.has(cell.trim())) {
           img.src = `assets/images/flags/${cell.trim()}.png`;
           img.classList.add("flag-img");
           img.loading = "lazy";
@@ -347,7 +348,7 @@ function renderTable() {
         img.loading = "lazy";
         img.classList.add("avatar-img");
         
-        if (AVAILABLE_AVATARS.has(cell.trim())) {
+        if (PLAYER_LIST.has(cell.trim())) {
           img.src = `assets/images/avatars/${cell.trim()}.jpg`;
         } else {
           img.src = "assets/images/avatars/Default.jpg";
@@ -616,5 +617,69 @@ function applyExactFilter(columnIndex, value) {
   window.scrollTo({
     top: 0,
     behavior: "smooth"
+  });
+}
+
+function setupAutocomplete() {
+
+  const input = document.getElementById("search-input");
+  const list = document.getElementById("autocomplete-list");
+  const columnSelect = document.getElementById("search-column");
+
+  input.addEventListener("input", () => {
+
+    const value = input.value.toLowerCase();
+    const selectedColumn = columnSelect.value;
+
+    list.innerHTML = "";
+
+    if (!value) {
+      list.classList.add("hidden");
+      return;
+    }
+
+    let source = [];
+
+    if (selectedColumn === "game") {
+      source = [...new Set(fullData.map(row => row[1]))].sort();
+    } 
+    else if (selectedColumn === "player") {
+      source = [...new Set(fullData.map(row => row[3]))].sort();
+    } else {
+      list.classList.add("hidden");
+      return;
+    }
+
+    const matches = source
+      .filter(item => item.toLowerCase().includes(value))
+      .slice(0, 10);
+
+    if (matches.length === 0) {
+      list.classList.add("hidden");
+      return;
+    }
+
+    matches.forEach(match => {
+      const div = document.createElement("div");
+      div.classList.add("autocomplete-item");
+      div.textContent = match;
+
+      div.addEventListener("click", () => {
+        input.value = match;
+        exactMatchMode = true;
+        list.classList.add("hidden");
+        applyFilter();
+      });
+
+      list.appendChild(div);
+    });
+
+    list.classList.remove("hidden");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".autocomplete-wrapper")) {
+      list.classList.add("hidden");
+    }
   });
 }

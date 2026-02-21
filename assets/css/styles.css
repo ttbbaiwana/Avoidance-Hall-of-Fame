@@ -334,7 +334,7 @@ body {
 
 .table-info {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 6px;
   font-size: 14px;
   font-weight: 500;

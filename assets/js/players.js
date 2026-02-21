@@ -34,7 +34,7 @@ function renderPlayers(data) {
     };
 
     const flag = document.createElement("img");
-    flag.classList.add("player-flag");
+    flag.classList.add("flag-img");
     flag.src = `assets/images/flags/${country}.png`;
     flag.onerror = function () {
       this.style.display = "none";

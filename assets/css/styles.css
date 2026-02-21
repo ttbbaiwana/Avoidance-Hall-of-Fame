@@ -530,3 +530,12 @@ body {
 .autocomplete-item:hover {
   background: #f0f0f0;
 }
+
+/* =========================
+   Sort Arrow
+========================= */
+.sort-arrow {
+  font-size: 11px;
+  margin-left: 4px;
+  opacity: 0.7;
+}

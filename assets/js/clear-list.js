@@ -407,6 +407,7 @@ function renderTable() {
   });
 
   updateRowCount();
+  updateFilterSummary();
 }
 
 function setupSearch() {
@@ -713,4 +714,38 @@ function setupAutocomplete() {
       list.classList.add("hidden");
     }
   });
+}
+
+function updateFilterSummary() {
+
+  const summaryEl = document.getElementById("filter-summary");
+
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
+
+  const parts = [];
+
+  if (clearMode === "first") {
+    parts.push("First Clears");
+  } else if (clearMode === "latest") {
+    parts.push("Latest Clears");
+  } else {
+    parts.push("All Clears");
+  }
+  
+  if (!showMakers) parts.push("Makers Hidden");
+  if (!showTesters) parts.push("Testers Hidden");
+
+  // Search filter
+  const selectedColumn = columnSelect.value;
+
+  if (selectedColumn === "country" && countrySelect.value) {
+    parts.push(`Country = ${countrySelect.value}`);
+  }
+  else if (input && input.value.trim() !== "") {
+    parts.push(`${columnSelect.options[columnSelect.selectedIndex].text} = ${input.value.trim()}`);
+  }
+
+  summaryEl.textContent = `Showing: ${parts.join(" | ")}`;
 }

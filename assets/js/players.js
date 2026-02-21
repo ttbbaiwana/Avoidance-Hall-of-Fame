@@ -28,17 +28,21 @@ function renderPlayers(data) {
 
     const avatar = document.createElement("img");
     avatar.classList.add("player-avatar");
-    avatar.src = `assets/images/avatars/${player}.jpg`;
-    avatar.onerror = function () {
-      this.src = "assets/images/avatars/Default.jpg";
-    };
+    const key = player.toLowerCase();
+    
+    if (PLAYER_LIST.has(key)) {
+      avatar.src = `assets/images/avatars/${key}.jpg`;
+    } else {
+      avatar.src = "assets/images/avatars/Default.jpg";
+    }
 
     const flag = document.createElement("img");
     flag.classList.add("flag-img");
-    flag.src = `assets/images/flags/${country}.png`;
-    flag.onerror = function () {
-      this.style.display = "none";
-    };
+    
+    if (FLAG_LIST.has(country)) {
+      flag.src = `assets/images/flags/${code}.png`;
+      header.appendChild(flag);
+    }
 
     const name = document.createElement("h3");
     name.textContent = player;

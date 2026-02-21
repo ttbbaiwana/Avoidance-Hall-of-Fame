@@ -502,14 +502,15 @@ body {
   background-color: rgba(255, 215, 0, 0.12);
 }
 
+/* =========================
+   Autosuggest
+========================= */
+
 .autocomplete-wrapper {
   position: relative;
   width: 250px;
 }
 
-/* =========================
-   Autosuggest
-========================= */
 .autocomplete-list {
   position: absolute;
   top: 100%;

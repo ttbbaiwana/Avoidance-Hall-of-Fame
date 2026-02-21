@@ -585,9 +585,18 @@ body {
 }
 
 .player-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
   text-decoration: none;
-  background: #f0f0f0;
+  background: #eaeaea;
   padding: 4px 8px;
   border-radius: 6px;
+}
+
+.platform-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
 }

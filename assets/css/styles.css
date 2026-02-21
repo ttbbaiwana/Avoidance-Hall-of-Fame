@@ -425,8 +425,8 @@ body {
    Avatars/Flags
 ========================= */
 .flag-img {
-  width: 26px;
-  height: 18px;
+  width: 30px;
+  height: 30px;
   object-fit: cover;
   border-radius: 2px;
 }
@@ -577,8 +577,8 @@ body {
 }
 
 .player-flag {
-  width: 26px;
-  height: 18px;
+  width: 30px;
+  height: 30px;
   object-fit: cover;
   border: 1px solid rgba(0,0,0,0.15);
 }

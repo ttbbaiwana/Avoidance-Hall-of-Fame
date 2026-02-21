@@ -421,6 +421,7 @@ const AVAILABLE_AVATARS = new Set([
   "そら団子",
   "だぶりゅー",
   "ちーの（ccino）",
+  "でぃお",
   "てつきゆう",
   "でせそつ",
   "とうふや",

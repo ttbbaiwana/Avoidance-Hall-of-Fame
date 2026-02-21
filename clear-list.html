@@ -15,24 +15,28 @@
   <h1>Clear List</h1>
 
 	<div class="filter-bar">
+	
 	  <select id="search-column">
 	    <option value="date">Date</option>
 	    <option value="game">Game</option>
 	    <option value="country">Country</option>
 	    <option value="player">Player</option>
 	  </select>
-		
-		<div class="autocomplete-wrapper">
-		  <input
-			type="text"
-			id="search-input"
-			placeholder="Search..."
-			autocomplete="off"
-		  />
-		  <div id="autocomplete-list" class="autocomplete-list hidden"></div>
-			<select id="country-select" class="hidden"></select>
-	  	<button id="clear-search">Clear</button>
-		</div>
+	
+	  <div class="autocomplete-wrapper">
+	    <input
+	      type="text"
+	      id="search-input"
+	      placeholder="Search..."
+	      autocomplete="off"
+	    />
+	    <div id="autocomplete-list" class="autocomplete-list hidden"></div>
+	  </div>
+	
+	  <select id="country-select" class="hidden"></select>
+	
+	  <button id="clear-search">Clear</button>
+	
 	</div>
 	
 	<div class="clear-mode">

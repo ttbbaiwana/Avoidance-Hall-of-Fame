@@ -59,9 +59,9 @@ function sortData() {
     date: 0,
     game: 1,
     country: 2,
-    player: 3,
-    death: 4,
-    time: 5
+    player: 4,
+    death: 5,
+    time: 6
   };
 
   const col = sortMap[currentSort];
@@ -214,33 +214,44 @@ function renderTable() {
   const sortKeys = ["date","game","country","player","death","time"];
 
   headers.forEach((h, index) => {
-
-    if (index === 3 || index === 8) return; // skip Avatar + Type
-
+  
+    // Skip Avatar and Type columns
+    if (index === 3 || index === 8) return;
+  
     const th = document.createElement("th");
-    const key = sortKeys[index];
-
     th.textContent = h;
-
-    if (key) {
+  
+    let columnKey = null;
+  
+    if (index === 0) columnKey = "date";
+    if (index === 1) columnKey = "game";
+    if (index === 2) columnKey = "country";
+    if (index === 4) columnKey = "player";
+    if (index === 5) columnKey = "death";
+    if (index === 6) columnKey = "time";
+  
+    if (columnKey) {
+  
       th.style.cursor = "pointer";
-
-      if (key === currentSort) {
+  
+      if (columnKey === currentSort) {
         th.innerHTML += currentOrder === "asc" ? " ▲" : " ▼";
       }
-
+  
       th.onclick = () => {
-        if (currentSort === key) {
+  
+        if (currentSort === columnKey) {
           currentOrder = currentOrder === "asc" ? "desc" : "asc";
         } else {
-          currentSort = key;
+          currentSort = columnKey;
           currentOrder = "asc";
         }
+  
         sortData();
         renderTable();
       };
     }
-
+  
     headerRow.appendChild(th);
   });
 

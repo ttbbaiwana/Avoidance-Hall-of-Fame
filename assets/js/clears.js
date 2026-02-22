@@ -83,23 +83,26 @@ function sortData() {
     
       const diffA = avoidanceDifficultyMap[valA];
       const diffB = avoidanceDifficultyMap[valB];
+      
+      if (diffA === undefined && diffB === undefined) {
+        const dateA = new Date(a[0]);
+        const dateB = new Date(b[0]);
+        return dateA - dateB;
+      }
     
-      // Handle missing games safely
-      if (diffA === undefined && diffB === undefined) return 0;
       if (diffA === undefined) return 1;
       if (diffB === undefined) return -1;
     
-      // Primary: difficulty
       if (diffA !== diffB) {
         return currentOrder === "asc"
           ? diffA - diffB
           : diffB - diffA;
       }
-      
+    
       const dateA = new Date(a[0]);
       const dateB = new Date(b[0]);
     
-      return dateA - dateB;
+      return dateA - dateB; // always ascending
     }
 
     if (currentSort === "country") {
@@ -716,7 +719,10 @@ function setupAutocomplete() {
       source = [...new Set(
         fullData
           .map(row => row[1])
-          .filter(game => game !== "I wanna Ruma - Extra")
+          .filter(game => 
+            game !== "I wanna Ruma - Extra" &&
+            game !== "curveWAH"
+          )
       )].sort();
     } 
     else if (selectedColumn === "player") {

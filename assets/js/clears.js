@@ -342,11 +342,17 @@ headerRow.appendChild(numberTh);
       if (index === 1) {
         td.classList.add("hover-game");
         td.textContent = cell;
-        const bg = avoidanceColorMap[cell];
-        if (bg) {
-          td.style.backgroundColor = bg;
-          td.style.color = getContrastTextColor(bg);
-          td.style.fontWeight = "600";
+        if (cell === "I wanna Ruma - Extra") {
+          td.style.backgroundColor = "#cc0000";
+          td.style.color = "#ffffff";
+          td.style.fontWeight = "700";
+        } else {
+          const bg = avoidanceColorMap[cell];
+          if (bg) {
+            td.style.backgroundColor = bg;
+            td.style.color = getContrastTextColor(bg);
+            td.style.fontWeight = "600";
+          }
         }
       }
       

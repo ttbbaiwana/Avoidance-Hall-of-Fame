@@ -481,7 +481,7 @@ body {
 }
 
 /* =========================
-   Rows
+   Clear Rows
 ========================= */
 .number-cell {
   font-weight: 600;
@@ -506,6 +506,15 @@ body {
 
 .hover-game:hover {
   filter: brightness(1.15);
+}
+
+.hover-flag {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.hover-flag:hover {
+  transform: scale(1.15);
 }
 
 /* =========================

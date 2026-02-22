@@ -481,13 +481,22 @@ body {
 }
 
 /* =========================
-   Row Numbers
+   Rows
 ========================= */
 .number-cell {
   font-weight: 600;
   width: 40px;
   text-align: center;
   border-right: 1px solid #DDD;
+}
+
+.clickable-cell {
+  cursor: pointer;
+  transition: font-weight 0.1s ease;
+}
+
+.clickable-cell:hover {
+  font-weight: 600;
 }
 
 /* =========================

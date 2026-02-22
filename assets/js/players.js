@@ -49,8 +49,8 @@ function renderPlayers(data) {
     const flag = document.createElement("img");
     flag.classList.add("flag-img");
     
-    if (FLAG_LIST.has(country.toLowerCase())) {
-      flag.src = `assets/images/flags/${country.toLowerCase()}.png`;
+    if (FLAG_LIST.has(country)) {
+      flag.src = `assets/images/flags/${country}.png`;
       flag.classList.add("clickable-flag");
     
       flag.addEventListener("click", () => {

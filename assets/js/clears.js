@@ -59,9 +59,9 @@ function sortData() {
     date: 0,
     game: 1,
     country: 2,
-    player: 4,
-    death: 5,
-    time: 6
+    player: 3,
+    death: 4,
+    time: 5
   };
 
   const col = sortMap[currentSort];

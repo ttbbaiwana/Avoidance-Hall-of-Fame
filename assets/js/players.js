@@ -1,4 +1,5 @@
 const API_URL = API_CONFIG.BASE_URL;
+const imageExistsCache = {};
 
 let playersFullData = [];
 let playersFilteredData = [];
@@ -47,11 +48,11 @@ function renderPlayers(data) {
     const avatar = document.createElement("img");
     avatar.classList.add("player-avatar");
     
-    if (PLAYER_LIST.has(player)) {
-      avatar.src = `assets/images/avatars/${player}.jpg`;
-    } else {
-      avatar.src = "assets/images/avatars/Default.jpg";
-    }
+    setSafeImage(
+      avatar,
+      `assets/images/avatars/${player}.jpg`,
+      "assets/images/avatars/Default.jpg"
+    );
 
     const flag = document.createElement("img");
     flag.classList.add("flag-img");
@@ -355,4 +356,29 @@ function updatePlayersFilterSummary() {
   } else {
     el.textContent = `Showing: ${parts.join(" | ")}`;
   }
+}
+
+function setSafeImage(imgElement, url, fallback = null) {
+
+  if (imageExistsCache[url] === true) {
+    imgElement.src = url;
+    return;
+  }
+
+  if (imageExistsCache[url] === false) {
+    if (fallback) imgElement.src = fallback;
+    return;
+  }
+
+  const testImg = new Image();
+  testImg.onload = function () {
+    imageExistsCache[url] = true;
+    imgElement.src = url;
+  };
+  testImg.onerror = function () {
+    imageExistsCache[url] = false;
+    if (fallback) imgElement.src = fallback;
+  };
+
+  testImg.src = url;
 }

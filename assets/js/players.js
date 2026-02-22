@@ -52,6 +52,7 @@ function renderPlayers(data) {
     const avatar = document.createElement("img");
     avatar.classList.add("player-avatar");
     avatar.loading = "lazy";
+    avatar.referrerPolicy = "no-referrer";
     avatar.src = avatarUrl || "assets/images/Default.jpg";
     avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
 

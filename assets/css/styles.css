@@ -499,6 +499,15 @@ body {
   font-weight: 600;
 }
 
+.hover-game {
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.hover-game:hover {
+  filter: brightness(1.15);
+}
+
 /* =========================
    Dividers
 ========================= */

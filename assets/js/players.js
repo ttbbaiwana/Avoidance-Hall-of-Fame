@@ -49,8 +49,30 @@ function renderPlayers(data) {
     const flag = document.createElement("img");
     flag.classList.add("flag-img");
     
-    if (FLAG_LIST.has(country)) {
-      flag.src = `assets/images/flags/${country}.png`;
+    if (FLAG_LIST.has(country.toLowerCase())) {
+      flag.src = `assets/images/flags/${country.toLowerCase()}.png`;
+      flag.classList.add("clickable-flag");
+    
+      flag.addEventListener("click", () => {
+        const columnSelect = document.getElementById("players-search-column");
+        const countrySelect = document.getElementById("players-country-select");
+        const input = document.getElementById("players-search-input");
+    
+        columnSelect.value = "country";
+        input.classList.add("hidden");
+        countrySelect.classList.remove("hidden");
+    
+        countrySelect.value = country;
+        playersExactMatchMode = true;
+    
+        applyPlayersFilter();
+    
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      });
+    
       header.appendChild(flag);
     }
 
@@ -112,6 +134,9 @@ function renderPlayers(data) {
 
     grid.appendChild(card);
   });
+
+  updatePlayersCount();
+  updatePlayersFilterSummary();
 }
 
 function getPlatformInfo(url) {
@@ -294,4 +319,33 @@ function setupPlayersAutocomplete() {
       list.classList.add("hidden");
     }
   });
+}
+
+function updatePlayersCount() {
+  const el = document.getElementById("players-count");
+  el.textContent = `Showing ${playersFilteredData.length} players`;
+}
+
+function updatePlayersFilterSummary() {
+
+  const el = document.getElementById("players-filter-summary");
+
+  const column = document.getElementById("players-search-column").value;
+  const input = document.getElementById("players-search-input");
+  const countrySelect = document.getElementById("players-country-select");
+
+  const parts = [];
+
+  if (column === "country" && countrySelect.value) {
+    parts.push(`Country = ${countrySelect.value}`);
+  }
+  else if (input.value.trim() !== "") {
+    parts.push(`Player = ${input.value.trim()}`);
+  }
+
+  if (parts.length === 0) {
+    el.textContent = "Showing: All Players";
+  } else {
+    el.textContent = `Showing: ${parts.join(" | ")}`;
+  }
 }

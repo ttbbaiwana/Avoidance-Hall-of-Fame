@@ -593,10 +593,34 @@ body {
   background: #eaeaea;
   padding: 4px 8px;
   border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.player-links a:hover {
+  background: #dcdcdc;
+  transform: translateY(-1px);
+}
+
+.players-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .platform-icon {
   width: 16px;
   height: 16px;
   object-fit: contain;
+}
+
+.clickable-flag {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.clickable-flag:hover {
+  transform: scale(1.1);
 }

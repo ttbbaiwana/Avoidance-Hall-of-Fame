@@ -80,6 +80,12 @@ function renderPlayers(data) {
 
     const name = document.createElement("h3");
     name.textContent = player;
+    name.classList.add("clickable-player");
+    
+    name.addEventListener("click", () => {
+      const encoded = encodeURIComponent(player);
+      window.location.href = `clear-list.html?player=${encoded}`;
+    });
 
     header.appendChild(avatar);
     header.appendChild(flag);

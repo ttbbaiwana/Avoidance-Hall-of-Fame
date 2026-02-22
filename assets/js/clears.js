@@ -55,7 +55,6 @@ function timeToSeconds(timeStr) {
 }
 
 function sortData() {
-
   const sortMap = {
     date: 0,
     game: 1,
@@ -79,49 +78,81 @@ function sortData() {
     }
 
     if (currentSort === "game") {
-
+    
       const diffA = avoidanceDifficultyMap[valA];
       const diffB = avoidanceDifficultyMap[valB];
-
+    
+      // Handle missing games safely
+      if (diffA === undefined && diffB === undefined) return 0;
       if (diffA === undefined) return 1;
       if (diffB === undefined) return -1;
-
+    
+      // Primary: difficulty
       if (diffA !== diffB) {
         return currentOrder === "asc"
           ? diffA - diffB
           : diffB - diffA;
       }
-
-      return new Date(a[0]) - new Date(b[0]);
+      
+      const dateA = new Date(a[0]);
+      const dateB = new Date(b[0]);
+    
+      return dateA - dateB;
     }
 
     if (currentSort === "country") {
-      if (!valA) return 1;
-      if (!valB) return -1;
+    
+      const emptyA = !valA || valA.trim() === "";
+      const emptyB = !valB || valB.trim() === "";
+      
+      if (emptyA && emptyB) return 0;
+      
+      if (emptyA) return 1;
+      if (emptyB) return -1;
+      
       return currentOrder === "asc"
         ? valA.localeCompare(valB)
         : valB.localeCompare(valA);
     }
 
     if (currentSort === "player") {
+      
       return currentOrder === "asc"
         ? valA.localeCompare(valB)
         : valB.localeCompare(valA);
     }
-
+    
     if (currentSort === "death") {
-      if (!valA || valA === "-") return 1;
-      if (!valB || valB === "-") return -1;
-      return currentOrder === "asc" ? valA - valB : valB - valA;
+    
+      const isEmptyA = !valA || valA === "-" || valA.trim() === "";
+      const isEmptyB = !valB || valB === "-" || valB.trim() === "";
+      
+      if (isEmptyA && isEmptyB) return 0;
+      if (isEmptyA) return 1;
+      if (isEmptyB) return -1;
+      
+      return currentOrder === "asc"
+        ? valA - valB
+        : valB - valA;
     }
 
     if (currentSort === "time") {
+    
+      const isEmptyA = !valA || valA === "-" || valA.trim() === "";
+      const isEmptyB = !valB || valB === "-" || valB.trim() === "";
+      
+      if (isEmptyA && isEmptyB) return 0;
+      if (isEmptyA) return 1;
+      if (isEmptyB) return -1;
+    
+      const secondsA = timeToSeconds(valA);
+      const secondsB = timeToSeconds(valB);
+    
       return currentOrder === "asc"
-        ? timeToSeconds(valA) - timeToSeconds(valB)
-        : timeToSeconds(valB) - timeToSeconds(valA);
+        ? secondsA - secondsB
+        : secondsB - secondsA;
     }
-
-    return 0;
+    
   });
 }
 

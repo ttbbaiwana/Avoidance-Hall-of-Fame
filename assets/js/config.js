@@ -538,6 +538,7 @@ const FLAG_LIST = new Set([
   "GB",
   "GR",
   "GT",
+  "HU",
   "ID",
   "IR",
   "IL",

@@ -18,6 +18,7 @@ let showMakers = true;
 let showTesters = true;
 let exactMatchMode = false;
 let rumaSecretMode = false;
+let curveWAHSecretMode = false;
 
 /* ================= FETCH ================= */
 
@@ -382,19 +383,46 @@ headerRow.appendChild(numberTh);
 
         wrapper.appendChild(avatar);
         wrapper.appendChild(name);
-
+        
         if (type === "M" || type === "T") {
+        
           const badge = document.createElement("span");
-          badge.textContent = type;
           badge.classList.add("role-badge");
+        
+          const isPlasmaWane =
+            row[4] === "PlasmaNapkin" &&
+            row[1] === "I wanna Wane" &&
+            type === "M";
+        
+          badge.textContent = type;
+        
           if (type === "M") badge.classList.add("maker-badge");
           if (type === "T") badge.classList.add("tester-badge");
+        
+          if (isPlasmaWane) {
+        
+            badge.addEventListener("mouseenter", () => {
+              badge.textContent = "W";
+            });
+        
+            badge.addEventListener("mouseleave", () => {
+              badge.textContent = "M";
+            });
+        
+            badge.addEventListener("click", () => {
+              curveWAHSecretMode = !curveWAHSecretMode;
+              applyFilter();
+            });
+        
+            badge.style.cursor = "pointer";
+          }
+        
           wrapper.appendChild(badge);
         }
 
         td.appendChild(wrapper);
       }
-
+      
       else if (index === 5 || index === 6) {
         td.textContent = cell ? cell.replace(".000", "") : "-";
       }
@@ -452,18 +480,21 @@ function setupSearch() {
   
   input.addEventListener("input", () => {
     rumaSecretMode = false;
+    curveWAHSecretMode = false;
     exactMatchMode = false;
     applyFilter();
   });
 
   countrySelect.addEventListener("change", () => {
     rumaSecretMode = false;
+    curveWAHSecretMode = false;
     exactMatchMode = false;
     applyFilter();
   });
 
   columnSelect.addEventListener("change", () => {
     rumaSecretMode = false;
+    curveWAHSecretMode = false;
     exactMatchMode = false;
     input.value = "";
     countrySelect.value = "";
@@ -482,6 +513,7 @@ function setupSearch() {
 
   clearBtn.addEventListener("click", () => {
     rumaSecretMode = false;
+    curveWAHSecretMode = false;
     input.value = "";
     countrySelect.value = "";
     exactMatchMode = false;
@@ -499,7 +531,8 @@ function applyFilter() {
 
   // Reset base
   filteredData = fullData.filter(row =>
-    row[1] !== "I wanna Ruma - Extra"
+    row[1] !== "I wanna Ruma - Extra" &&
+    row[1] !== "curveWAH"
   );
 
   // Country filter
@@ -533,13 +566,18 @@ function applyFilter() {
         : value.includes(query);
     });
   }
-
-  // Secret Ruma mode
+  
   if (rumaSecretMode) {
     filteredData = fullData.filter(row =>
       row[1] === "I wanna Ruma - Extra"
     );
   }
+
+  if (curveWAHSecretMode) {
+  filteredData = fullData.filter(row =>
+    row[1] === "curveWAH"
+  );
+}
   
   applyClearMode();
   sortData();

@@ -17,6 +17,7 @@ let clearMode = "all";
 let showMakers = true;
 let showTesters = true;
 let exactMatchMode = false;
+let rumaSecretMode = false;
 
 /* ================= FETCH ================= */
 
@@ -209,7 +210,25 @@ function renderTable() {
 
   const numberTh = document.createElement("th");
   numberTh.textContent = "#";
-  headerRow.appendChild(numberTh);
+  
+  numberTh.addEventListener("mouseenter", () => {
+    if (isRumaSearchActive()) {
+      numberTh.textContent = "?";
+    }
+  });
+  
+  numberTh.addEventListener("mouseleave", () => {
+    numberTh.textContent = "#";
+  });
+  
+  numberTh.addEventListener("click", () => {
+    if (isRumaSearchActive()) {
+      rumaSecretMode = !rumaSecretMode;
+      applyFilter();
+    }
+  });
+
+headerRow.appendChild(numberTh);
 
   const sortKeys = ["date","game","country","player","death","time"];
 
@@ -463,7 +482,7 @@ function setupSearch() {
 }
 
 function applyFilter() {
-
+  rumaSecretMode = false;
   const column = document.getElementById("search-column").value;
   const input = document.getElementById("search-input");
   const countrySelect = document.getElementById("country-select");
@@ -505,6 +524,13 @@ function applyFilter() {
     });
   }
 
+  // Secret Ruma mode
+  if (rumaSecretMode) {
+    filteredData = fullData.filter(row =>
+      row[1] === "I wanna Ruma - Extra"
+    );
+  }
+  
   applyClearMode();
   sortData();
   renderTable();
@@ -751,4 +777,15 @@ function applyUrlFilters() {
   exactMatchMode = true;
 
   applyFilter();
+}
+
+function isRumaSearchActive() {
+
+  const column = document.getElementById("search-column").value;
+  const input = document.getElementById("search-input").value.trim();
+
+  return (
+    column === "game" &&
+    input === "I wanna Ruma"
+  );
 }

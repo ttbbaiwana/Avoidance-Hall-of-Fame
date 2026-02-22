@@ -84,7 +84,7 @@ function renderPlayers(data) {
     
     name.addEventListener("click", () => {
       const encoded = encodeURIComponent(player);
-      window.location.href = `clear-list.html?player=${encoded}`;
+      window.location.href = `clears.html?player=${encoded}`;
     });
 
     header.appendChild(avatar);

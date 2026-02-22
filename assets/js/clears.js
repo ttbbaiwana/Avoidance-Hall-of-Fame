@@ -30,6 +30,7 @@ fetch(`${API_URL}?view=clear-list`)
     populateCountryDropdown();
     setupSearch();
     setupAutocomplete();
+    applyUrlFilters();
 
     sortData();
     renderTable();
@@ -684,4 +685,28 @@ function updateSearchPlaceholder() {
     columnSelect.options[columnSelect.selectedIndex].text;
 
   input.placeholder = `Search ${selectedText}...`;
+}
+
+function applyUrlFilters() {
+
+  const params = new URLSearchParams(window.location.search);
+
+  const playerParam = params.get("player");
+
+  if (!playerParam) return;
+
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
+
+  columnSelect.value = "player";
+
+  input.classList.remove("hidden");
+  countrySelect.classList.add("hidden");
+
+  input.value = playerParam;
+
+  exactMatchMode = true;
+
+  applyFilter();
 }

@@ -343,11 +343,20 @@ headerRow.appendChild(numberTh);
       if (index === 1) {
         td.classList.add("hover-game");
         td.textContent = cell;
+        
         if (cell === "I wanna Ruma - Extra") {
           td.style.backgroundColor = "#cc0000";
           td.style.color = "#ffffff";
           td.style.fontWeight = "700";
-        } else {
+        }
+
+        else if (cell === "curveWAH") {
+          td.style.backgroundColor = "#e06666";
+          td.style.color = "#000000";
+          td.style.fontWeight = "700";
+        }
+        
+        else {
           const bg = avoidanceColorMap[cell];
           if (bg) {
             td.style.backgroundColor = bg;

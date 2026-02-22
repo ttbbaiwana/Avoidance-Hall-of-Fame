@@ -443,19 +443,21 @@ function setupSearch() {
       showTesters = e.target.checked;
       applyFilter();
     });
-
+  
   input.addEventListener("input", () => {
+    rumaSecretMode = false;
     exactMatchMode = false;
     applyFilter();
   });
 
   countrySelect.addEventListener("change", () => {
+    rumaSecretMode = false;
     exactMatchMode = false;
     applyFilter();
   });
 
   columnSelect.addEventListener("change", () => {
-
+    rumaSecretMode = false;
     exactMatchMode = false;
     input.value = "";
     countrySelect.value = "";
@@ -473,6 +475,7 @@ function setupSearch() {
   });
 
   clearBtn.addEventListener("click", () => {
+    rumaSecretMode = false;
     input.value = "";
     countrySelect.value = "";
     exactMatchMode = false;
@@ -482,7 +485,6 @@ function setupSearch() {
 }
 
 function applyFilter() {
-  rumaSecretMode = false;
   const column = document.getElementById("search-column").value;
   const input = document.getElementById("search-input");
   const countrySelect = document.getElementById("country-select");
@@ -490,7 +492,9 @@ function applyFilter() {
   const query = input.value.trim().toLowerCase();
 
   // Reset base
-  filteredData = [...fullData];
+  filteredData = fullData.filter(row =>
+    row[1] !== "I wanna Ruma - Extra"
+  );
 
   // Country filter
   if (column === "country" && countrySelect.value) {
@@ -648,7 +652,11 @@ function setupAutocomplete() {
     let source = [];
 
     if (selectedColumn === "game") {
-      source = [...new Set(fullData.map(row => row[1]))].sort();
+      source = [...new Set(
+        fullData
+          .map(row => row[1])
+          .filter(game => game !== "I wanna Ruma - Extra")
+      )].sort();
     } 
     else if (selectedColumn === "player") {
       source = [...new Set(fullData.map(row => row[3]))].sort();

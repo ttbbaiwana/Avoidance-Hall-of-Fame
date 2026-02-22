@@ -335,9 +335,14 @@ headerRow.appendChild(numberTh);
       const td = document.createElement("td");
 
       /* Click filter */
-      if ([0, 1, 2, 4].includes(index)) {
+      if ([0,1,2,4].includes(index)) {
+      
         td.classList.add("clickable-cell");
-        td.onclick = () => applyExactFilter(index, cell);
+      
+        td.addEventListener("click", (e) => {
+          if (e.target.closest(".role-badge")) return;
+          applyExactFilter(index, cell);
+        });
       }
 
       if (index === 1) {

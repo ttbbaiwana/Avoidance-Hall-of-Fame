@@ -15,8 +15,15 @@ fetch(`${API_URL}?view=players`)
     setupPlayersAutocomplete();
 
     renderPlayers(playersFilteredData);
+
+    document.getElementById("players-loader").classList.add("hidden");
+    document.getElementById("players-content").classList.remove("hidden");
   })
-  .catch(err => console.error(err));
+  .catch(err => {
+    console.error(err);
+    document.getElementById("players-loader").innerHTML =
+      "<p style='color:red;'>Failed to load players.</p>";
+  });
 
 function renderPlayers(data) {
 

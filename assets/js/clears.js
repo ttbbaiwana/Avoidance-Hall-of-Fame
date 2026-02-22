@@ -18,19 +18,22 @@ let showMakers = true;
 let showTesters = true;
 let exactMatchMode = false;
 
+/* ================= FETCH ================= */
+
 fetch(`${API_URL}?view=clear-list`)
   .then(res => res.json())
   .then(json => {
     headers = json.headers;
     fullData = json.data;
     filteredData = [...fullData];
-    
+
     populateCountryDropdown();
-    sortData();
-    renderTable();
     setupSearch();
     setupAutocomplete();
-    
+
+    sortData();
+    renderTable();
+
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("clear-table").classList.remove("hidden");
   })
@@ -40,28 +43,25 @@ fetch(`${API_URL}?view=clear-list`)
       "<p style='color:red;'>Failed to load data.</p>";
   });
 
+/* ================= SORT ================= */
+
 function timeToSeconds(timeStr) {
-
   if (!timeStr || timeStr === "-") return 0;
-
   const parts = timeStr.split(":").map(Number);
-
-  // H:M:S
-  if (parts.length === 3) {
-    return parts[0] * 3600 + parts[1] * 60 + parts[2];
-  }
-
-  return 0;
+  return parts.length === 3
+    ? parts[0] * 3600 + parts[1] * 60 + parts[2]
+    : 0;
 }
 
 function sortData() {
+
   const sortMap = {
     date: 0,
     game: 1,
     country: 2,
-    player: 3,
-    death: 4,
-    time: 5
+    player: 4,
+    death: 5,
+    time: 6
   };
 
   const col = sortMap[currentSort];
@@ -78,83 +78,53 @@ function sortData() {
     }
 
     if (currentSort === "game") {
-    
+
       const diffA = avoidanceDifficultyMap[valA];
       const diffB = avoidanceDifficultyMap[valB];
-    
-      // Handle missing games safely
-      if (diffA === undefined && diffB === undefined) return 0;
+
       if (diffA === undefined) return 1;
       if (diffB === undefined) return -1;
-    
-      // Primary: difficulty
+
       if (diffA !== diffB) {
         return currentOrder === "asc"
           ? diffA - diffB
           : diffB - diffA;
       }
-      
-      const dateA = new Date(a[0]);
-      const dateB = new Date(b[0]);
-    
-      return dateA - dateB;
+
+      return new Date(a[0]) - new Date(b[0]);
     }
 
     if (currentSort === "country") {
-    
-      const emptyA = !valA || valA.trim() === "";
-      const emptyB = !valB || valB.trim() === "";
-      
-      if (emptyA && emptyB) return 0;
-      
-      if (emptyA) return 1;
-      if (emptyB) return -1;
-      
+      if (!valA) return 1;
+      if (!valB) return -1;
       return currentOrder === "asc"
         ? valA.localeCompare(valB)
         : valB.localeCompare(valA);
     }
 
     if (currentSort === "player") {
-      
       return currentOrder === "asc"
         ? valA.localeCompare(valB)
         : valB.localeCompare(valA);
     }
-    
+
     if (currentSort === "death") {
-    
-      const isEmptyA = !valA || valA === "-" || valA.trim() === "";
-      const isEmptyB = !valB || valB === "-" || valB.trim() === "";
-      
-      if (isEmptyA && isEmptyB) return 0;
-      if (isEmptyA) return 1;
-      if (isEmptyB) return -1;
-      
-      return currentOrder === "asc"
-        ? valA - valB
-        : valB - valA;
+      if (!valA || valA === "-") return 1;
+      if (!valB || valB === "-") return -1;
+      return currentOrder === "asc" ? valA - valB : valB - valA;
     }
 
     if (currentSort === "time") {
-    
-      const isEmptyA = !valA || valA === "-" || valA.trim() === "";
-      const isEmptyB = !valB || valB === "-" || valB.trim() === "";
-      
-      if (isEmptyA && isEmptyB) return 0;
-      if (isEmptyA) return 1;
-      if (isEmptyB) return -1;
-    
-      const secondsA = timeToSeconds(valA);
-      const secondsB = timeToSeconds(valB);
-    
       return currentOrder === "asc"
-        ? secondsA - secondsB
-        : secondsB - secondsA;
+        ? timeToSeconds(valA) - timeToSeconds(valB)
+        : timeToSeconds(valB) - timeToSeconds(valA);
     }
-    
+
+    return 0;
   });
 }
+
+/* ================= RENDER ================= */
 
 function renderTable() {
 
@@ -163,82 +133,88 @@ function renderTable() {
 
   thead.innerHTML = "";
   tbody.innerHTML = "";
-  
+
   const searchColumn = document.getElementById("search-column").value;
-  const input = document.getElementById("search-input");
-  const firstClearMap = {};
+  const searchInput = document.getElementById("search-input");
 
   const isPlayerFilterActive =
     searchColumn === "player" &&
-    input &&
-    input.value.trim() !== "";
-  
+    searchInput.value.trim() !== "";
+
+  const isDateFilterActive =
+    searchColumn === "date" &&
+    searchInput.value.trim() !== "";
+
   const isGameSorted =
     currentSort === "game" &&
     clearMode === "all" &&
     !isPlayerFilterActive;
 
+  /* ===== First Clear Map ===== */
+
+  const firstClearMap = {};
+
   filteredData.forEach(row => {
     const game = row[1];
     const date = new Date(row[0]);
-    const type = row[7];
-  
-    const isHiddenRole =
+    const type = row[8];
+
+    const hidden =
       (type === "M" && !showMakers) ||
       (type === "T" && !showTesters);
-  
-    if (isHiddenRole) return;
-  
-    if (!firstClearMap[game] || date < new Date(firstClearMap[game][0])) {
+
+    if (hidden) return;
+
+    if (!firstClearMap[game] ||
+        date < new Date(firstClearMap[game][0])) {
       firstClearMap[game] = row;
     }
   });
-  
+
+  /* ===== Header ===== */
+
   const headerRow = document.createElement("tr");
 
   const numberTh = document.createElement("th");
   numberTh.textContent = "#";
   headerRow.appendChild(numberTh);
 
-  const sortKeys = ["date", "game", "country", "player", "death", "time"];
-  
+  const sortKeys = ["date","game","country","player","death","time"];
+
   headers.forEach((h, index) => {
-  
-    if (index === 7) return;
-  
+
+    if (index === 3 || index === 8) return; // skip Avatar + Type
+
     const th = document.createElement("th");
-    const columnKey = sortKeys[index];
-  
+    const key = sortKeys[index];
+
     th.textContent = h;
-  
-    if (sortKeys[index] !== undefined) {
+
+    if (key) {
       th.style.cursor = "pointer";
-  
-      if (columnKey === currentSort) {
-        const arrow = document.createElement("span");
-        arrow.classList.add("sort-arrow");
-        arrow.textContent = currentOrder === "asc" ? " ▲" : " ▼";
-        th.appendChild(arrow);
+
+      if (key === currentSort) {
+        th.innerHTML += currentOrder === "asc" ? " ▲" : " ▼";
       }
-  
+
       th.onclick = () => {
-  
-        if (currentSort === columnKey) {
+        if (currentSort === key) {
           currentOrder = currentOrder === "asc" ? "desc" : "asc";
         } else {
-          currentSort = columnKey;
+          currentSort = key;
           currentOrder = "asc";
         }
-  
         sortData();
         renderTable();
       };
     }
-  
+
     headerRow.appendChild(th);
   });
 
   thead.appendChild(headerRow);
+
+  /* ===== Rows ===== */
 
   let lastGame = null;
   let gameCounter = 1;
@@ -247,20 +223,14 @@ function renderTable() {
 
     const tr = document.createElement("tr");
     const game = row[1];
+    const type = row[8];
 
-    const input = document.getElementById("search-input");
-    const countrySelect = document.getElementById("country-select");
-    
-    const isDateFilterActive =
-      searchColumn === "date" &&
-      input &&
-      input.value.trim() !== "";
-    
-    const isPlayerFilterActive =
-      searchColumn === "player" &&
-      input &&
-      input.value.trim() !== "";
-    
+    const hiddenRole =
+      (type === "M" && !showMakers) ||
+      (type === "T" && !showTesters);
+
+    if (hiddenRole) tr.classList.add("role-hidden-row");
+
     if (
       currentSort === "game" &&
       clearMode === "all" &&
@@ -281,23 +251,11 @@ function renderTable() {
     let displayNumber;
 
     if (isGameSorted) {
-    
-      const type = row[7];
-      const isHiddenRole =
-        (type === "M" && !showMakers) ||
-        (type === "T" && !showTesters);
-    
       if (game !== lastGame) {
         gameCounter = 1;
         lastGame = game;
       }
-    
-      if (!isHiddenRole) {
-        displayNumber = gameCounter++;
-      } else {
-        displayNumber = "";
-      }
-    
+      displayNumber = hiddenRole ? "" : gameCounter++;
     } else {
       displayNumber = rowIndex + 1;
     }
@@ -309,24 +267,14 @@ function renderTable() {
 
     row.forEach((cell, index) => {
 
-      const type = row[7];
-
-      if (
-        (type === "M" && !showMakers) ||
-        (type === "T" && !showTesters)
-      ) {
-        tr.classList.add("role-hidden-row");
-      }
-
-      if (index === 7) return;
+      if (index === 3 || index === 8) return; // skip Avatar + Type
 
       const td = document.createElement("td");
 
-      if ([0, 1, 2, 3].includes(index)) {
+      /* Click filter */
+      if ([0,1,2,4].includes(index)) {
         td.style.cursor = "pointer";
-        td.addEventListener("click", () => {
-          applyExactFilter(index, cell);
-        });
+        td.onclick = () => applyExactFilter(index, cell);
       }
 
       if (index === 1) {
@@ -341,37 +289,30 @@ function renderTable() {
 
       else if (index === 2) {
         const img = document.createElement("img");
-        
-        if (FLAG_LIST.has(cell.trim())) {
-          img.src = `assets/images/flags/${cell.trim()}.png`;
-          img.classList.add("flag-img");
-          img.loading = "lazy";
-          img.onerror = function () { this.style.display = "none"; };
-          td.appendChild(img);
-        }
+        img.src = `assets/images/flags/${cell}.png`;
+        img.classList.add("flag-img");
+        img.loading = "lazy";
+        img.onerror = () => img.remove();
+        td.appendChild(img);
       }
 
-      else if (index === 3) {
+      else if (index === 4) {
         const wrapper = document.createElement("div");
         wrapper.classList.add("player-cell");
 
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.classList.add("avatar-img");
-        
-        if (PLAYER_LIST.has(cell.trim())) {
-          img.src = `assets/images/avatars/${cell.trim()}.jpg`;
-        } else {
-          img.src = "assets/images/avatars/Default.jpg";
-        }
+        const avatar = document.createElement("img");
+        avatar.classList.add("avatar-img");
+        avatar.loading = "lazy";
+        avatar.src = row[3] || "assets/images/Default.jpg";
+        avatar.onerror = () =>
+          avatar.src = "assets/images/Default.jpg";
 
-        const nameSpan = document.createElement("span");
-        nameSpan.textContent = cell;
+        const name = document.createElement("span");
+        name.textContent = cell;
 
-        wrapper.appendChild(img);
-        wrapper.appendChild(nameSpan);
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(name);
 
-        const type = row[7];
         if (type === "M" || type === "T") {
           const badge = document.createElement("span");
           badge.textContent = type;
@@ -384,11 +325,11 @@ function renderTable() {
         td.appendChild(wrapper);
       }
 
-      else if (index === 4 || index === 5) {
+      else if (index === 5 || index === 6) {
         td.textContent = cell ? cell.replace(".000", "") : "-";
       }
 
-      else if (index === 6 && cell && cell.startsWith("http")) {
+      else if (index === 7 && cell?.startsWith("http")) {
         const a = document.createElement("a");
         a.href = cell;
         a.textContent = "Video";
@@ -411,50 +352,50 @@ function renderTable() {
 }
 
 function setupSearch() {
+
   const input = document.getElementById("search-input");
   const columnSelect = document.getElementById("search-column");
   const countrySelect = document.getElementById("country-select");
   const clearBtn = document.getElementById("clear-search");
 
-  input.placeholder = `Search ${columnSelect.options[columnSelect.selectedIndex].text}...`;
+  updateSearchPlaceholder();
 
   document.querySelectorAll('input[name="clear-mode"]').forEach(radio => {
-    radio.addEventListener("change", (e) => {
+    radio.addEventListener("change", e => {
       clearMode = e.target.value;
       applyFilter();
     });
   });
 
   document.getElementById("show-makers")
-    .addEventListener("change", function(e) {
+    .addEventListener("change", e => {
       showMakers = e.target.checked;
       applyFilter();
     });
-  
+
   document.getElementById("show-testers")
-    .addEventListener("change", function(e) {
+    .addEventListener("change", e => {
       showTesters = e.target.checked;
       applyFilter();
     });
-  
+
   input.addEventListener("input", () => {
     exactMatchMode = false;
     applyFilter();
   });
-  
+
   countrySelect.addEventListener("change", () => {
     exactMatchMode = false;
     applyFilter();
   });
 
   columnSelect.addEventListener("change", () => {
-    const selected = columnSelect.value;
-    
+
     exactMatchMode = false;
     input.value = "";
     countrySelect.value = "";
-  
-    if (selected === "country") {
+
+    if (columnSelect.value === "country") {
       input.classList.add("hidden");
       countrySelect.classList.remove("hidden");
     } else {
@@ -462,17 +403,16 @@ function setupSearch() {
       input.classList.remove("hidden");
       updateSearchPlaceholder();
     }
-  
+
     applyFilter();
   });
-  
+
   clearBtn.addEventListener("click", () => {
     input.value = "";
     countrySelect.value = "";
-    filteredData = [...fullData];
+    exactMatchMode = false;
     updateSearchPlaceholder();
-    sortData();
-    renderTable();
+    applyFilter();
   });
 }
 
@@ -482,46 +422,43 @@ function applyFilter() {
   const input = document.getElementById("search-input");
   const countrySelect = document.getElementById("country-select");
 
-  if (column === "country") {
+  const query = input.value.trim().toLowerCase();
 
-    const selectedCountry = countrySelect.value;
+  // Reset base
+  filteredData = [...fullData];
 
-    if (!selectedCountry) {
-      filteredData = [...fullData];
-    } else {
-      filteredData = fullData.filter(row =>
-        row[2] === selectedCountry
-      );
-    }
+  // Country filter
+  if (column === "country" && countrySelect.value) {
 
-  } else {
-
-    const query = input.value.toLowerCase().trim();
-
-    if (!query) {
-      filteredData = [...fullData];
-    } else {
-      const columnIndexMap = {
-        date: 0,
-        game: 1,
-        player: 3
-      };
-
-      const colIndex = columnIndexMap[column];
-
-      filteredData = fullData.filter(row => {
-        const cell = row[colIndex];
-        if (!cell) return false;
-
-        if (exactMatchMode) {
-          return cell.toLowerCase() === query;
-        }
-        
-        return cell.toLowerCase().includes(query);
-      });
-    }
+    filteredData = filteredData.filter(row =>
+      row[2] === countrySelect.value
+    );
   }
-  
+
+  // Text filter
+  else if (column !== "country" && query) {
+
+    const columnIndexMap = {
+      date: 0,
+      game: 1,
+      player: 4
+    };
+
+    const colIndex = columnIndexMap[column];
+
+    filteredData = filteredData.filter(row => {
+
+      const cell = row[colIndex];
+      if (!cell) return false;
+
+      const value = cell.toLowerCase();
+
+      return exactMatchMode
+        ? value === query
+        : value.includes(query);
+    });
+  }
+
   applyClearMode();
   sortData();
   renderTable();
@@ -560,26 +497,22 @@ function applyClearMode() {
   const gameMap = {};
 
   filteredData.forEach(row => {
+
     const game = row[1];
     const date = new Date(row[0]);
 
     if (!gameMap[game]) {
       gameMap[game] = row;
-    } else {
+      return;
+    }
 
-      const existingDate = new Date(gameMap[game][0]);
+    const existingDate = new Date(gameMap[game][0]);
 
-      if (clearMode === "first") {
-        if (date < existingDate) {
-          gameMap[game] = row;
-        }
-      }
-
-      if (clearMode === "latest") {
-        if (date > existingDate) {
-          gameMap[game] = row;
-        }
-      }
+    if (
+      (clearMode === "first" && date < existingDate) ||
+      (clearMode === "latest" && date > existingDate)
+    ) {
+      gameMap[game] = row;
     }
   });
 
@@ -596,31 +529,30 @@ function applyExactFilter(columnIndex, value) {
     0: "date",
     1: "game",
     2: "country",
-    3: "player"
+    4: "player"
   };
 
   const selectedColumn = columnMap[columnIndex];
-  
+
+  if (!selectedColumn) return;
+
   columnSelect.value = selectedColumn;
   updateSearchPlaceholder();
-  
+
   if (selectedColumn === "country") {
     input.classList.add("hidden");
     countrySelect.classList.remove("hidden");
     countrySelect.value = value;
   } else {
-    input.classList.remove("hidden");
     countrySelect.classList.add("hidden");
+    input.classList.remove("hidden");
     input.value = value;
   }
-  
+
   exactMatchMode = true;
   applyFilter();
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function setupAutocomplete() {

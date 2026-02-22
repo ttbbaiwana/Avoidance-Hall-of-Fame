@@ -415,17 +415,17 @@ headerRow.appendChild(numberTh);
         
           if (isPlasmaWane) {
         
-            badge.addEventListener("mouseenter", () => {
+            badge.addEventListener("mouseenter", (e) => {
               e.stopPropagation();
               badge.textContent = "W";
             });
         
-            badge.addEventListener("mouseleave", () => {
+            badge.addEventListener("mouseleave", (e) => {
               e.stopPropagation();
               badge.textContent = "M";
             });
         
-            badge.addEventListener("click", () => {
+            badge.addEventListener("click", (e) => {
               e.stopPropagation();
               curveWAHSecretMode = !curveWAHSecretMode;
               applyFilter();

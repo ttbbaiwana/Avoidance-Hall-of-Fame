@@ -29,16 +29,22 @@
     />
     <div id="players-autocomplete-list" class="autocomplete-list hidden"></div>
   </div>
-
-  <select id="players-country-select" class="hidden"></select>
-
-  <button id="players-clear-search">Clear</button>
-</div>
-  <div class="players-info">
-    <span id="players-filter-summary"></span>
-    <span id="players-count"></span>
+    <select id="players-country-select" class="hidden"></select>
+    <button id="players-clear-search">Clear</button>
   </div>
-  <div id="players-grid" class="players-grid"></div>
+  
+  <div id="players-loader" class="loader">
+    <div class="spinner"></div>
+    <p>Loading players...</p>
+  </div>
+  
+  <div id="players-content" class="hidden">
+    <div class="players-info">
+      <span id="players-filter-summary"></span>
+      <span id="players-count"></span>
+    </div>
+    <div id="players-grid" class="players-grid"></div>
+  </div>
   <br/>
 </div>
 

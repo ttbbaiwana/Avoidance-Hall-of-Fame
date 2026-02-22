@@ -278,6 +278,7 @@ function renderTable() {
       }
 
       if (index === 1) {
+        td.classList.add("hover-game");
         td.textContent = cell;
         const bg = avoidanceColorMap[cell];
         if (bg) {
@@ -292,7 +293,7 @@ function renderTable() {
           const flag = document.createElement("span");
           flag.classList.add("fi", `fi-${cell.trim().toLowerCase()}`);
           flag.classList.add("flag-icon");
-      
+          flag.classList.add("hover-flag");
           td.appendChild(flag);
         }
       }
@@ -335,6 +336,7 @@ function renderTable() {
         a.href = cell;
         a.textContent = "Video";
         a.target = "_blank";
+        td.classList.add("clickable-cell");
         td.appendChild(a);
       }
 

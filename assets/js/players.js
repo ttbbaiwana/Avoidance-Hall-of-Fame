@@ -56,9 +56,9 @@ function renderPlayers(data) {
     avatar.src = avatarUrl || "assets/images/Default.jpg";
     avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
 
-    const flag = document.createElement("img");
-    flag.classList.add("flag-img", "clickable-flag");
-    flag.src = `assets/images/flags/${country}.png`;
+    const flag = document.createElement("span");
+    flag.classList.add("fi", `fi-${country.toLowerCase()}`);
+    flag.classList.add("flag-icon", "clickable-flag");
     flag.loading = "lazy";
     flag.onerror = () => flag.remove();
 

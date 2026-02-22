@@ -272,8 +272,8 @@ function renderTable() {
       const td = document.createElement("td");
 
       /* Click filter */
-      if ([0,1,2,4].includes(index)) {
-        td.style.cursor = "pointer";
+      if ([0, 1, 2, 4].includes(index)) {
+        td.classList.add("clickable-cell");
         td.onclick = () => applyExactFilter(index, cell);
       }
 

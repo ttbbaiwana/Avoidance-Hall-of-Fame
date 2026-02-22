@@ -1,9 +1,10 @@
 const API_URL = API_CONFIG.BASE_URL;
-const imageExistsCache = {};
 
 let playersFullData = [];
 let playersFilteredData = [];
 let playersExactMatchMode = false;
+
+/* ================= FETCH ================= */
 
 fetch(`${API_URL}?view=players`)
   .then(res => res.json())
@@ -26,6 +27,8 @@ fetch(`${API_URL}?view=players`)
       "<p style='color:red;'>Failed to load players.</p>";
   });
 
+/* ================= RENDER ================= */
+
 function renderPlayers(data) {
 
   const grid = document.getElementById("players-grid");
@@ -34,55 +37,45 @@ function renderPlayers(data) {
   data.forEach(row => {
 
     const country = row[0];
-    const player = row[1];
-    const channels = row.slice(2, 5).filter(Boolean);
-    const socials = row[6];
+    const avatarUrl = row[1];
+    const player = row[2];
+    const channels = row.slice(3, 7).filter(Boolean);
+    const socials = row[7];
 
     const card = document.createElement("div");
     card.classList.add("player-card");
 
-    // Header (avatar + name + flag)
+    /* Header */
     const header = document.createElement("div");
     header.classList.add("player-card-header");
 
     const avatar = document.createElement("img");
     avatar.classList.add("player-avatar");
-    
-    setSafeImage(
-      avatar,
-      `assets/images/avatars/${player}.jpg`,
-      "assets/images/avatars/Default.jpg"
-    );
+    avatar.loading = "lazy";
+    avatar.src = avatarUrl || "assets/images/Default.jpg";
+    avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
 
     const flag = document.createElement("img");
-    flag.classList.add("flag-img");
-    
-    if (FLAG_LIST.has(country)) {
-      flag.src = `assets/images/flags/${country}.png`;
-      flag.classList.add("clickable-flag");
-    
-      flag.addEventListener("click", () => {
-        const columnSelect = document.getElementById("players-search-column");
-        const countrySelect = document.getElementById("players-country-select");
-        const input = document.getElementById("players-search-input");
-    
-        columnSelect.value = "country";
-        input.classList.add("hidden");
-        countrySelect.classList.remove("hidden");
-    
-        countrySelect.value = country;
-        playersExactMatchMode = true;
-    
-        applyPlayersFilter();
-    
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
-      });
-    
-      header.appendChild(flag);
-    }
+    flag.classList.add("flag-img", "clickable-flag");
+    flag.src = `assets/images/flags/${country}.png`;
+    flag.loading = "lazy";
+    flag.onerror = () => flag.remove();
+
+    flag.addEventListener("click", () => {
+      const columnSelect = document.getElementById("players-search-column");
+      const countrySelect = document.getElementById("players-country-select");
+      const input = document.getElementById("players-search-input");
+
+      columnSelect.value = "country";
+      input.classList.add("hidden");
+      countrySelect.classList.remove("hidden");
+      countrySelect.value = country;
+
+      playersExactMatchMode = true;
+      applyPlayersFilter();
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
 
     const name = document.createElement("h3");
     name.textContent = player;
@@ -93,59 +86,41 @@ function renderPlayers(data) {
 
     card.appendChild(header);
 
-    // Channels
+    /* Links */
     const linksContainer = document.createElement("div");
     linksContainer.classList.add("player-links");
 
-    channels.forEach(url => {
+    [...channels, socials].filter(Boolean).forEach(url => {
+
       const a = document.createElement("a");
       a.href = url;
       a.target = "_blank";
+
       const platform = getPlatformInfo(url);
 
       if (platform.key && PLATFORM_ICONS[platform.key]) {
-      
         const icon = document.createElement("img");
         icon.src = `assets/images/icons/${PLATFORM_ICONS[platform.key]}`;
         icon.classList.add("platform-icon");
-      
         a.appendChild(icon);
       }
-      
+
       const text = document.createElement("span");
       text.textContent = platform.name;
-      
       a.appendChild(text);
+
       linksContainer.appendChild(a);
     });
 
-    if (socials) {
-      const a = document.createElement("a");
-      a.href = socials;
-      a.target = "_blank";
-      const platform = getPlatformInfo(socials);
-
-      if (platform.key && PLATFORM_ICONS[platform.key]) {
-        const icon = document.createElement("img");
-        icon.src = `assets/images/icons/${PLATFORM_ICONS[platform.key]}`;
-        icon.classList.add("platform-icon");
-        a.appendChild(icon);
-      }
-      
-      const text = document.createElement("span");
-      text.textContent = platform.name;
-      a.appendChild(text);
-      linksContainer.appendChild(a);
-    }
-
     card.appendChild(linksContainer);
-
     grid.appendChild(card);
   });
 
   updatePlayersCount();
   updatePlayersFilterSummary();
 }
+
+/* ================= PLATFORM ================= */
 
 function getPlatformInfo(url) {
   const lower = url.toLowerCase();
@@ -162,22 +137,7 @@ function getPlatformInfo(url) {
   return { name: "Link", key: null };
 }
 
-function populateCountryDropdown() {
-  const select = document.getElementById("players-country-select");
-
-  const countries = [...new Set(playersFullData.map(row => row[0]))]
-    .filter(Boolean)
-    .sort();
-
-  select.innerHTML = "<option value=''>Select country</option>";
-
-  countries.forEach(country => {
-    const option = document.createElement("option");
-    option.value = country;
-    option.textContent = country;
-    select.appendChild(option);
-  });
-}
+/* ================= FILTERING ================= */
 
 function setupPlayersSearch() {
 
@@ -185,6 +145,8 @@ function setupPlayersSearch() {
   const input = document.getElementById("players-search-input");
   const countrySelect = document.getElementById("players-country-select");
   const clearBtn = document.getElementById("players-clear-search");
+
+  updatePlayersPlaceholder();
 
   columnSelect.addEventListener("change", () => {
 
@@ -221,16 +183,6 @@ function setupPlayersSearch() {
     updatePlayersPlaceholder();
     applyPlayersFilter();
   });
-
-  updatePlayersPlaceholder();
-}
-
-function updatePlayersPlaceholder() {
-  const columnSelect = document.getElementById("players-search-column");
-  const input = document.getElementById("players-search-input");
-
-  const text = columnSelect.options[columnSelect.selectedIndex].text;
-  input.placeholder = `Search ${text}...`;
 }
 
 function applyPlayersFilter() {
@@ -239,37 +191,31 @@ function applyPlayersFilter() {
   const input = document.getElementById("players-search-input");
   const countrySelect = document.getElementById("players-country-select");
 
-  if (column === "country") {
+  const query = input.value.trim().toLowerCase();
 
-    const selected = countrySelect.value;
+  playersFilteredData = [...playersFullData];
 
-    if (!selected) {
-      playersFilteredData = [...playersFullData];
-    } else {
-      playersFilteredData = playersFullData.filter(row =>
-        row[0] === selected
-      );
-    }
+  if (column === "country" && countrySelect.value) {
 
-  } else {
+    playersFilteredData = playersFilteredData.filter(row =>
+      row[0] === countrySelect.value
+    );
+  }
 
-    const query = input.value.toLowerCase().trim();
+  else if (column === "player" && query) {
 
-    if (!query) {
-      playersFilteredData = [...playersFullData];
-    } else if (playersExactMatchMode) {
-      playersFilteredData = playersFullData.filter(row =>
-        row[1].toLowerCase() === query
-      );
-    } else {
-      playersFilteredData = playersFullData.filter(row =>
-        row[1].toLowerCase().includes(query)
-      );
-    }
+    playersFilteredData = playersFilteredData.filter(row => {
+      const value = row[2].toLowerCase();
+      return playersExactMatchMode
+        ? value === query
+        : value.includes(query);
+    });
   }
 
   renderPlayers(playersFilteredData);
 }
+
+/* ================= AUTOCOMPLETE ================= */
 
 function setupPlayersAutocomplete() {
 
@@ -286,7 +232,7 @@ function setupPlayersAutocomplete() {
       return;
     }
 
-    const source = [...new Set(playersFullData.map(row => row[1]))].sort();
+    const source = [...new Set(playersFullData.map(row => row[2]))].sort();
 
     const startsWith = [];
     const includes = [];
@@ -299,7 +245,7 @@ function setupPlayersAutocomplete() {
 
     const matches = [...startsWith, ...includes].slice(0, 10);
 
-    if (matches.length === 0) {
+    if (!matches.length) {
       list.classList.add("hidden");
       return;
     }
@@ -322,63 +268,57 @@ function setupPlayersAutocomplete() {
     list.classList.remove("hidden");
   });
 
-  document.addEventListener("click", (e) => {
+  document.addEventListener("click", e => {
     if (!e.target.closest(".autocomplete-wrapper")) {
       list.classList.add("hidden");
     }
   });
 }
 
+/* ================= UI HELPERS ================= */
+
+function updatePlayersPlaceholder() {
+  const columnSelect = document.getElementById("players-search-column");
+  const input = document.getElementById("players-search-input");
+  input.placeholder = `Search ${columnSelect.options[columnSelect.selectedIndex].text}...`;
+}
+
+function populateCountryDropdown() {
+  const select = document.getElementById("players-country-select");
+
+  const countries = [...new Set(playersFullData.map(row => row[0]))]
+    .filter(Boolean)
+    .sort();
+
+  select.innerHTML = "<option value=''>Select country</option>";
+
+  countries.forEach(country => {
+    const option = document.createElement("option");
+    option.value = country;
+    option.textContent = country;
+    select.appendChild(option);
+  });
+}
+
 function updatePlayersCount() {
-  const el = document.getElementById("players-count");
-  el.textContent = `Showing ${playersFilteredData.length} players`;
+  document.getElementById("players-count")
+    .textContent = `Showing ${playersFilteredData.length} players`;
 }
 
 function updatePlayersFilterSummary() {
-
-  const el = document.getElementById("players-filter-summary");
 
   const column = document.getElementById("players-search-column").value;
   const input = document.getElementById("players-search-input");
   const countrySelect = document.getElementById("players-country-select");
 
-  const parts = [];
+  let text = "Showing: All Players";
 
   if (column === "country" && countrySelect.value) {
-    parts.push(`Country = ${countrySelect.value}`);
+    text = `Showing: Country = ${countrySelect.value}`;
   }
-  else if (input.value.trim() !== "") {
-    parts.push(`Player = ${input.value.trim()}`);
-  }
-
-  if (parts.length === 0) {
-    el.textContent = "Showing: All Players";
-  } else {
-    el.textContent = `Showing: ${parts.join(" | ")}`;
-  }
-}
-
-function setSafeImage(imgElement, url, fallback = null) {
-
-  if (imageExistsCache[url] === true) {
-    imgElement.src = url;
-    return;
+  else if (input.value.trim()) {
+    text = `Showing: Player = ${input.value.trim()}`;
   }
 
-  if (imageExistsCache[url] === false) {
-    if (fallback) imgElement.src = fallback;
-    return;
-  }
-
-  const testImg = new Image();
-  testImg.onload = function () {
-    imageExistsCache[url] = true;
-    imgElement.src = url;
-  };
-  testImg.onerror = function () {
-    imageExistsCache[url] = false;
-    if (fallback) imgElement.src = fallback;
-  };
-
-  testImg.src = url;
+  document.getElementById("players-filter-summary").textContent = text;
 }

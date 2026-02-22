@@ -400,7 +400,7 @@ headerRow.appendChild(numberTh);
         
           const isPlasmaWane =
             row[4] === "PlasmaNapkin" &&
-            row[1] === "I wanna Wane" &&
+            row[1] === "I Wanna Wane" &&
             type === "M";
         
           badge.textContent = type;

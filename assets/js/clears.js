@@ -286,16 +286,17 @@ function renderTable() {
           td.style.fontWeight = "600";
         }
       }
-
+      
       else if (index === 2) {
-        const img = document.createElement("img");
-        img.src = `assets/images/flags/${cell}.png`;
-        img.classList.add("flag-img");
-        img.loading = "lazy";
-        img.onerror = () => img.remove();
-        td.appendChild(img);
+        if (cell && cell.trim() !== "") {
+          const flag = document.createElement("span");
+          flag.classList.add("fi", `fi-${cell.trim().toLowerCase()}`);
+          flag.classList.add("flag-icon");
+      
+          td.appendChild(flag);
+        }
       }
-
+      
       else if (index === 4) {
         const wrapper = document.createElement("div");
         wrapper.classList.add("player-cell");

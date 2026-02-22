@@ -424,12 +424,11 @@ body {
 /* =========================
    Avatars/Flags
 ========================= */
-.flag-img {
+.flag-icon {
   width: 24px;
   height: 18px;
-  object-fit: cover;
-  border: 1px solid rgba(0,0,0,0.15);
   border-radius: 2px;
+  box-shadow: 0 0 1px rgba(0,0,0,0.3);
 }
 
 .player-cell {

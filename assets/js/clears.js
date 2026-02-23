@@ -399,7 +399,6 @@ headerRow.appendChild(numberTh);
         const avatar = document.createElement("img");
         avatar.classList.add("avatar-img");
         avatar.loading = "lazy";
-        avatar.referrerPolicy = "no-referrer";
         avatar.src = row[3] || "assets/images/Default.jpg";
         avatar.onerror = () =>
           avatar.src = "assets/images/Default.jpg";
@@ -481,9 +480,9 @@ headerRow.appendChild(numberTh);
 
 function setupSearch() {
 
-  const input = ElementById("search-input");
-  const columnSelect = ElementById("search-column");
-  const countrySelect = ElementById("country-select");
+  const input = document.getElementById("search-input");
+  const columnSelect = document.getElementById("search-column");
+  const countrySelect = document.getElementById("country-select");
   const clearBtn = document.getElementById("clear-search");
 
   updateSearchPlaceholder();
@@ -596,7 +595,7 @@ function applyFilter() {
 
   // Reset base
   filteredData = getBaseVisibleData();
-  
+
   // Country filter
   if (column === "country" && countrySelect.value) {
     filteredData = filteredData.filter(row =>

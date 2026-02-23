@@ -29,7 +29,7 @@ fetch(`${API_URL}?view=clear-list`)
   .then(json => {
     headers = json.headers;
     fullData = json.data;
-    filteredData = [...fullData];
+    filteredData = getBaseVisibleData();
 
     populateCountryDropdown();
     setupSearch();
@@ -399,6 +399,7 @@ headerRow.appendChild(numberTh);
         const avatar = document.createElement("img");
         avatar.classList.add("avatar-img");
         avatar.loading = "lazy";
+        avatar.referrerPolicy = "no-referrer";
         avatar.src = row[3] || "assets/images/Default.jpg";
         avatar.onerror = () =>
           avatar.src = "assets/images/Default.jpg";
@@ -594,12 +595,8 @@ function applyFilter() {
   }
 
   // Reset base
-  filteredData = fullData.filter(row =>
-    row[1] !== "I wanna Ruma - Extra" &&
-    row[1] !== "curveWAH" &&
-    row[1] !== "I wanna OIIAOIIA"
-  );
-
+  filteredData = getBaseVisibleData();
+  
   // Country filter
   if (column === "country" && countrySelect.value) {
     filteredData = filteredData.filter(row =>
@@ -943,4 +940,12 @@ function updateSecretDropdownOption() {
   if (!oiiaSecretAvailable && existing) {
     existing.remove();
   }
+}
+
+function getBaseVisibleData() {
+  return fullData.filter(row =>
+    row[1] !== "I wanna Ruma - Extra" &&
+    row[1] !== "curveWAH" &&
+    row[1] !== "I wanna OIIAOIIA"
+  );
 }

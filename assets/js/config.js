@@ -115,6 +115,7 @@ const avoidanceConfig = [
   { name: "I Wanna Be The NNN", color: "#8c048d" },
   { name: "I wanna touch the entrance", color: "#ffffff" },
   { name: "I wanna be the LOUDER", color: "#990000" },
+  { name: "I wanna Crash and Burn - EX", color: "#720044" },
   { name: "I wanna be the Music2 - The Dirty of Loudness《INFINITE》 Perfect", color: "#c70102" },
   { name: "I Wanna be the TIS - First Body", color: "#631b7e" },
   { name: "Avoidance Collab 4 - Hitless", color: "#3c78d8" },

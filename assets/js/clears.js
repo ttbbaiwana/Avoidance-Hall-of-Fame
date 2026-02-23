@@ -40,7 +40,7 @@ fetch(`${API_URL}?view=clear-list`)
     renderTable();
 
     document.getElementById("loader").classList.add("hidden");
-    document.getElementById("-table").classList.remove("hidden");
+    document.getElementById("clear-table").classList.remove("hidden");
   })
   .catch(err => {
     console.error(err);
@@ -167,7 +167,7 @@ function sortData() {
 
 function renderTable() {
 
-  const thead = document.querySelector("#-table thead");
+  const thead = document.querySelector("#clear-table thead");
   const tbody = document.querySelector("#clear-table tbody");
 
   thead.innerHTML = "";
@@ -481,9 +481,9 @@ headerRow.appendChild(numberTh);
 
 function setupSearch() {
 
-  const input = document.getElementById("search-input");
-  const columnSelect = document.getElementById("search-column");
-  const countrySelect = document.getElementById("country-select");
+  const input = ElementById("search-input");
+  const columnSelect = ElementById("search-column");
+  const countrySelect = ElementById("country-select");
   const clearBtn = document.getElementById("clear-search");
 
   updateSearchPlaceholder();

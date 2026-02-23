@@ -726,7 +726,7 @@ function setupAutocomplete() {
       )].sort();
     } 
     else if (selectedColumn === "player") {
-      source = [...new Set(fullData.map(row => row[3]))].sort();
+      source = [...new Set(fullData.map(row => row[4]))].sort();
     } else {
       list.classList.add("hidden");
       return;

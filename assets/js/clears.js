@@ -367,7 +367,7 @@ headerRow.appendChild(numberTh);
         }
 
         else if (cell === "I wanna OIIAOIIA") {
-          td.style.backgroundColor = "##c67a5e";
+          td.style.backgroundColor = "#c67a5e";
           td.style.color = "#000000";
           td.style.fontWeight = "700";
         }

@@ -550,14 +550,29 @@ function setupSearch() {
   });
 
   clearBtn.addEventListener("click", () => {
+  
+    const columnSelect = document.getElementById("search-column");
+  
+    input.value = "";
+    countrySelect.value = "";
+  
+    exactMatchMode = false;
     rumaSecretMode = false;
     curveWAHSecretMode = false;
     oiiaSecretMode = false;
-    input.value = "";
-    countrySelect.value = "";
-    exactMatchMode = false;
+    oiiaSecretAvailable = false;
+    columnSelect.value = "date";
+    
+    updateSecretDropdownOption();
+  
+    countrySelect.classList.add("hidden");
+    input.classList.remove("hidden");
+  
     updateSearchPlaceholder();
-    applyFilter();
+  
+    filteredData = [...fullData];
+    sortData();
+    renderTable();
   });
 }
 
@@ -587,7 +602,6 @@ function applyFilter() {
 
   // Country filter
   if (column === "country" && countrySelect.value) {
-
     filteredData = filteredData.filter(row =>
       row[2] === countrySelect.value
     );

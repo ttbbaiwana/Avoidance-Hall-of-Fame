@@ -19,6 +19,8 @@ let showTesters = true;
 let exactMatchMode = false;
 let rumaSecretMode = false;
 let curveWAHSecretMode = false;
+let oiiaSecretAvailable = false;
+let oiiaSecretMode = false;
 
 /* ================= FETCH ================= */
 
@@ -501,6 +503,8 @@ function setupSearch() {
   input.addEventListener("input", () => {
     rumaSecretMode = false;
     curveWAHSecretMode = false;
+    oiiaSecretMode = false;
+    updateSecretDropdownOption();
     exactMatchMode = false;
     applyFilter();
   });
@@ -508,6 +512,8 @@ function setupSearch() {
   countrySelect.addEventListener("change", () => {
     rumaSecretMode = false;
     curveWAHSecretMode = false;
+    oiiaSecretMode = false;
+    updateSecretDropdownOption();
     exactMatchMode = false;
     applyFilter();
   });
@@ -515,6 +521,8 @@ function setupSearch() {
   columnSelect.addEventListener("change", () => {
     rumaSecretMode = false;
     curveWAHSecretMode = false;
+    oiiaSecretMode = false;
+    updateSecretDropdownOption();
     exactMatchMode = false;
     input.value = "";
     countrySelect.value = "";
@@ -534,6 +542,8 @@ function setupSearch() {
   clearBtn.addEventListener("click", () => {
     rumaSecretMode = false;
     curveWAHSecretMode = false;
+    oiiaSecretMode = false;
+    updateSecretDropdownOption();
     input.value = "";
     countrySelect.value = "";
     exactMatchMode = false;
@@ -549,10 +559,21 @@ function applyFilter() {
 
   const query = input.value.trim().toLowerCase();
 
+  if (column === "oiia-secret") {
+    oiiaSecretMode = true;
+    filteredData = fullData.filter(row =>
+      row[1] === "I wanna OIIAOIIA"
+    );
+    sortData();
+    renderTable();
+    return;
+  }
+
   // Reset base
   filteredData = fullData.filter(row =>
     row[1] !== "I wanna Ruma - Extra" &&
-    row[1] !== "curveWAH"
+    row[1] !== "curveWAH" &&
+    row[1] !== "I wanna OIIAOIIA"
   );
 
   // Country filter
@@ -585,6 +606,17 @@ function applyFilter() {
         ? value === query
         : value.includes(query);
     });
+  }
+
+  oiiaSecretAvailable = false;
+  
+  if (
+    column === "game" &&
+    input.value.trim() ===
+      "I wanna be the Music2 - シュレーディンガーの猫《INFINITE》 Perfect"
+  ) {
+    oiiaSecretAvailable = true;
+    updateSecretDropdownOption();
   }
   
   if (rumaSecretMode) {
@@ -719,9 +751,10 @@ function setupAutocomplete() {
       source = [...new Set(
         fullData
           .map(row => row[1])
-          .filter(game => 
+          .filter(game =>
             game !== "I wanna Ruma - Extra" &&
-            game !== "curveWAH"
+            game !== "curveWAH" &&
+            game !== "I wanna OIIAOIIA"
           )
       )].sort();
     } 
@@ -863,4 +896,26 @@ function isRumaSearchActive() {
     column === "game" &&
     input === "I wanna Ruma"
   );
+}
+
+function updateSecretDropdownOption() {
+
+  const columnSelect = document.getElementById("search-column");
+
+  const existing = [...columnSelect.options].find(
+    opt => opt.value === "oiia-secret"
+  );
+
+  if (oiiaSecretAvailable && !existing) {
+
+    const option = document.createElement("option");
+    option.value = "oiia-secret";
+    option.textContent = "????????";
+
+    columnSelect.appendChild(option);
+  }
+
+  if (!oiiaSecretAvailable && existing) {
+    existing.remove();
+  }
 }

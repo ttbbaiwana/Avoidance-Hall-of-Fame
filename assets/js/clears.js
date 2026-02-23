@@ -365,6 +365,12 @@ headerRow.appendChild(numberTh);
           td.style.color = "#000000";
           td.style.fontWeight = "700";
         }
+
+        else if (cell === "I wanna OIIAOIIA") {
+          td.style.backgroundColor = "##c67a5e";
+          td.style.color = "#000000";
+          td.style.fontWeight = "700";
+        }
         
         else {
           const bg = avoidanceColorMap[cell];
@@ -504,7 +510,6 @@ function setupSearch() {
     rumaSecretMode = false;
     curveWAHSecretMode = false;
     oiiaSecretMode = false;
-    updateSecretDropdownOption();
     exactMatchMode = false;
     applyFilter();
   });
@@ -513,29 +518,34 @@ function setupSearch() {
     rumaSecretMode = false;
     curveWAHSecretMode = false;
     oiiaSecretMode = false;
-    updateSecretDropdownOption();
     exactMatchMode = false;
     applyFilter();
   });
 
   columnSelect.addEventListener("change", () => {
+  
+    playersExactMatchMode = false;
     rumaSecretMode = false;
     curveWAHSecretMode = false;
     oiiaSecretMode = false;
-    updateSecretDropdownOption();
-    exactMatchMode = false;
+  
     input.value = "";
     countrySelect.value = "";
-
-    if (columnSelect.value === "country") {
+  
+    const selected = columnSelect.value;
+  
+    if (selected === "country") {
       input.classList.add("hidden");
       countrySelect.classList.remove("hidden");
+    } else if (selected === "oiia-secret") {
+      input.classList.add("hidden");
+      countrySelect.classList.add("hidden");
     } else {
       countrySelect.classList.add("hidden");
       input.classList.remove("hidden");
       updateSearchPlaceholder();
     }
-
+    
     applyFilter();
   });
 
@@ -543,7 +553,6 @@ function setupSearch() {
     rumaSecretMode = false;
     curveWAHSecretMode = false;
     oiiaSecretMode = false;
-    updateSecretDropdownOption();
     input.value = "";
     countrySelect.value = "";
     exactMatchMode = false;
@@ -616,7 +625,6 @@ function applyFilter() {
       "I wanna be the Music2 - シュレーディンガーの猫《INFINITE》 Perfect"
   ) {
     oiiaSecretAvailable = true;
-    updateSecretDropdownOption();
   }
   
   if (rumaSecretMode) {
@@ -631,6 +639,7 @@ function applyFilter() {
   );
 }
   
+  updateSecretDropdownOption();
   applyClearMode();
   sortData();
   renderTable();
@@ -856,6 +865,8 @@ function updateFilterSummary() {
 function updateSearchPlaceholder() {
   const columnSelect = document.getElementById("search-column");
   const input = document.getElementById("search-input");
+
+  if (columnSelect.value === "oii-secret") return;
 
   const selectedText =
     columnSelect.options[columnSelect.selectedIndex].text;

@@ -399,6 +399,7 @@ headerRow.appendChild(numberTh);
         const avatar = document.createElement("img");
         avatar.classList.add("avatar-img");
         avatar.loading = "lazy";
+        avatar.referrerPolicy = "no-referrer";
         avatar.src = row[3] || "assets/images/Default.jpg";
         avatar.onerror = () =>
           avatar.src = "assets/images/Default.jpg";

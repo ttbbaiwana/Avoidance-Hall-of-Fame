@@ -40,7 +40,7 @@ fetch(`${API_URL}?view=clear-list`)
     renderTable();
 
     document.getElementById("loader").classList.add("hidden");
-    document.getElementById("clear-table").classList.remove("hidden");
+    document.getElementById("-table").classList.remove("hidden");
   })
   .catch(err => {
     console.error(err);
@@ -167,7 +167,7 @@ function sortData() {
 
 function renderTable() {
 
-  const thead = document.querySelector("#clear-table thead");
+  const thead = document.querySelector("#-table thead");
   const tbody = document.querySelector("#clear-table tbody");
 
   thead.innerHTML = "";
@@ -571,7 +571,7 @@ function setupSearch() {
   
     updateSearchPlaceholder();
   
-    filteredData = [...fullData];
+    filteredData = getBaseVisibleData();
     sortData();
     renderTable();
   });

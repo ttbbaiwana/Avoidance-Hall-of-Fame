@@ -13,12 +13,22 @@ const avoidanceDifficultyMap = Object.fromEntries(
 let tableData = [];
 let headers = [];
 let currentSort = { index: null, asc: false };
+let clearsMeta = {};
+let showRatings = false;
+
+document.querySelectorAll('input[name="view-mode"]').forEach(radio => {
+  radio.addEventListener("change", e => {
+    showRatings = e.target.value === "ratings";
+    renderTable();
+  });
+});
 
 fetch(`${API_URL}?view=ahof`)
   .then(res => res.json())
   .then(json => {
     headers = json.headers;
     tableData = json.data.filter(row => row[0] !== "");
+    clearsMeta = json.clearsMeta;
     renderTable();
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("ahof").classList.remove("hidden");
@@ -30,6 +40,7 @@ fetch(`${API_URL}?view=ahof`)
   });
 
 function renderTable() {
+
   const thead = document.querySelector("#ahof thead");
   const tbody = document.querySelector("#ahof tbody");
 
@@ -43,16 +54,38 @@ function renderTable() {
   rankTh.textContent = "#";
   headerRow.appendChild(rankTh);
 
-  headers.forEach((header, i) => {
-    const th = document.createElement("th");
-    th.textContent = header;
-    th.onclick = () => sortTable(i + 1);
-    headerRow.appendChild(th);
-  });
+  // Game column
+  const gameTh = document.createElement("th");
+  gameTh.textContent = "Game";
+  gameTh.onclick = () => sortTable(1);
+  headerRow.appendChild(gameTh);
+
+  if (!showRatings) {
+
+    const firstTh = document.createElement("th");
+    firstTh.textContent = "First Clear";
+    headerRow.appendChild(firstTh);
+
+    const latestTh = document.createElement("th");
+    latestTh.textContent = "Latest Clear";
+    headerRow.appendChild(latestTh);
+
+    const totalTh = document.createElement("th");
+    totalTh.textContent = "Total Clears";
+    headerRow.appendChild(totalTh);
+  } else {
+    headers.slice(1).forEach((header, i) => {
+      const th = document.createElement("th");
+      th.textContent = header;
+      th.onclick = () => sortTable(i + 2);
+      headerRow.appendChild(th);
+    });
+  }
 
   thead.appendChild(headerRow);
 
   tableData.forEach((row, rowIndex) => {
+
     const tr = document.createElement("tr");
 
     // Rank cell
@@ -61,43 +94,62 @@ function renderTable() {
     rankTd.classList.add("stat-colored");
     tr.appendChild(rankTd);
 
-    row.forEach((cell, i) => {
-      const td = document.createElement("td");
+    const gameName = row[0];
 
-      // Game Name Column
-      if (i === 0) {
-        td.textContent = cell;
+    // Game cell
+    const gameTd = document.createElement("td");
+    gameTd.textContent = gameName;
 
-        const bg = avoidanceColorMap[cell];
-        if (bg) {
-          td.style.backgroundColor = bg;
-          td.style.color = getContrastTextColor(bg);
-          td.style.fontWeight = "600";
+    const bg = avoidanceColorMap[gameName];
+    if (bg) {
+      gameTd.style.backgroundColor = bg;
+      gameTd.style.color = getContrastTextColor(bg);
+      gameTd.style.fontWeight = "600";
+    }
+
+    tr.appendChild(gameTd);
+
+    if (!showRatings) {
+
+      const meta = clearsMeta[gameName] || {};
+
+      const firstTd = document.createElement("td");
+      firstTd.textContent = meta.first || "-";
+      tr.appendChild(firstTd);
+
+      const latestTd = document.createElement("td");
+      latestTd.textContent = meta.latest || "-";
+      tr.appendChild(latestTd);
+
+      const totalTd = document.createElement("td");
+      totalTd.textContent = meta.total || "0";
+      tr.appendChild(totalTd);
+    } else {
+
+      row.slice(1).forEach((cell, i) => {
+
+        const td = document.createElement("td");
+
+        if (cell === "N/A") {
+          td.textContent = "N/A";
+          td.classList.add("na");
+          tr.appendChild(td);
+          return;
+        }
+
+        if (!isNaN(cell) && cell !== "") {
+          const num = parseFloat(cell);
+          td.textContent = num.toFixed(2);
+
+          applyColor(td, i + 2, num);
+          td.classList.add("stat-colored");
+        } else {
+          td.textContent = cell;
         }
 
         tr.appendChild(td);
-        return;
-      }
-
-      // N/A handling
-      if (cell === "N/A") {
-        td.textContent = "N/A";
-        td.classList.add("na");
-        tr.appendChild(td);
-        return;
-      }
-
-      // Numeric handling
-      if (!isNaN(cell) && cell !== "") {
-        const num = parseFloat(cell);
-        td.textContent = num.toFixed(2);
-        applyColor(td, i + 1, num); // +1 because of Rank column
-      } else {
-        td.textContent = cell;
-      }
-
-      tr.appendChild(td);
-    });
+      });
+    }
 
     tbody.appendChild(tr);
   });

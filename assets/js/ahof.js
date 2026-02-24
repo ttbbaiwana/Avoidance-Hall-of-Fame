@@ -192,10 +192,8 @@ function renderTable() {
     /* ================= RATINGS MODE ================= */
 
     else {
-
-      // Reading → Quality (row[1] → row[9])
+      
       for (let i = 1; i <= 9; i++) {
-
         const cell = row[i];
         const td = document.createElement("td");
 
@@ -209,7 +207,7 @@ function renderTable() {
         if (!isNaN(cell) && cell !== "") {
           const num = parseFloat(cell);
           td.textContent = num.toFixed(2);
-          applyColor(td, i + 1, num);
+          applyRatingColor(td, i, num);
           td.classList.add("stat-colored");
         } else {
           td.textContent = cell;
@@ -304,33 +302,52 @@ function sortTable(headerIndex) {
   renderTable();
 }
 
-/* ---------- Color Interpolation ---------- */
+/* ================= RATING COLOR SYSTEM ================= */
 
-function applyColor(td, columnIndex, value) {
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function interpolateRGB(start, end, ratio) {
+  const r = Math.round(start[0] + (end[0] - start[0]) * ratio);
+  const g = Math.round(start[1] + (end[1] - start[1]) * ratio);
+  const b = Math.round(start[2] + (end[2] - start[2]) * ratio);
+  return `rgb(${r},${g},${b})`;
+}
+
+function normalizeRating(value) {
+  return clamp(value, 0, 10) / 10;
+}
+
+function getBlueRedColor(value) {
+  const ratio = normalizeRating(value);
+  return interpolateRGB(
+    [0, 0, 255],    // blue
+    [255, 0, 0],    // red
+    ratio
+  );
+}
+
+function getRedGreenColor(value) {
+  const ratio = normalizeRating(value);
+  return interpolateRGB(
+    [255, 0, 0],    // red
+    [32, 172, 23],  // green
+    ratio
+  );
+}
+
+function applyRatingColor(td, columnIndex, value) {
   
-  if ([2,3,4,5,6,7,8].includes(columnIndex)) {
-    td.style.color = interpolateBlueRed(value);
+  if (columnIndex >= 1 && columnIndex <= 8) {
+    td.style.color = getBlueRedColor(value);
     td.classList.add("stat-colored");
+    return;
   }
 
-  if (columnIndex === 10) {
-    td.style.color = interpolateRedGreen(value);
+  // Quality column
+  if (columnIndex === 9) {
+    td.style.color = getRedGreenColor(value);
     td.classList.add("stat-colored");
   }
-}
-
-function interpolateBlueRed(val) {
-  const ratio = Math.max(0, Math.min(10, val)) / 10;
-  const r = Math.round(255 * ratio);
-  const g = 0;
-  const b = Math.round(255 * (1 - ratio));
-  return `rgb(${r},${g},${b})`;
-}
-
-function interpolateRedGreen(val) {
-  const ratio = Math.max(0, Math.min(10, val)) / 10;
-  const r = Math.round(255 + (32 - 255) * ratio);
-  const g = Math.round(0 + (172 - 0) * ratio);
-  const b = Math.round(0 + (23 - 0) * ratio);
-  return `rgb(${r},${g},${b})`;
 }

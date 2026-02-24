@@ -108,29 +108,7 @@ function renderTable() {
     }
 
     tr.appendChild(gameTd);
-
-    if (!showRatings && headerIndex === 4) {
-      
-      if (currentSort.index === headerIndex) {
-          currentSort.asc = !currentSort.asc;
-        } else {
-          currentSort.index = headerIndex;
-          currentSort.asc = false;
-        }
-      
-        tableData.sort((a, b) => {
-          const totalA = clearsMeta[a[0]]?.total || 0;
-          const totalB = clearsMeta[b[0]]?.total || 0;
-      
-          return currentSort.asc
-            ? totalA - totalB
-            : totalB - totalA;
-        });
-      
-        renderTable();
-        return;
-    }
-
+    
     if (!showRatings) {
 
       const meta = clearsMeta[gameName] || {};
@@ -229,9 +207,32 @@ function sortTable(headerIndex) {
 
       return diffA - diffB; // hardest first
     });
-
+    
     renderTable();
     return;
+  }
+  
+  // Total Clears
+  if (!showRatings && headerIndex === 4) {
+    
+    if (currentSort.index === headerIndex) {
+        currentSort.asc = !currentSort.asc;
+      } else {
+        currentSort.index = headerIndex;
+        currentSort.asc = false;
+      }
+    
+      tableData.sort((a, b) => {
+        const totalA = clearsMeta[a[0]]?.total || 0;
+        const totalB = clearsMeta[b[0]]?.total || 0;
+    
+        return currentSort.asc
+          ? totalA - totalB
+          : totalB - totalA;
+      });
+    
+      renderTable();
+      return;
   }
   
   const dataIndex = headerIndex - 1;

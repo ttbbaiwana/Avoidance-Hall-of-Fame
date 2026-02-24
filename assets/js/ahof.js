@@ -72,6 +72,8 @@ function renderTable() {
 
     const totalTh = document.createElement("th");
     totalTh.textContent = "Total Clears";
+    totalTh.style.cursor = "pointer";
+    totalTh.onclick = () => sortTable(4);
     headerRow.appendChild(totalTh);
   } else {
     headers.slice(1).forEach((header, i) => {

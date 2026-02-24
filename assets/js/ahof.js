@@ -13,7 +13,6 @@ const avoidanceDifficultyMap = Object.fromEntries(
 let tableData = [];
 let headers = [];
 let currentSort = { index: null, asc: false };
-let clearsMeta = {};
 let showRatings = false;
 
 document.querySelectorAll('input[name="view-mode"]').forEach(radio => {
@@ -28,7 +27,6 @@ fetch(`${API_URL}?view=ahof`)
   .then(json => {
     headers = json.headers;
     tableData = json.data.filter(row => row[0] !== "");
-    clearsMeta = json.clearsMeta;
     renderTable();
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("ahof").classList.remove("hidden");
@@ -122,17 +120,18 @@ function renderTable() {
     tr.appendChild(gameTd);
     
     if (!showRatings) {
-
-      const meta = clearsMeta[gameName] || {};
+      const first = row[row.length - 3];
+      const latest = row[row.length - 2];
+      const total = row[row.length - 1];
       const firstTd = document.createElement("td");
       
-      if (meta.first && meta.first !== "-") {
+      if (first !== "-") {
         const span = document.createElement("span");
-        span.textContent = meta.first;
+        span.textContent = first;
         span.classList.add("ahof-player-link");
       
         span.addEventListener("click", () => {
-          const encodedPlayer = encodeURIComponent(meta.first);
+          const encodedPlayer = encodeURIComponent(first);
           const encodedGame = encodeURIComponent(gameName);
           window.location.href =
             `clears.html?player=${encodedPlayer}&game=${encodedGame}`;
@@ -147,13 +146,13 @@ function renderTable() {
       
       const latestTd = document.createElement("td");
       
-      if (meta.latest && meta.latest !== "-") {
+      if (latest !== "-") {
         const span = document.createElement("span");
-        span.textContent = meta.latest;
+        span.textContent = latest;
         span.classList.add("ahof-player-link");
       
         span.addEventListener("click", () => {
-          const encodedPlayer = encodeURIComponent(meta.latest);
+          const encodedPlayer = encodeURIComponent(latest);
           const encodedGame = encodeURIComponent(gameName);
           window.location.href =
             `clears.html?player=${encodedPlayer}&game=${encodedGame}`;
@@ -169,7 +168,7 @@ function renderTable() {
       const totalTd = document.createElement("td");
       const span = document.createElement("span");
       
-      span.textContent = meta.total || "0";
+      span.textContent = total || "0";
       span.classList.add("ahof-total");
       totalTd.appendChild(span);
       tr.appendChild(totalTd);
@@ -242,9 +241,8 @@ function sortTable(headerIndex) {
       }
 
       tableData.sort((a, b) => {
-
-        const totalA = clearsMeta[a[0]]?.total || 0;
-        const totalB = clearsMeta[b[0]]?.total || 0;
+        const totalA = parseInt(a[a.length - 1]) || 0;
+        const totalB = parseInt(b[b.length - 1]) || 0;
 
         return currentSort.asc
           ? totalA - totalB

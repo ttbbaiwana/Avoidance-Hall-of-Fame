@@ -215,6 +215,15 @@ body {
   font-weight: 600;
 }
 
+.ahof-game-link {
+  cursor: pointer;
+  transition: font-weight 0.1s ease;
+}
+
+.ahof-game-link:hover {
+  font-weight: 700;
+}
+
 /* =========================
    Landing Page
 ========================= */

@@ -179,25 +179,22 @@ function createAvoidanceSection(name) {
       expButtons.forEach(b => b.classList.remove("selected"));
       btn.classList.add("selected");
 
-      if (answer === "yes") {
-        responses.avoidances[name].experience = "yes";
-        ratingsDiv.classList.remove("hidden");
-      } else {
-        responses.avoidances[name].experience = "no";
-
-        // hide UI
-        ratingsDiv.classList.add("hidden");
-
-        // clear radios
-        const radios = ratingsDiv.querySelectorAll('input[type="radio"]');
-        radios.forEach(radio => {
-          radio.checked = false;
-          radio.dataset.wasChecked = "false";
-        });
-
-        // clear data
-        responses.avoidances[name].ratings = {};
-      }
+				if (answer === "yes") {
+				  responses.avoidances[name].experience = "yes";
+				  ratingsDiv.classList.remove("hidden");
+				  submitBtn.classList.remove("hidden");
+				} else {
+        	responses.avoidances[name].experience = "no";
+					ratingsDiv.classList.add("hidden");
+					submitBtn.classList.add("hidden");
+					submitStatus.innerText = "";
+					const radios = ratingsDiv.querySelectorAll('input[type="radio"]');
+					radios.forEach(radio => {
+	          radio.checked = false;
+	          radio.dataset.wasChecked = "false";
+        	});					
+        	responses.avoidances[name].ratings = {};
+				}
     });
   });
 
@@ -230,6 +227,65 @@ function createAvoidanceSection(name) {
     }
   });
 
+	const submitBtn = document.createElement("button");
+	submitBtn.className = "primary-button hidden";
+	submitBtn.textContent = "Submit This Rating";
+	
+	const submitStatus = document.createElement("p");
+	submitStatus.className = "submit-status";
+	
+	section.appendChild(submitBtn);
+	section.appendChild(submitStatus);
+
+	function validateSingleAvoidance() {
+	  const data = responses.avoidances[name];
+		
+	  if (data.experience !== "yes") {
+	    alert(`You must select "Yes" for "${name}" before submitting.`);
+	    return false;
+	  }
+		
+	  if (Object.keys(data.ratings).length === 0) {
+	    alert(`You must rate at least one category for "${name}".`);
+	    return false;
+	  }
+	
+	  return true;
+	}
+
+	submitBtn.addEventListener("click", async () => {
+	  if (!validateSingleAvoidance()) return;
+	
+	  submitBtn.disabled = true;
+	  submitStatus.innerText = "Submitting...";
+		
+	  const payload = {
+	    meta: responses.meta,
+	    avoidances: {
+	      [name]: responses.avoidances[name]
+	    }
+	  };
+	
+	  try {
+	    const res = await fetch(GOOGLE_SCRIPT_URL, {
+	      method: "POST",
+	      body: JSON.stringify(payload)
+	    });
+	
+	    const result = await res.json();
+	
+	    if (result.status === "ok") {
+	      submitStatus.innerText = "Submitted successfully!";
+	    } else {
+	      throw new Error("Submission failed");
+	    }
+	  } catch (err) {
+	    submitStatus.innerText = "Submission failed. Please try again.";
+	    submitBtn.disabled = false;
+	    console.error(err);
+	  }
+	});
+	
   return section;
 }
 

@@ -3,8 +3,7 @@
 const SecretManager = (() => {
 
   /* ================= SECRET GAME REGISTRY ================= */
-
-  // Add future secret games here ONLY
+  
   const SECRET_GAME_SET = new Set([
     "I wanna Ruma - Extra",
     "curveWAH",
@@ -79,8 +78,7 @@ const SecretManager = (() => {
 
     state.oiiaAvailable =
       column === "game" &&
-      input ===
-        "I wanna be the Music2 - シュレーディンガーの猫《INFINITE》 Perfect";
+      input === "I wanna be the Music2 - シュレーディンガーの猫《INFINITE》 Perfect";
 
     const select = hooks.getColumnSelect();
     if (!select) return;
@@ -115,31 +113,29 @@ const SecretManager = (() => {
 
   /* ================= APPLY SECRETS ================= */
 
-  function applySecrets(column, data) {
-
+  function applySecrets(column, data, fullData) {
+  
     updateOiiaAvailability();
-
+  
     // OIIA dropdown selection
     if (column === "oiia-secret") {
-      return data.filter(row =>
+      return fullData.filter(row =>
         row[1] === "I wanna OIIAOIIA"
       );
     }
-
-    // Ruma mode
+  
     if (state.rumaActive) {
-      return data.filter(row =>
+      return fullData.filter(row =>
         row[1] === "I wanna Ruma - Extra"
       );
     }
-
-    // CurveWAH mode
+  
     if (state.curveWAHActive) {
-      return data.filter(row =>
+      return fullData.filter(row =>
         row[1] === "curveWAH"
       );
     }
-
+  
     return data;
   }
 

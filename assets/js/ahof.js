@@ -15,6 +15,28 @@ let headers = [];
 let currentSort = { index: null, asc: false };
 let showRatings = false;
 
+const ahofTable = document.getElementById("ahof");
+const ahofThead = ahofTable.querySelector("thead");
+const ahofTbody = ahofTable.querySelector("tbody");
+
+ahofTbody.addEventListener("click", (e) => {
+
+  const gameEl = e.target.closest(".ahof-game-link");
+  if (gameEl) {
+    const game = gameEl.dataset.game;
+    window.location.href = `clears.html?game=${encodeURIComponent(game)}`;
+    return;
+  }
+
+  const playerEl = e.target.closest(".ahof-player-link");
+  if (playerEl) {
+    const player = playerEl.dataset.player;
+    const game = playerEl.dataset.game;
+    window.location.href =
+      `clears.html?player=${encodeURIComponent(player)}&game=${encodeURIComponent(game)}`;
+  }
+});
+
 document.querySelectorAll('input[name="view-mode"]').forEach(radio => {
   radio.addEventListener("change", e => {
     showRatings = e.target.value === "ratings";
@@ -39,22 +61,17 @@ fetch(`${API_URL}?view=ahof`)
 
 function renderTable() {
 
-  const thead = document.querySelector("#ahof thead");
-  const tbody = document.querySelector("#ahof tbody");
-
-  thead.innerHTML = "";
-  tbody.innerHTML = "";
-
-  const headerRow = document.createElement("tr");
+  ahofThead.textContent = "";
+  ahofTbody.textContent = "";
 
   /* ================= HEADER ================= */
 
-  // Rank column
+  const headerRow = document.createElement("tr");
+
   const rankTh = document.createElement("th");
   rankTh.textContent = "#";
   headerRow.appendChild(rankTh);
 
-  // Game column
   const gameTh = document.createElement("th");
   gameTh.textContent = "Game";
   gameTh.style.cursor = "pointer";
@@ -62,62 +79,61 @@ function renderTable() {
   headerRow.appendChild(gameTh);
 
   if (!showRatings) {
-    // Clears mode
-    ["First Clear", "Latest Clear", "Total Clears"].forEach((title, i) => {
-      const th = document.createElement("th");
-      th.textContent = title;
 
-      if (title === "Total Clears") {
-        th.style.cursor = "pointer";
-        th.onclick = () => sortTable(12); // total clears index
-      }
+    ["First Clear", "Latest Clear", "Total Clears"]
+      .forEach((title, i) => {
 
-      headerRow.appendChild(th);
-    });
+        const th = document.createElement("th");
+        th.textContent = title;
+
+        if (title === "Total Clears") {
+          th.style.cursor = "pointer";
+          th.onclick = () => sortTable(12);
+        }
+
+        headerRow.appendChild(th);
+      });
+
   } else {
-    // Ratings mode (Reading → Quality)
+
     const ratingHeaders = headers.slice(1, 10);
 
     ratingHeaders.forEach((header, i) => {
+
       const th = document.createElement("th");
       th.textContent = header;
       th.style.cursor = "pointer";
-      th.onclick = () => sortTable(i + 2); // offset for rank+game
+      th.onclick = () => sortTable(i + 2);
+
       headerRow.appendChild(th);
     });
   }
 
-  thead.appendChild(headerRow);
+  ahofThead.appendChild(headerRow);
 
   /* ================= BODY ================= */
 
-  tableData.forEach((row, rowIndex) => {
+  const fragment = document.createDocumentFragment();
 
+  for (let rowIndex = 0; rowIndex < tableData.length; rowIndex++) {
+
+    const row = tableData[rowIndex];
     const tr = document.createElement("tr");
 
-    /* ===== Rank ===== */
-
+    // Rank
     const rankTd = document.createElement("td");
     rankTd.textContent = rowIndex + 1;
-    rankTd.classList.add("stat-colored");
     tr.appendChild(rankTd);
 
     const gameName = row[0];
 
-    /* ===== Game Cell ===== */
-
+    // Game
     const gameTd = document.createElement("td");
-    const span = document.createElement("span");
+    const gameSpan = document.createElement("span");
 
-    span.textContent = gameName;
-    span.classList.add("ahof-game-link");
-
-    span.addEventListener("click", () => {
-      const encodedGame = encodeURIComponent(gameName);
-      window.location.href = `clears.html?game=${encodedGame}`;
-    });
-
-    gameTd.appendChild(span);
+    gameSpan.textContent = gameName;
+    gameSpan.className = "ahof-game-link";
+    gameSpan.dataset.game = gameName;
 
     const bg = avoidanceColorMap[gameName];
     if (bg) {
@@ -126,9 +142,10 @@ function renderTable() {
       gameTd.style.fontWeight = "600";
     }
 
+    gameTd.appendChild(gameSpan);
     tr.appendChild(gameTd);
 
-    /* ================= CLEARS MODE ================= */
+    /* ===== CLEARS MODE ===== */
 
     if (!showRatings) {
 
@@ -136,21 +153,15 @@ function renderTable() {
       const latest = row[11] || "-";
       const total = row[12] || "0";
 
-      // First Clear
+      // First
       const firstTd = document.createElement("td");
 
       if (first !== "-") {
         const span = document.createElement("span");
         span.textContent = first;
-        span.classList.add("ahof-player-link");
-
-        span.addEventListener("click", () => {
-          const encodedPlayer = encodeURIComponent(first);
-          const encodedGame = encodeURIComponent(gameName);
-          window.location.href =
-            `clears.html?player=${encodedPlayer}&game=${encodedGame}`;
-        });
-
+        span.className = "ahof-player-link";
+        span.dataset.player = first;
+        span.dataset.game = gameName;
         firstTd.appendChild(span);
       } else {
         firstTd.textContent = "-";
@@ -158,21 +169,15 @@ function renderTable() {
 
       tr.appendChild(firstTd);
 
-      // Latest Clear
+      // Latest
       const latestTd = document.createElement("td");
 
       if (latest !== "-") {
         const span = document.createElement("span");
         span.textContent = latest;
-        span.classList.add("ahof-player-link");
-
-        span.addEventListener("click", () => {
-          const encodedPlayer = encodeURIComponent(latest);
-          const encodedGame = encodeURIComponent(gameName);
-          window.location.href =
-            `clears.html?player=${encodedPlayer}&game=${encodedGame}`;
-        });
-
+        span.className = "ahof-player-link";
+        span.dataset.player = latest;
+        span.dataset.game = gameName;
         latestTd.appendChild(span);
       } else {
         latestTd.textContent = "-";
@@ -180,36 +185,31 @@ function renderTable() {
 
       tr.appendChild(latestTd);
 
-      // Total Clears
+      // Total
       const totalTd = document.createElement("td");
-      const totalSpan = document.createElement("span");
-      totalSpan.textContent = total;
-      totalSpan.classList.add("ahof-total");
-      totalTd.appendChild(totalSpan);
+      totalTd.textContent = total;
       tr.appendChild(totalTd);
     }
 
-    /* ================= RATINGS MODE ================= */
+    /* ===== RATINGS MODE ===== */
 
     else {
-      
+
       for (let i = 1; i <= 9; i++) {
+
         const cell = row[i];
         const td = document.createElement("td");
 
         if (cell === "N/A") {
           td.textContent = "N/A";
-          td.classList.add("na");
-          tr.appendChild(td);
-          continue;
         }
+        else if (!isNaN(cell) && cell !== "") {
 
-        if (!isNaN(cell) && cell !== "") {
           const num = parseFloat(cell);
           td.textContent = num.toFixed(2);
           applyRatingColor(td, i, num);
-          td.classList.add("stat-colored");
-        } else {
+        }
+        else {
           td.textContent = cell;
         }
 
@@ -217,8 +217,10 @@ function renderTable() {
       }
     }
 
-    tbody.appendChild(tr);
-  });
+    fragment.appendChild(tr);
+  }
+
+  ahofTbody.appendChild(fragment);
 }
 
 function sortTable(headerIndex) {

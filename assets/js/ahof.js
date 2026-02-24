@@ -109,16 +109,71 @@ function renderTable() {
 
     tr.appendChild(gameTd);
 
+    if (!showRatings && headerIndex === 4) {
+      
+      if (currentSort.index === headerIndex) {
+          currentSort.asc = !currentSort.asc;
+        } else {
+          currentSort.index = headerIndex;
+          currentSort.asc = false;
+        }
+      
+        tableData.sort((a, b) => {
+          const totalA = clearsMeta[a[0]]?.total || 0;
+          const totalB = clearsMeta[b[0]]?.total || 0;
+      
+          return currentSort.asc
+            ? totalA - totalB
+            : totalB - totalA;
+        });
+      
+        renderTable();
+        return;
+    }
+
     if (!showRatings) {
 
       const meta = clearsMeta[gameName] || {};
-
       const firstTd = document.createElement("td");
-      firstTd.textContent = meta.first || "-";
+      
+      if (meta.first && meta.first !== "-") {
+        const span = document.createElement("span");
+        span.textContent = meta.first;
+        span.classList.add("ahof-player-link");
+      
+        span.addEventListener("click", () => {
+          const encodedPlayer = encodeURIComponent(meta.first);
+          const encodedGame = encodeURIComponent(gameName);
+          window.location.href =
+            `clears.html?player=${encodedPlayer}&game=${encodedGame}`;
+        });
+      
+        firstTd.appendChild(span);
+      } else {
+        firstTd.textContent = "-";
+      }
+      
       tr.appendChild(firstTd);
-
+      
       const latestTd = document.createElement("td");
-      latestTd.textContent = meta.latest || "-";
+      
+      if (meta.latest && meta.latest !== "-") {
+        const span = document.createElement("span");
+        span.textContent = meta.latest;
+        span.classList.add("ahof-player-link");
+      
+        span.addEventListener("click", () => {
+          const encodedPlayer = encodeURIComponent(meta.latest);
+          const encodedGame = encodeURIComponent(gameName);
+          window.location.href =
+            `clears.html?player=${encodedPlayer}&game=${encodedGame}`;
+        });
+      
+        latestTd.appendChild(span);
+      } else {
+        latestTd.textContent = "-";
+      }
+      
       tr.appendChild(latestTd);
 
       const totalTd = document.createElement("td");

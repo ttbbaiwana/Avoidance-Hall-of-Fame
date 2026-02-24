@@ -138,38 +138,39 @@ function createAvoidanceSection(name) {
   const expButtons = section.querySelectorAll(".exp-btn");
 
   // Build rating blocks
-  ratingCategories.forEach(({ key, label }) => {
-    const block = document.createElement("div");
-    block.className = "rating";
-		block.dataset.categoryKey = key;
-
-    const groupName = `${name}-${category}`.replace(/\s+/g, "_");
-
-    block.innerHTML = `
-      <label class="rating-label">${label}</label>
-
-      <div class="rating-scale">
-        <div class="rating-numbers">
-          ${Array.from({ length: 11 }, (_, i) => `<span>${i}</span>`).join("")}
-        </div>
-
-        <div class="rating-radios">
-          ${Array.from({ length: 11 }, (_, i) => `
-            <label>
-              <input
-                type="radio"
-                name="${groupName}"
-                value="${i}"
-              />
-              <span class="radio-dot"></span>
-            </label>
-          `).join("")}
-        </div>
-      </div>
-    `;
-
-    ratingsDiv.appendChild(block);
-  });
+	ratingCategories.forEach(({ key, label }) => {
+	
+	  const block = document.createElement("div");
+	  block.className = "rating";
+	  block.dataset.categoryKey = key;
+	
+	  const groupName = `${name}-${key}`.replace(/\s+/g, "_");
+	
+	  block.innerHTML = `
+	    <label class="rating-label">${label}</label>
+	
+	    <div class="rating-scale">
+	      <div class="rating-numbers">
+	        ${Array.from({ length: 11 }, (_, i) => `<span>${i}</span>`).join("")}
+	      </div>
+	
+	      <div class="rating-radios">
+	        ${Array.from({ length: 11 }, (_, i) => `
+	          <label>
+	            <input
+	              type="radio"
+	              name="${groupName}"
+	              value="${i}"
+	            />
+	            <span class="radio-dot"></span>
+	          </label>
+	        `).join("")}
+	      </div>
+	    </div>
+	  `;
+	
+	  ratingsDiv.appendChild(block);
+	});
 
   // Yes / No toggle logic
   expButtons.forEach(btn => {
@@ -200,30 +201,30 @@ function createAvoidanceSection(name) {
   });
 
   // Toggleable radio behavior + data sync
-  ratingsDiv.addEventListener("click", (e) => {
-    if (e.target.type !== "radio") return;
-
-    const radio = e.target;
-		const category = radio.closest(".rating").dataset.categoryKey;
-
-    const avoidance = responses.avoidances[name];
-
-    if (radio.dataset.wasChecked === "true") {
-      // unselect
-      radio.checked = false;
-      radio.dataset.wasChecked = "false";
-      delete avoidance.ratings[category];
-    } else {
-      // clear group toggle state
-      const group = ratingsDiv.querySelectorAll(
-        `input[name="${radio.name}"]`
-      );
-      group.forEach(r => (r.dataset.wasChecked = "false"));
-
-      radio.dataset.wasChecked = "true";
-      avoidance.ratings[category] = Number(radio.value);
-    }
-  });
+	ratingsDiv.addEventListener("click", (e) => {
+	
+	  if (e.target.type !== "radio") return;
+	
+	  const radio = e.target;
+	  const block = radio.closest(".rating");
+	  const categoryKey = block.dataset.categoryKey;
+	
+	  const avoidance = responses.avoidances[name];
+	
+	  if (radio.dataset.wasChecked === "true") {
+	    radio.checked = false;
+	    radio.dataset.wasChecked = "false";
+	    delete avoidance.ratings[categoryKey];
+	  } else {
+	    const group = ratingsDiv.querySelectorAll(
+	      `input[name="${radio.name}"]`
+	    );
+	    group.forEach(r => (r.dataset.wasChecked = "false"));
+	
+	    radio.dataset.wasChecked = "true";
+	    avoidance.ratings[categoryKey] = Number(radio.value);
+	  }
+	});
 
 	const submitBtn = document.createElement("button");
 	submitBtn.className = "primary-button hidden";

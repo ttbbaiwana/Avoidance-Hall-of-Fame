@@ -83,13 +83,13 @@ nextBtn.addEventListener("click", () => {
 
 // ---------- AVOIDANCE TEMPLATE ----------
 const ratingCategories = [
-  "Reading Intricacy (RNG)",
-  "Speed (RNG)",
-  "Density (RNG)",
-  "Pattern (FIXED)",
-  "Gimmick",
-  "Luck",
-	"Quality"
+  { key: "Reading Intricacy", label: "Reading Intricacy (RNG)" },
+  { key: "Speed", label: "Speed (RNG)" },
+  { key: "Density", label: "Density (RNG)" },
+  { key: "Pattern", label: "Pattern (FIXED)" },
+  { key: "Gimmick", label: "Gimmick" },
+  { key: "Luck", label: "Luck" },
+  { key: "Quality", label: "Quality" }
 ];
 
 function createAvoidanceSection(name) {
@@ -138,14 +138,15 @@ function createAvoidanceSection(name) {
   const expButtons = section.querySelectorAll(".exp-btn");
 
   // Build rating blocks
-  ratingCategories.forEach(category => {
+  ratingCategories.forEach(({ key, label }) => {
     const block = document.createElement("div");
     block.className = "rating";
+		block.dataset.categoryKey = key;
 
     const groupName = `${name}-${category}`.replace(/\s+/g, "_");
 
     block.innerHTML = `
-      <label class="rating-label">${category}</label>
+      <label class="rating-label">${label}</label>
 
       <div class="rating-scale">
         <div class="rating-numbers">
@@ -203,10 +204,7 @@ function createAvoidanceSection(name) {
     if (e.target.type !== "radio") return;
 
     const radio = e.target;
-    const category = radio
-      .closest(".rating")
-      .querySelector(".rating-label")
-      .innerText;
+		const category = radio.closest(".rating").dataset.categoryKey;
 
     const avoidance = responses.avoidances[name];
 
@@ -229,7 +227,7 @@ function createAvoidanceSection(name) {
 
 	const submitBtn = document.createElement("button");
 	submitBtn.className = "primary-button hidden";
-	submitBtn.textContent = "Submit This Rating";
+	submitBtn.textContent = "Submit";
 	
 	const submitStatus = document.createElement("p");
 	submitStatus.className = "submit-status";

@@ -515,7 +515,11 @@ function applyFilter() {
     });
   }
 
-  filteredData = SecretManager.applySecrets(column, filteredData);
+  filteredData = SecretManager.applySecrets(
+    column,
+    filteredData,
+    fullData
+  );
 
   applyClearMode();
   sortData();

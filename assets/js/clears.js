@@ -849,3 +849,43 @@ function applyUrlFilters() {
     renderTable();
   }
 }
+
+function applyExactFilter(columnIndex, value) {
+
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
+
+  const columnMap = {
+    0: "date",
+    1: "game",
+    2: "country",
+    4: "player"
+  };
+
+  const selectedColumn = columnMap[columnIndex];
+
+  if (!selectedColumn) return;
+
+  columnSelect.value = selectedColumn;
+  updateSearchPlaceholder();
+
+  if (selectedColumn === "country") {
+    input.classList.add("hidden");
+    countrySelect.classList.remove("hidden");
+    countrySelect.value = value;
+  } else {
+    countrySelect.classList.add("hidden");
+    input.classList.remove("hidden");
+    input.value = value;
+  }
+
+  exactMatchMode = true;
+
+  applyFilter();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}

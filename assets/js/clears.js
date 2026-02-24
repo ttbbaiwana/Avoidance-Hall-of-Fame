@@ -375,22 +375,30 @@ function renderTable() {
       }
 
       if (index === 1) {
-
+      
         td.textContent = cell;
-
-        const bg = avoidanceColorMap[cell];
-        if (bg) {
-          td.style.backgroundColor = bg;
-          td.style.color = getContrastTextColor(bg);
-          td.style.fontWeight = "600";
+        
+        const secretStyle = SecretManager.getSecretStyle(cell);
+      
+        if (secretStyle) {     
+          td.style.backgroundColor = secretStyle.backgroundColor;      
+          td.style.color = getContrastTextColor(secretStyle.backgroundColor);      
+          td.style.fontWeight = secretStyle.fontWeight;      
+        }
+        else {
+          const bg = avoidanceColorMap[cell];
+      
+          if (bg) {
+            td.style.backgroundColor = bg;
+            td.style.color = getContrastTextColor(bg);
+            td.style.fontWeight = "600";
+          }
         }
       }
 
       else if (index === 2 && cell) {
-
         const flag = document.createElement("span");
-        flag.className =
-          `fi fi-${cell.toLowerCase()} flag-icon`;
+        flag.className = `fi fi-${cell.toLowerCase()} flag-icon`;
         td.appendChild(flag);
       }
 
@@ -404,8 +412,7 @@ function renderTable() {
         avatar.loading = "lazy";
         avatar.referrerPolicy = "no-referrer";
         avatar.src = row[3] || "assets/images/Default.jpg";
-        avatar.onerror = () =>
-          avatar.src = "assets/images/Default.jpg";
+        avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
 
         const name = document.createElement("span");
         name.textContent = cell;
@@ -471,22 +478,14 @@ function renderTable() {
 
 function applyFilter() {
 
-  const column =
-    document.getElementById("search-column").value;
-
-  const input =
-    document.getElementById("search-input");
-
-  const countrySelect =
-    document.getElementById("country-select");
-
-  const query =
-    input.value.trim().toLowerCase();
+  const column = document.getElementById("search-column").value;
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
+  const query = input.value.trim().toLowerCase();
 
   filteredData = getBaseVisibleData();
 
   if (column === "country" && countrySelect.value) {
-
     filteredData = filteredData.filter(row =>
       row[2] === countrySelect.value
     );
@@ -503,7 +502,6 @@ function applyFilter() {
     const colIndex = columnIndexMap[column];
 
     filteredData = filteredData.filter(row => {
-
       const cell = row[colIndex];
       if (!cell) return false;
 
@@ -542,8 +540,7 @@ function populateCountryDropdown() {
     .filter(Boolean)
     .sort();
 
-  select.innerHTML =
-    "<option value=''>Select country</option>";
+  select.innerHTML = "<option value=''>Select country</option>";
 
   countries.forEach(country => {
 
@@ -570,8 +567,7 @@ function applyClearMode() {
       return;
     }
 
-    const existingDate =
-      new Date(gameMap[game][0]);
+    const existingDate = new Date(gameMap[game][0]);
 
     if (
       (clearMode === "first" && date < existingDate) ||
@@ -585,13 +581,9 @@ function applyClearMode() {
 }
 
 function updateRowCount() {
-
   const rowCountElement = document.getElementById("row-count");
-
   if (!rowCountElement) return;
-
   const count = filteredData.length;
-
   rowCountElement.textContent = `Showing ${count} Clear${count === 1 ? "" : "s"}`;
 }
 
@@ -626,8 +618,7 @@ function updateFilterSummary() {
     parts.push(`Country = ${countrySelect.value}`);
   }
   else if (input.value.trim() !== "") {
-    const columnLabel =
-      columnSelect.options[columnSelect.selectedIndex].text;
+    const columnLabel = columnSelect.options[columnSelect.selectedIndex].text;
     parts.push(`${columnLabel} = ${input.value.trim()}`);
   }
 
@@ -657,8 +648,7 @@ function setupSearch() {
 
   document
     .querySelectorAll('input[name="clear-mode"]')
-    .forEach(radio => {
-
+    .forEach(radio => 
       radio.addEventListener("change", e => {
         clearMode = e.target.value;
         applyFilter();
@@ -681,19 +671,21 @@ function setupSearch() {
 
   input.addEventListener("input", () => {
     exactMatchMode = false;
+    SecretManager.resetSecrets();
     applyFilter();
   });
 
   countrySelect.addEventListener("change", () => {
     exactMatchMode = false;
+    SecretManager.resetSecrets();
     applyFilter();
   });
 
   columnSelect.addEventListener("change", () => {
-
+  
     input.value = "";
     countrySelect.value = "";
-
+  
     if (columnSelect.value === "country") {
       input.classList.add("hidden");
       countrySelect.classList.remove("hidden");
@@ -703,23 +695,26 @@ function setupSearch() {
       input.classList.remove("hidden");
       updateSearchPlaceholder();
     }
-
+  
+    SecretManager.resetSecrets();
     applyFilter();
   });
 
   clearBtn.addEventListener("click", () => {
-
+  
     input.value = "";
     countrySelect.value = "";
     columnSelect.value = "date";
-
+  
     exactMatchMode = false;
-
+  
     countrySelect.classList.add("hidden");
     input.classList.remove("hidden");
-
+  
     updateSearchPlaceholder();
-
+  
+    SecretManager.resetSecrets();
+  
     filteredData = getBaseVisibleData();
     sortData();
     renderTable();
@@ -846,8 +841,7 @@ function applyUrlFilters() {
   applyFilter();
 
   if (gameParam) {
-    filteredData =
-      filteredData.filter(row =>
+    filteredData = filteredData.filter(row =>
         row[1] === gameParam
       );
     renderTable();

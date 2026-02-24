@@ -890,23 +890,30 @@ function applyUrlFilters() {
   const params = new URLSearchParams(window.location.search);
 
   const playerParam = params.get("player");
+  const gameParam = params.get("game");
 
-  if (!playerParam) return;
+  if (!playerParam && !gameParam) return;
 
   const columnSelect = document.getElementById("search-column");
   const input = document.getElementById("search-input");
   const countrySelect = document.getElementById("country-select");
 
-  columnSelect.value = "player";
-
-  input.classList.remove("hidden");
-  countrySelect.classList.add("hidden");
-
-  input.value = playerParam;
-
-  exactMatchMode = true;
+  if (playerParam) {
+    columnSelect.value = "player";
+    input.classList.remove("hidden");
+    countrySelect.classList.add("hidden");
+    input.value = playerParam;
+    exactMatchMode = true;
+  }
 
   applyFilter();
+
+  if (gameParam) {
+    filteredData = filteredData.filter(row =>
+      row[1] === gameParam
+    );
+    renderTable();
+  }
 }
 
 function isRumaSearchActive() {

@@ -1,5 +1,9 @@
 const API_URL = API_CONFIG.BASE_URL;
 
+const clearTable = document.getElementById("clear-table");
+const clearThead = clearTable.querySelector("thead");
+const clearTbody = clearTable.querySelector("tbody");
+
 const avoidanceColorMap = Object.fromEntries(
   avoidanceConfig.map(a => [a.name, a.color])
 );
@@ -17,10 +21,10 @@ let clearMode = "all";
 let showMakers = true;
 let showTesters = true;
 let exactMatchMode = false;
-let rumaSecretMode = false;
-let curveWAHSecretMode = false;
-let oiiaSecretAvailable = false;
-let oiiaSecretMode = false;
+let autocompleteSources = {
+  games: [],
+  players: []
+};
 
 /* ================= FETCH ================= */
 
@@ -31,6 +35,7 @@ fetch(`${API_URL}?view=clear-list`)
     fullData = json.data;
     filteredData = getBaseVisibleData();
 
+    buildAutocompleteSources();
     populateCountryDropdown();
     setupSearch();
     setupAutocomplete();
@@ -41,12 +46,78 @@ fetch(`${API_URL}?view=clear-list`)
 
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("clear-table").classList.remove("hidden");
+    
+    SecretManager.init({
+      applyFilter,
+      getSearchState: () => ({
+        column: document.getElementById("search-column").value,
+        input: document.getElementById("search-input").value.trim()
+      }),
+      getColumnSelect: () =>
+        document.getElementById("search-column")
+    });
+    
   })
   .catch(err => {
     console.error(err);
     document.getElementById("loader").innerHTML =
       "<p style='color:red;'>Failed to load data.</p>";
   });
+
+clearTbody.addEventListener("click", (e) => {
+  const clickableCell = e.target.closest(".clickable-cell");
+  if (clickableCell && clickableCell.dataset.filterIndex) {
+    applyExactFilter(
+      parseInt(clickableCell.dataset.filterIndex),
+      clickableCell.dataset.value
+    );
+    return;
+  }
+
+  const badge = e.target.closest(".role-badge");
+  if (badge && badge.dataset.secret === "curveWAH") {
+    curveWAHSecretMode = !curveWAHSecretMode;
+    applyFilter();
+  }
+});
+
+/* ===== PlasmaWane Secret Hover Handling ===== */
+clearTbody.addEventListener("mouseover", (e) => {
+  const badge = e.target.closest(".role-badge");
+  if (badge) SecretManager.handlePlasmaHover(badge, true);
+});
+
+clearTbody.addEventListener("mouseout", (e) => {
+  const badge = e.target.closest(".role-badge");
+  if (badge) SecretManager.handlePlasmaHover(badge, false);
+});
+
+clearTbody.addEventListener("click", (e) => {
+  const badge = e.target.closest(".role-badge");
+  if (badge?.dataset.secret === "curveWAH") {
+    SecretManager.toggleCurveWAH();
+  }
+});
+
+function buildAutocompleteSources() {
+
+  const gameSet = new Set();
+  const playerSet = new Set();
+
+  for (const row of fullData) {
+    const game = row[1];
+    const player = row[4];
+
+    if (!SecretManager.isSecretGame(game)) {
+      gameSet.add(game);
+    }
+
+    playerSet.add(player);
+  }
+
+  autocompleteSources.games = Array.from(gameSet).sort();
+  autocompleteSources.players = Array.from(playerSet).sort();
+}
 
 /* ================= SORT ================= */
 
@@ -164,132 +235,259 @@ function sortData() {
 }
 
 /* ================= RENDER ================= */
-
 function renderTable() {
 
-  const thead = document.querySelector("#clear-table thead");
-  const tbody = document.querySelector("#clear-table tbody");
+  const thead = document.querySelector("#ahof thead");
+  const tbody = document.querySelector("#ahof tbody");
 
   thead.innerHTML = "";
   tbody.innerHTML = "";
 
-  const searchColumn = document.getElementById("search-column").value;
-  const searchInput = document.getElementById("search-input");
+  const headerRow = document.createElement("tr");
 
-  const isPlayerFilterActive =
-    searchColumn === "player" &&
-    searchInput.value.trim() !== "";
+  /* ================= HEADER ================= */
 
-  const isDateFilterActive =
-    searchColumn === "date" &&
-    searchInput.value.trim() !== "";
+  // Rank column
+  const rankTh = document.createElement("th");
+  rankTh.textContent = "#";
+  headerRow.appendChild(rankTh);
 
-  const isGameSorted =
-    currentSort === "game" &&
-    clearMode === "all" &&
-    !isPlayerFilterActive;
+  // Game column
+  const gameTh = document.createElement("th");
+  gameTh.textContent = "Game";
+  gameTh.style.cursor = "pointer";
+  gameTh.onclick = () => sortTable(1);
+  headerRow.appendChild(gameTh);
 
-  /* ===== First Clear Map ===== */
+  if (!showRatings) {
+    // Clears mode
+    ["First Clear", "Latest Clear", "Total Clears"].forEach((title, i) => {
+      const th = document.createElement("th");
+      th.textContent = title;
 
-  const firstClearMap = {};
+      if (title === "Total Clears") {
+        th.style.cursor = "pointer";
+        th.onclick = () => sortTable(12); // total clears index
+      }
 
-  filteredData.forEach(row => {
-    const game = row[1];
-    const date = new Date(row[0]);
-    const type = row[8];
+      headerRow.appendChild(th);
+    });
+  } else {
+    // Ratings mode (Reading → Quality)
+    const ratingHeaders = headers.slice(1, 10);
 
-    const hidden =
-      (type === "M" && !showMakers) ||
-      (type === "T" && !showTesters);
+    ratingHeaders.forEach((header, i) => {
+      const th = document.createElement("th");
+      th.textContent = header;
+      th.style.cursor = "pointer";
+      th.onclick = () => sortTable(i + 2); // offset for rank+game
+      headerRow.appendChild(th);
+    });
+  }
 
-    if (hidden) return;
+  thead.appendChild(headerRow);
 
-    if (!firstClearMap[game] ||
-        date < new Date(firstClearMap[game][0])) {
-      firstClearMap[game] = row;
+  /* ================= BODY ================= */
+
+  tableData.forEach((row, rowIndex) => {
+
+    const tr = document.createElement("tr");
+
+    /* ===== Rank ===== */
+
+    const rankTd = document.createElement("td");
+    rankTd.textContent = rowIndex + 1;
+    rankTd.classList.add("stat-colored");
+    tr.appendChild(rankTd);
+
+    const gameName = row[0];
+
+    /* ===== Game Cell ===== */
+
+    const gameTd = document.createElement("td");
+    const span = document.createElement("span");
+
+    span.textContent = gameName;
+    span.classList.add("ahof-game-link");
+
+    span.addEventListener("click", () => {
+      const encodedGame = encodeURIComponent(gameName);
+      window.location.href = `clears.html?game=${encodedGame}`;
+    });
+
+    gameTd.appendChild(span);
+
+    const bg = avoidanceColorMap[gameName];
+    if (bg) {
+      gameTd.style.backgroundColor = bg;
+      gameTd.style.color = getContrastTextColor(bg);
+      gameTd.style.fontWeight = "600";
     }
-  });
 
-  /* ===== Header ===== */
+    tr.appendChild(gameTd);
+
+    /* ================= CLEARS MODE ================= */
+
+    if (!showRatings) {
+
+      const first = row[10] || "-";
+      const latest = row[11] || "-";
+      const total = row[12] || "0";
+
+      // First Clear
+      const firstTd = document.createElement("td");
+
+      if (first !== "-") {
+        const span = document.createElement("span");
+        span.textContent = first;
+        span.classList.add("ahof-player-link");
+
+        span.addEventListener("click", () => {
+          const encodedPlayer = encodeURIComponent(first);
+          const encodedGame = encodeURIComponent(gameName);
+          window.location.href =
+            `clears.html?player=${encodedPlayer}&game=${encodedGame}`;
+        });
+
+        firstTd.appendChild(span);
+      } else {
+        firstTd.textContent = "-";
+      }
+
+      tr.appendChild(firstTd);
+
+      // Latest Clear
+      const latestTd = document.createElement("td");
+
+      if (latest !== "-") {
+        const span = document.createElement("span");
+        span.textContent = latest;
+        span.classList.add("ahof-player-link");
+
+        span.addEventListener("click", () => {
+          const encodedPlayer = encodeURIComponent(latest);
+          const encodedGame = encodeURIComponent(gameName);
+          window.location.href =
+            `clears.html?player=${encodedPlayer}&game=${encodedGame}`;
+        });
+
+        latestTd.appendChild(span);
+      } else {
+        latestTd.textContent = "-";
+      }
+
+      tr.appendChild(latestTd);
+
+      // Total Clears
+      const totalTd = document.createElement("td");
+      const totalSpan = document.createElement("span");
+      totalSpan.textContent = total;
+      totalSpan.classList.add("ahof-total");
+      totalTd.appendChild(totalSpan);
+      tr.appendChild(totalTd);
+    }
+
+    /* ================= RATINGS MODE ================= */
+
+    else {
+
+      // Reading → Quality (row[1] → row[9])
+      for (let i = 1; i <= 9; i++) {
+
+        const cell = row[i];
+        const td = document.createElement("td");
+
+        if (cell === "N/A") {
+          td.textContent = "N/A";
+          td.classList.add("na");
+          tr.appendChild(td);
+          continue;
+        }
+
+        if (!isNaN(cell) && cell !== "") {
+          const num = parseFloat(cell);
+          td.textContent = num.toFixed(2);
+          applyColor(td, i + 1, num);
+          td.classList.add("stat-colored");
+        } else {
+          td.textContent = cell;
+        }
+
+        tr.appendChild(td);
+      }
+    }
+
+    tbody.appendChild(tr);
+  });
+}
+
+function renderTable() {
+
+  clearThead.textContent = "";
+  clearTbody.textContent = "";
+
+  const fragment = document.createDocumentFragment();
+
+  /* ================= HEADER ================= */
 
   const headerRow = document.createElement("tr");
 
   const numberTh = document.createElement("th");
   numberTh.textContent = "#";
-  
-  numberTh.addEventListener("mouseenter", () => {
-    if (isRumaSearchActive()) {
-      numberTh.textContent = "?";
-    }
-  });
-  
-  numberTh.addEventListener("mouseleave", () => {
-    numberTh.textContent = "#";
-  });
-  
-  numberTh.addEventListener("click", () => {
-    if (isRumaSearchActive()) {
-      rumaSecretMode = !rumaSecretMode;
-      applyFilter();
-    }
-  });
-
-headerRow.appendChild(numberTh);
-
-  const sortKeys = ["date","game","country","player","death","time"];
+  headerRow.appendChild(numberTh);
 
   headers.forEach((h, index) => {
-  
-    // Skip Avatar and Type columns
+
     if (index === 3 || index === 8) return;
-  
+
     const th = document.createElement("th");
     th.textContent = h;
-  
+
     let columnKey = null;
-  
+
     if (index === 0) columnKey = "date";
     if (index === 1) columnKey = "game";
     if (index === 2) columnKey = "country";
     if (index === 4) columnKey = "player";
     if (index === 5) columnKey = "death";
     if (index === 6) columnKey = "time";
-  
+
     if (columnKey) {
-  
+
       th.style.cursor = "pointer";
-  
+
       if (columnKey === currentSort) {
-        th.innerHTML += currentOrder === "asc" ? " ▲" : " ▼";
+        th.textContent += currentOrder === "asc" ? " ▲" : " ▼";
       }
-  
+
       th.onclick = () => {
-  
         if (currentSort === columnKey) {
           currentOrder = currentOrder === "asc" ? "desc" : "asc";
         } else {
           currentSort = columnKey;
           currentOrder = "asc";
         }
-  
+
         sortData();
         renderTable();
       };
     }
-  
+
     headerRow.appendChild(th);
   });
 
-  thead.appendChild(headerRow);
+  clearThead.appendChild(headerRow);
 
-  /* ===== Rows ===== */
+  /* ================= ROWS ================= */
 
   let lastGame = null;
   let gameCounter = 1;
 
-  filteredData.forEach((row, rowIndex) => {
+  for (let rowIndex = 0; rowIndex < filteredData.length; rowIndex++) {
 
+    const row = filteredData[rowIndex];
     const tr = document.createElement("tr");
+
     const game = row[1];
     const type = row[8];
 
@@ -297,107 +495,74 @@ headerRow.appendChild(numberTh);
       (type === "M" && !showMakers) ||
       (type === "T" && !showTesters);
 
-    if (hiddenRole) tr.classList.add("role-hidden-row");
+    if (hiddenRole) tr.className = "role-hidden-row";
 
-    if (
-      currentSort === "game" &&
-      clearMode === "all" &&
-      !isDateFilterActive &&
-      !isPlayerFilterActive &&
-      firstClearMap[game] === row
-    ) {
-      tr.classList.add("first-clear-row");
-    }
-
-    if (isGameSorted && rowIndex > 0) {
-      const prevGame = filteredData[rowIndex - 1][1];
-      if (game !== prevGame) {
-        tr.classList.add("game-divider");
-      }
-    }
+    /* ===== Row Number Logic ===== */
 
     let displayNumber;
 
-    if (isGameSorted) {
+    if (currentSort === "game" && clearMode === "all") {
+
       if (game !== lastGame) {
         gameCounter = 1;
         lastGame = game;
       }
+
       displayNumber = hiddenRole ? "" : gameCounter++;
-    } else {
+    }
+    else {
       displayNumber = rowIndex + 1;
     }
 
     const numberTd = document.createElement("td");
     numberTd.textContent = displayNumber;
-    numberTd.classList.add("number-cell");
     tr.appendChild(numberTd);
 
-    row.forEach((cell, index) => {
+    /* ===== Columns ===== */
 
-      if (index === 3 || index === 8) return; // skip Avatar + Type
+    for (let index = 0; index < row.length; index++) {
 
+      if (index === 3 || index === 8) continue;
+
+      const cell = row[index];
       const td = document.createElement("td");
 
-      /* Click filter */
+      /* Clickable filter columns */
       if ([0,1,2,4].includes(index)) {
-      
-        td.classList.add("clickable-cell");
-      
-        td.addEventListener("click", (e) => {
-          if (e.target.closest(".role-badge")) return;
-          applyExactFilter(index, cell);
-        });
+        td.className = "clickable-cell";
+        td.dataset.filterIndex = index;
+        td.dataset.value = cell;
       }
 
+      /* Game column styling */
       if (index === 1) {
-        td.classList.add("hover-game");
+
         td.textContent = cell;
-        
-        if (cell === "I wanna Ruma - Extra") {
-          td.style.backgroundColor = "#cc0000";
-          td.style.color = "#ffffff";
-          td.style.fontWeight = "700";
-        }
 
-        else if (cell === "curveWAH") {
-          td.style.backgroundColor = "#e06666";
-          td.style.color = "#000000";
-          td.style.fontWeight = "700";
-        }
-
-        else if (cell === "I wanna OIIAOIIA") {
-          td.style.backgroundColor = "#c67a5e";
-          td.style.color = "#000000";
-          td.style.fontWeight = "700";
-        }
-        
-        else {
-          const bg = avoidanceColorMap[cell];
-          if (bg) {
-            td.style.backgroundColor = bg;
-            td.style.color = getContrastTextColor(bg);
-            td.style.fontWeight = "600";
-          }
+        const bg = avoidanceColorMap[cell];
+        if (bg) {
+          td.style.backgroundColor = bg;
+          td.style.color = getContrastTextColor(bg);
+          td.style.fontWeight = "600";
         }
       }
-      
-      else if (index === 2) {
-        if (cell && cell.trim() !== "") {
-          const flag = document.createElement("span");
-          flag.classList.add("fi", `fi-${cell.trim().toLowerCase()}`);
-          flag.classList.add("flag-icon");
-          flag.classList.add("hover-flag");
-          td.appendChild(flag);
-        }
+
+      /* Country flag */
+      else if (index === 2 && cell) {
+
+        const flag = document.createElement("span");
+        flag.className = `fi fi-${cell.toLowerCase()} flag-icon`;
+        td.appendChild(flag);
       }
-      
+
+      /* Player column */
       else if (index === 4) {
+
         const wrapper = document.createElement("div");
-        wrapper.classList.add("player-cell");
+        wrapper.className = "player-cell";
 
         const avatar = document.createElement("img");
-        avatar.classList.add("avatar-img");
+        avatar.className = "avatar-img";
         avatar.loading = "lazy";
         avatar.referrerPolicy = "no-referrer";
         avatar.src = row[3] || "assets/images/Default.jpg";
@@ -409,59 +574,39 @@ headerRow.appendChild(numberTh);
 
         wrapper.appendChild(avatar);
         wrapper.appendChild(name);
-        
+
         if (type === "M" || type === "T") {
-        
+
           const badge = document.createElement("span");
-          badge.classList.add("role-badge");
-        
-          const isPlasmaWane =
+          badge.className = `role-badge ${type === "M" ? "maker-badge" : "tester-badge"}`;
+          badge.textContent = type;
+
+          if (
             row[4] === "PlasmaNapkin" &&
             row[1] === "I Wanna Wane" &&
-            type === "M";
-        
-          badge.textContent = type;
-        
-          if (type === "M") badge.classList.add("maker-badge");
-          if (type === "T") badge.classList.add("tester-badge");
-        
-          if (isPlasmaWane) {
-        
-            badge.addEventListener("mouseenter", (e) => {
-              e.stopPropagation();
-              badge.textContent = "W";
-            });
-        
-            badge.addEventListener("mouseleave", (e) => {
-              e.stopPropagation();
-              badge.textContent = "M";
-            });
-        
-            badge.addEventListener("click", (e) => {
-              e.stopPropagation();
-              curveWAHSecretMode = !curveWAHSecretMode;
-              applyFilter();
-            });
-        
+            type === "M"
+          ) {
+            badge.dataset.secret = "curveWAH";
             badge.style.cursor = "pointer";
           }
-        
+
           wrapper.appendChild(badge);
         }
 
         td.appendChild(wrapper);
       }
-      
+
+      /* Death / Time */
       else if (index === 5 || index === 6) {
         td.textContent = cell ? cell.replace(".000", "") : "-";
       }
 
+      /* Video */
       else if (index === 7 && cell?.startsWith("http")) {
         const a = document.createElement("a");
         a.href = cell;
         a.textContent = "Video";
         a.target = "_blank";
-        td.classList.add("clickable-cell");
         td.appendChild(a);
       }
 
@@ -470,10 +615,12 @@ headerRow.appendChild(numberTh);
       }
 
       tr.appendChild(td);
-    });
+    }
 
-    tbody.appendChild(tr);
-  });
+    fragment.appendChild(tr);
+  }
+
+  clearTbody.appendChild(fragment);
 
   updateRowCount();
   updateFilterSummary();
@@ -506,71 +653,49 @@ function setupSearch() {
       showTesters = e.target.checked;
       applyFilter();
     });
-  
+
   input.addEventListener("input", () => {
-    rumaSecretMode = false;
-    curveWAHSecretMode = false;
-    oiiaSecretMode = false;
     exactMatchMode = false;
     applyFilter();
   });
 
   countrySelect.addEventListener("change", () => {
-    rumaSecretMode = false;
-    curveWAHSecretMode = false;
-    oiiaSecretMode = false;
     exactMatchMode = false;
     applyFilter();
   });
 
   columnSelect.addEventListener("change", () => {
-  
-    playersExactMatchMode = false;
-    rumaSecretMode = false;
-    curveWAHSecretMode = false;
-    oiiaSecretMode = false;
-  
+
     input.value = "";
     countrySelect.value = "";
-  
+
     const selected = columnSelect.value;
-  
+
     if (selected === "country") {
       input.classList.add("hidden");
       countrySelect.classList.remove("hidden");
-    } else if (selected === "oiia-secret") {
-      input.classList.add("hidden");
-      countrySelect.classList.add("hidden");
     } else {
       countrySelect.classList.add("hidden");
       input.classList.remove("hidden");
       updateSearchPlaceholder();
     }
-    
+
     applyFilter();
   });
 
   clearBtn.addEventListener("click", () => {
-  
-    const columnSelect = document.getElementById("search-column");
-  
+
     input.value = "";
     countrySelect.value = "";
-  
-    exactMatchMode = false;
-    rumaSecretMode = false;
-    curveWAHSecretMode = false;
-    oiiaSecretMode = false;
-    oiiaSecretAvailable = false;
     columnSelect.value = "date";
-    
-    updateSecretDropdownOption();
-  
+
+    exactMatchMode = false;
+
     countrySelect.classList.add("hidden");
     input.classList.remove("hidden");
-  
+
     updateSearchPlaceholder();
-  
+
     filteredData = getBaseVisibleData();
     sortData();
     renderTable();
@@ -578,23 +703,14 @@ function setupSearch() {
 }
 
 function applyFilter() {
+
   const column = document.getElementById("search-column").value;
   const input = document.getElementById("search-input");
   const countrySelect = document.getElementById("country-select");
 
   const query = input.value.trim().toLowerCase();
 
-  if (column === "oiia-secret") {
-    oiiaSecretMode = true;
-    filteredData = fullData.filter(row =>
-      row[1] === "I wanna OIIAOIIA"
-    );
-    sortData();
-    renderTable();
-    return;
-  }
-
-  // Reset base
+  // Start from base visible data
   filteredData = getBaseVisibleData();
 
   // Country filter
@@ -616,7 +732,6 @@ function applyFilter() {
     const colIndex = columnIndexMap[column];
 
     filteredData = filteredData.filter(row => {
-
       const cell = row[colIndex];
       if (!cell) return false;
 
@@ -627,30 +742,9 @@ function applyFilter() {
         : value.includes(query);
     });
   }
+  
+  filteredData = SecretManager.applySecrets(column, filteredData);
 
-  oiiaSecretAvailable = false;
-  
-  if (
-    column === "game" &&
-    input.value.trim() ===
-      "I wanna be the Music2 - シュレーディンガーの猫《INFINITE》 Perfect"
-  ) {
-    oiiaSecretAvailable = true;
-  }
-  
-  if (rumaSecretMode) {
-    filteredData = fullData.filter(row =>
-      row[1] === "I wanna Ruma - Extra"
-    );
-  }
-
-  if (curveWAHSecretMode) {
-  filteredData = fullData.filter(row =>
-    row[1] === "curveWAH"
-  );
-}
-  
-  updateSecretDropdownOption();
   applyClearMode();
   sortData();
   renderTable();
@@ -755,55 +849,49 @@ function setupAutocomplete() {
 
   input.addEventListener("input", () => {
 
-    const value = input.value.toLowerCase();
-    const selectedColumn = columnSelect.value;
+    const query = input.value.trim().toLowerCase();
+    const column = columnSelect.value;
 
-    list.innerHTML = "";
+    list.textContent = "";
 
-    if (!value) {
+    if (!query) {
       list.classList.add("hidden");
       return;
     }
 
-    let source = [];
+    let source;
 
-    if (selectedColumn === "game") {
-      source = [...new Set(
-        fullData
-          .map(row => row[1])
-          .filter(game =>
-            game !== "I wanna Ruma - Extra" &&
-            game !== "curveWAH" &&
-            game !== "I wanna OIIAOIIA"
-          )
-      )].sort();
-    } 
-    else if (selectedColumn === "player") {
-      source = [...new Set(fullData.map(row => row[4]))].sort();
-    } else {
+    if (column === "game") {
+      source = autocompleteSources.games;
+    }
+    else if (column === "player") {
+      source = autocompleteSources.players;
+    }
+    else {
       list.classList.add("hidden");
       return;
     }
 
-    const lowerValue = value.toLowerCase();
-    
     const startsWithMatches = [];
     const includesMatches = [];
-    
-    source.forEach(item => {
+
+    for (const item of source) {
+
       const lowerItem = item.toLowerCase();
-    
-      if (lowerItem.startsWith(lowerValue)) {
+
+      if (lowerItem.startsWith(query)) {
         startsWithMatches.push(item);
       }
-      else if (lowerItem.includes(lowerValue)) {
+      else if (lowerItem.includes(query)) {
         includesMatches.push(item);
       }
-    });
 
-    startsWithMatches.sort();
-    includesMatches.sort();
-    
+      // Early stop for performance
+      if (startsWithMatches.length + includesMatches.length >= 20) {
+        break;
+      }
+    }
+
     const matches = [
       ...startsWithMatches,
       ...includesMatches
@@ -814,22 +902,29 @@ function setupAutocomplete() {
       return;
     }
 
-    matches.forEach(match => {
+    const fragment = document.createDocumentFragment();
+
+    for (const match of matches) {
       const div = document.createElement("div");
-      div.classList.add("autocomplete-item");
+      div.className = "autocomplete-item";
+      div.dataset.value = match;
       div.textContent = match;
+      fragment.appendChild(div);
+    }
 
-      div.addEventListener("click", () => {
-        input.value = match;
-        exactMatchMode = true;
-        list.classList.add("hidden");
-        applyFilter();
-      });
-
-      list.appendChild(div);
-    });
-
+    list.appendChild(fragment);
     list.classList.remove("hidden");
+  });
+  
+  list.addEventListener("click", (e) => {
+
+    const item = e.target.closest(".autocomplete-item");
+    if (!item) return;
+
+    input.value = item.dataset.value;
+    exactMatchMode = true;
+    list.classList.add("hidden");
+    applyFilter();
   });
 
   document.addEventListener("click", (e) => {
@@ -877,7 +972,7 @@ function updateSearchPlaceholder() {
   const columnSelect = document.getElementById("search-column");
   const input = document.getElementById("search-input");
 
-  if (columnSelect.value === "oii-secret") return;
+  if (columnSelect.value === "oiia-secret") return;
 
   const selectedText =
     columnSelect.options[columnSelect.selectedIndex].text;
@@ -916,43 +1011,8 @@ function applyUrlFilters() {
   }
 }
 
-function isRumaSearchActive() {
-
-  const column = document.getElementById("search-column").value;
-  const input = document.getElementById("search-input").value.trim();
-
-  return (
-    column === "game" &&
-    input === "I wanna Ruma"
-  );
-}
-
-function updateSecretDropdownOption() {
-
-  const columnSelect = document.getElementById("search-column");
-
-  const existing = [...columnSelect.options].find(
-    opt => opt.value === "oiia-secret"
-  );
-
-  if (oiiaSecretAvailable && !existing) {
-
-    const option = document.createElement("option");
-    option.value = "oiia-secret";
-    option.textContent = "????????";
-
-    columnSelect.appendChild(option);
-  }
-
-  if (!oiiaSecretAvailable && existing) {
-    existing.remove();
-  }
-}
-
 function getBaseVisibleData() {
   return fullData.filter(row =>
-    row[1] !== "I wanna Ruma - Extra" &&
-    row[1] !== "curveWAH" &&
-    row[1] !== "I wanna OIIAOIIA"
+    !SecretManager.isSecretGame(row[1])
   );
 }

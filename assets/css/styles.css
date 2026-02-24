@@ -208,11 +208,12 @@ body {
 
 .ahof-player-link {
   cursor: pointer;
+  font-weight: 600;
   transition: font-weight 0.1s ease;
 }
 
 .ahof-player-link:hover {
-  font-weight: 600;
+  font-weight: 800;
 }
 
 .ahof-game-link {
@@ -222,6 +223,11 @@ body {
 
 .ahof-game-link:hover {
   font-weight: 700;
+}
+
+.ahof-total {
+  font-weight: 600;
+  transition: font-weight 0.1s ease;
 }
 
 /* =========================

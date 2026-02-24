@@ -107,7 +107,7 @@ function renderTable() {
     
     span.addEventListener("click", () => {
       const encodedGame = encodeURIComponent(gameName);
-      window.location.href = `clear-list.html?game=${encodedGame}`;
+      window.location.href = `clears.html?game=${encodedGame}`;
     });
     
     gameTd.appendChild(span);

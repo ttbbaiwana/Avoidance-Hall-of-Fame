@@ -167,7 +167,11 @@ function renderTable() {
       tr.appendChild(latestTd);
 
       const totalTd = document.createElement("td");
-      totalTd.textContent = meta.total || "0";
+      const span = document.createElement("span");
+      
+      span.textContent = meta.total || "0";
+      span.classList.add("ahof-total");
+      totalTd.appendChild(span);
       tr.appendChild(totalTd);
     } else {
 

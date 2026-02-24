@@ -34,7 +34,10 @@
       <div class="field">
         <label>
           <strong>What is your name on AHoF?</strong> (Enter it exactly how it appears on AHoF)<br />
-          <input id="name" type="text" required />
+          <div class="autocomplete-wrapper">
+            <input id="name" type="text" autocomplete="off" required />
+            <div id="name-autocomplete-list" class="autocomplete-list hidden"></div>
+          </div>
         </label>
       </div>
   

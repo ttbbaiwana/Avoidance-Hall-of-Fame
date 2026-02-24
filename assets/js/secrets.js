@@ -1,0 +1,157 @@
+/* ================= SECRET MANAGER ================= */
+
+const SecretManager = (() => {
+
+  /* ================= SECRET GAME REGISTRY ================= */
+
+  // Add future secret games here ONLY
+  const SECRET_GAME_SET = new Set([
+    "I wanna Ruma - Extra",
+    "curveWAH",
+    "I wanna OIIAOIIA"
+  ]);
+
+  function isSecretGame(gameName) {
+    return SECRET_GAME_SET.has(gameName);
+  }
+
+  function getSecretGameNames() {
+    return Array.from(SECRET_GAME_SET);
+  }
+
+  /* ================= INTERNAL STATE ================= */
+
+  const state = {
+    rumaActive: false,
+    curveWAHActive: false,
+    oiiaAvailable: false
+  };
+
+  let hooks = {
+    applyFilter: null,
+    getSearchState: null,
+    getColumnSelect: null
+  };
+
+  /* ================= INITIALIZATION ================= */
+
+  function init(config) {
+    hooks = config;
+    setupRumaHeaderSecret();
+  }
+
+  /* ================= RUMA SECRET ================= */
+
+  function isRumaSearchActive() {
+    const { column, input } = hooks.getSearchState();
+    return column === "game" && input === "I wanna Ruma";
+  }
+
+  function setupRumaHeaderSecret() {
+
+    document.addEventListener("mouseover", (e) => {
+      if (e.target.tagName !== "TH") return;
+
+      if (e.target.textContent === "#" && isRumaSearchActive()) {
+        e.target.textContent = "?";
+      }
+    });
+
+    document.addEventListener("mouseout", (e) => {
+      if (e.target.tagName === "TH" && e.target.textContent === "?") {
+        e.target.textContent = "#";
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (e.target.tagName === "TH" && e.target.textContent === "?") {
+        state.rumaActive = !state.rumaActive;
+        hooks.applyFilter();
+      }
+    });
+  }
+
+  /* ================= OIIA SECRET ================= */
+
+  function updateOiiaAvailability() {
+
+    const { column, input } = hooks.getSearchState();
+
+    state.oiiaAvailable =
+      column === "game" &&
+      input ===
+        "I wanna be the Music2 - シュレーディンガーの猫《INFINITE》 Perfect";
+
+    const select = hooks.getColumnSelect();
+    if (!select) return;
+
+    const existing = [...select.options]
+      .find(opt => opt.value === "oiia-secret");
+
+    if (state.oiiaAvailable && !existing) {
+      const option = document.createElement("option");
+      option.value = "oiia-secret";
+      option.textContent = "????????";
+      select.appendChild(option);
+    }
+
+    if (!state.oiiaAvailable && existing) {
+      existing.remove();
+    }
+  }
+
+  /* ================= CURVEWAH SECRET ================= */
+
+  function toggleCurveWAH() {
+    state.curveWAHActive = !state.curveWAHActive;
+    hooks.applyFilter();
+  }
+
+  function handlePlasmaHover(badge, entering) {
+    if (badge.dataset.secret === "curveWAH") {
+      badge.textContent = entering ? "W" : "M";
+    }
+  }
+
+  /* ================= APPLY SECRETS ================= */
+
+  function applySecrets(column, data) {
+
+    updateOiiaAvailability();
+
+    // OIIA dropdown selection
+    if (column === "oiia-secret") {
+      return data.filter(row =>
+        row[1] === "I wanna OIIAOIIA"
+      );
+    }
+
+    // Ruma mode
+    if (state.rumaActive) {
+      return data.filter(row =>
+        row[1] === "I wanna Ruma - Extra"
+      );
+    }
+
+    // CurveWAH mode
+    if (state.curveWAHActive) {
+      return data.filter(row =>
+        row[1] === "curveWAH"
+      );
+    }
+
+    return data;
+  }
+
+  /* ================= PUBLIC API ================= */
+
+  return {
+    init,
+    applySecrets,
+    toggleCurveWAH,
+    handlePlasmaHover,
+    isSecretGame,
+    getSecretGameNames
+  };
+
+})();

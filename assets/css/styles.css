@@ -206,6 +206,15 @@ body {
   z-index: 2;
 }
 
+.ahof-player-link {
+  cursor: pointer;
+  transition: font-weight 0.1s ease;
+}
+
+.ahof-player-link:hover {
+  font-weight: 600;
+}
+
 /* =========================
    Landing Page
 ========================= */

@@ -527,3 +527,325 @@ function getBaseVisibleData() {
     !SecretManager.isSecretGame(row[1])
   );
 }
+
+function populateCountryDropdown() {
+
+  const select = document.getElementById("country-select");
+
+  const countries = [...new Set(
+    fullData.map(row => row[2])
+  )]
+    .filter(Boolean)
+    .sort();
+
+  select.innerHTML =
+    "<option value=''>Select country</option>";
+
+  countries.forEach(country => {
+
+    const option = document.createElement("option");
+    option.value = country;
+    option.textContent = country;
+    select.appendChild(option);
+  });
+}
+
+function applyClearMode() {
+
+  if (clearMode === "all") return;
+
+  const gameMap = {};
+
+  filteredData.forEach(row => {
+
+    const game = row[1];
+    const date = new Date(row[0]);
+
+    if (!gameMap[game]) {
+      gameMap[game] = row;
+      return;
+    }
+
+    const existingDate =
+      new Date(gameMap[game][0]);
+
+    if (
+      (clearMode === "first" && date < existingDate) ||
+      (clearMode === "latest" && date > existingDate)
+    ) {
+      gameMap[game] = row;
+    }
+  });
+
+  filteredData = Object.values(gameMap);
+}
+
+function updateRowCount() {
+
+  const rowCountElement = document.getElementById("row-count");
+
+  if (!rowCountElement) return;
+
+  const count = filteredData.length;
+
+  rowCountElement.textContent = `Showing ${count} Clear${count === 1 ? "" : "s"}`;
+}
+
+function updateFilterSummary() {
+
+  const summaryEl = document.getElementById("filter-summary");
+
+  if (!summaryEl) return;
+
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
+
+  const parts = [];
+
+  if (clearMode === "first") {
+    parts.push("First Clears");
+  }
+  else if (clearMode === "latest") {
+    parts.push("Latest Clears");
+  }
+  else {
+    parts.push("All Clears");
+  }
+
+  if (!showMakers) parts.push("Makers Hidden");
+  if (!showTesters) parts.push("Testers Hidden");
+
+  const selectedColumn = columnSelect.value;
+
+  if (selectedColumn === "country" && countrySelect.value) {
+    parts.push(`Country = ${countrySelect.value}`);
+  }
+  else if (input.value.trim() !== "") {
+    const columnLabel =
+      columnSelect.options[columnSelect.selectedIndex].text;
+    parts.push(`${columnLabel} = ${input.value.trim()}`);
+  }
+
+  summaryEl.textContent = `Showing: ${parts.join(" | ")}`;
+}
+
+function updateSearchPlaceholder() {
+
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+
+  if (columnSelect.value === "oiia-secret") return;
+
+  const selectedText = columnSelect.options[columnSelect.selectedIndex].text;
+
+  input.placeholder = `Search ${selectedText}...`;
+}
+
+function setupSearch() {
+
+  const input = document.getElementById("search-input");
+  const columnSelect = document.getElementById("search-column");
+  const countrySelect = document.getElementById("country-select");
+  const clearBtn = document.getElementById("clear-search");
+
+  updateSearchPlaceholder();
+
+  document
+    .querySelectorAll('input[name="clear-mode"]')
+    .forEach(radio => {
+
+      radio.addEventListener("change", e => {
+        clearMode = e.target.value;
+        applyFilter();
+      });
+    });
+
+  document
+    .getElementById("show-makers")
+    .addEventListener("change", e => {
+      showMakers = e.target.checked;
+      applyFilter();
+    });
+
+  document
+    .getElementById("show-testers")
+    .addEventListener("change", e => {
+      showTesters = e.target.checked;
+      applyFilter();
+    });
+
+  input.addEventListener("input", () => {
+    exactMatchMode = false;
+    applyFilter();
+  });
+
+  countrySelect.addEventListener("change", () => {
+    exactMatchMode = false;
+    applyFilter();
+  });
+
+  columnSelect.addEventListener("change", () => {
+
+    input.value = "";
+    countrySelect.value = "";
+
+    if (columnSelect.value === "country") {
+      input.classList.add("hidden");
+      countrySelect.classList.remove("hidden");
+    }
+    else {
+      countrySelect.classList.add("hidden");
+      input.classList.remove("hidden");
+      updateSearchPlaceholder();
+    }
+
+    applyFilter();
+  });
+
+  clearBtn.addEventListener("click", () => {
+
+    input.value = "";
+    countrySelect.value = "";
+    columnSelect.value = "date";
+
+    exactMatchMode = false;
+
+    countrySelect.classList.add("hidden");
+    input.classList.remove("hidden");
+
+    updateSearchPlaceholder();
+
+    filteredData = getBaseVisibleData();
+    sortData();
+    renderTable();
+  });
+}
+
+function setupAutocomplete() {
+
+  const input = document.getElementById("search-input");
+  const list = document.getElementById("autocomplete-list");
+  const columnSelect = document.getElementById("search-column");
+
+  input.addEventListener("input", () => {
+
+    const query = input.value.trim().toLowerCase();
+    const column = columnSelect.value;
+
+    list.textContent = "";
+
+    if (!query) {
+      list.classList.add("hidden");
+      return;
+    }
+
+    let source;
+
+    if (column === "game") {
+      source = autocompleteSources.games;
+    }
+    else if (column === "player") {
+      source = autocompleteSources.players;
+    }
+    else {
+      list.classList.add("hidden");
+      return;
+    }
+
+    const startsWithMatches = [];
+    const includesMatches = [];
+
+    for (const item of source) {
+
+      const lowerItem = item.toLowerCase();
+
+      if (lowerItem.startsWith(query)) {
+        startsWithMatches.push(item);
+      }
+      else if (lowerItem.includes(query)) {
+        includesMatches.push(item);
+      }
+
+      if (startsWithMatches.length +
+          includesMatches.length >= 20) {
+        break;
+      }
+    }
+
+    const matches = [
+      ...startsWithMatches,
+      ...includesMatches
+    ].slice(0, 10);
+
+    if (matches.length === 0) {
+      list.classList.add("hidden");
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    matches.forEach(match => {
+
+      const div = document.createElement("div");
+
+      div.className = "autocomplete-item";
+      div.dataset.value = match;
+      div.textContent = match;
+
+      fragment.appendChild(div);
+    });
+
+    list.appendChild(fragment);
+    list.classList.remove("hidden");
+  });
+
+  list.addEventListener("click", e => {
+
+    const item = e.target.closest(".autocomplete-item");
+
+    if (!item) return;
+
+    input.value = item.dataset.value;
+    exactMatchMode = true;
+    list.classList.add("hidden");
+    applyFilter();
+  });
+
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".autocomplete-wrapper")) {
+      list.classList.add("hidden");
+    }
+  });
+}
+
+function applyUrlFilters() {
+
+  const params = new URLSearchParams(window.location.search);
+  const playerParam = params.get("player");
+  const gameParam = params.get("game");
+
+  if (!playerParam && !gameParam) return;
+
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
+
+  if (playerParam) {
+    columnSelect.value = "player";
+    input.classList.remove("hidden");
+    countrySelect.classList.add("hidden");
+    input.value = playerParam;
+    exactMatchMode = true;
+  }
+
+  applyFilter();
+
+  if (gameParam) {
+    filteredData =
+      filteredData.filter(row =>
+        row[1] === gameParam
+      );
+    renderTable();
+  }
+}

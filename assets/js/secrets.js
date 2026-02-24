@@ -4,16 +4,42 @@ const SecretManager = (() => {
 
   /* ================= SECRET GAME REGISTRY ================= */
   
-  const SECRET_GAME_SET = new Set([
-    "I wanna Ruma - Extra",
-    "curveWAH",
-    "I wanna OIIAOIIA"
-  ]);
-
+  const SECRET_GAMES = {
+    ruma: {
+      name: "I wanna Ruma - Extra",
+      color: "#cc0000"
+    },
+    curveWAH: {
+      name: "curveWAH",
+      color: "#e06666"
+    },
+    oiia: {
+      name: "I wanna OIIAOIIA",
+      color: "#c67a5e"
+    }
+  };
+  
+  const SECRET_GAME_SET = new Set(
+    Object.values(SECRET_GAMES).map(g => g.name)
+  );
+  
   function isSecretGame(gameName) {
     return SECRET_GAME_SET.has(gameName);
   }
-
+  
+  function getSecretStyle(gameName) {
+  
+    const entry = Object.values(SECRET_GAMES)
+      .find(g => g.name === gameName);
+  
+    if (!entry) return null;
+  
+    return {
+      backgroundColor: entry.color,
+      fontWeight: "700"
+    };
+  }
+  
   function getSecretGameNames() {
     return Array.from(SECRET_GAME_SET);
   }
@@ -116,27 +142,32 @@ const SecretManager = (() => {
   function applySecrets(column, data, fullData) {
   
     updateOiiaAvailability();
-  
-    // OIIA dropdown selection
+
     if (column === "oiia-secret") {
       return fullData.filter(row =>
-        row[1] === "I wanna OIIAOIIA"
+        row[1] === SECRET_GAMES.oiia.name
       );
     }
-  
+    
     if (state.rumaActive) {
       return fullData.filter(row =>
-        row[1] === "I wanna Ruma - Extra"
+        row[1] === SECRET_GAMES.ruma.name
       );
     }
-  
+    
     if (state.curveWAHActive) {
       return fullData.filter(row =>
-        row[1] === "curveWAH"
+        row[1] === SECRET_GAMES.curveWAH.name
       );
     }
   
     return data;
+  }
+
+  /* ================= RESET SECRETS ================= */
+  function resetSecrets() {
+    state.rumaActive = false;
+    state.curveWAHActive = false;
   }
 
   /* ================= PUBLIC API ================= */
@@ -147,7 +178,9 @@ const SecretManager = (() => {
     toggleCurveWAH,
     handlePlasmaHover,
     isSecretGame,
-    getSecretGameNames
+    getSecretGameNames,
+    getSecretStyle,
+    resetSecrets
   };
 
 })();

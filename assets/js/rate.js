@@ -13,6 +13,8 @@ const responses = {
   avoidances: {}
 };
 
+let validPlayerNames = [];
+
 function getContrastTextColor(hex) {
   const c = hex.replace("#", "");
   const r = parseInt(c.substr(0, 2), 16);
@@ -25,10 +27,29 @@ function getContrastTextColor(hex) {
   return luminance > 0.6 ? "#000000" : "#ffffff";
 }
 
+async function fetchValidPlayerNames() {
+  try {
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?view=players`);
+    const json = await res.json();
+
+    // Player column index = 2 (Country, Avatar, Player...)
+    validPlayerNames = [...new Set(
+      json.data.map(row => row[2])
+    )].sort();
+
+    setupNameAutocomplete();
+  } catch (err) {
+    console.error("Failed to fetch player names", err);
+  }
+}
+
+fetchValidPlayerNames();
+
 // ---------- PAGE 1 GATE ----------
 function validateGate() {
   const clears = Number(clearsInput.value);
-  const nameFilled = nameInput.value.trim().length > 0;
+  const enteredName = nameInput.value.trim();
+	const nameFilled = validPlayerNames.includes(enteredName);
 	responses.meta.name = nameInput.value.trim();
 
   if (nameFilled && clears >= 5) {
@@ -36,11 +57,17 @@ function validateGate() {
     errorMsg.style.display = "none";
   } else {
     nextBtn.disabled = true;
-    if (clears > 0 && clears < 5) {
-      errorMsg.style.display = "block";
-    } else {
-      errorMsg.style.display = "none";
-    }
+		if (!nameFilled && enteredName.length > 0) {
+		  errorMsg.innerText = "Name must match a valid AHoF player.";
+		  errorMsg.style.display = "block";
+		}
+		else if (clears > 0 && clears < 5) {
+		  errorMsg.innerText = "You must have at least 5 AHoF clears.";
+		  errorMsg.style.display = "block";
+		}
+		else {
+		  errorMsg.style.display = "none";
+		}
   }
 }
 
@@ -264,3 +291,59 @@ submitBtn.addEventListener("click", async () => {
     console.error(err);
   }
 });
+
+function setupNameAutocomplete() {
+
+  const input = document.getElementById("name");
+  const list = document.getElementById("name-autocomplete-list");
+
+  input.addEventListener("input", () => {
+
+    const value = input.value.toLowerCase();
+    list.innerHTML = "";
+
+    if (!value) {
+      list.classList.add("hidden");
+      return;
+    }
+
+    const startsWith = [];
+    const includes = [];
+
+    validPlayerNames.forEach(name => {
+      const lower = name.toLowerCase();
+
+      if (lower.startsWith(value)) startsWith.push(name);
+      else if (lower.includes(value)) includes.push(name);
+    });
+
+    const matches = [...startsWith, ...includes].slice(0, 10);
+
+    if (!matches.length) {
+      list.classList.add("hidden");
+      return;
+    }
+
+    matches.forEach(match => {
+      const div = document.createElement("div");
+      div.classList.add("autocomplete-item");
+      div.textContent = match;
+
+      div.addEventListener("click", () => {
+        input.value = match;
+        list.classList.add("hidden");
+        validateGate();
+      });
+
+      list.appendChild(div);
+    });
+
+    list.classList.remove("hidden");
+  });
+
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".autocomplete-wrapper")) {
+      list.classList.add("hidden");
+    }
+  });
+}

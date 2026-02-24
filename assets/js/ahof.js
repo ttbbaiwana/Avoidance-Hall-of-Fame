@@ -98,15 +98,25 @@ function renderTable() {
 
     // Game cell
     const gameTd = document.createElement("td");
-    gameTd.textContent = gameName;
-
+    const span = document.createElement("span");
+    
+    span.textContent = gameName;
+    span.classList.add("ahof-game-link");
+    
+    span.addEventListener("click", () => {
+      const encodedGame = encodeURIComponent(gameName);
+      window.location.href = `clear-list.html?game=${encodedGame}`;
+    });
+    
+    gameTd.appendChild(span);
+    
     const bg = avoidanceColorMap[gameName];
     if (bg) {
       gameTd.style.backgroundColor = bg;
       gameTd.style.color = getContrastTextColor(bg);
       gameTd.style.fontWeight = "600";
     }
-
+    
     tr.appendChild(gameTd);
     
     if (!showRatings) {
@@ -190,10 +200,10 @@ function renderTable() {
 
 function sortTable(headerIndex) {
 
-  // Rank
+  // Ignore Rank
   if (headerIndex === 0) return;
 
-  // Game
+  // Game sorting
   if (headerIndex === 1) {
 
     tableData.sort((a, b) => {
@@ -205,36 +215,44 @@ function sortTable(headerIndex) {
       if (diffA === undefined) return 1;
       if (diffB === undefined) return -1;
 
-      return diffA - diffB; // hardest first
+      return diffA - diffB;
     });
-    
+
     renderTable();
     return;
   }
-  
-  // Total Clears
-  if (!showRatings && headerIndex === 4) {
-    
-    if (currentSort.index === headerIndex) {
+
+  // Clears Mode
+  if (!showRatings) {
+
+    // Total Clears column = index 4
+    if (headerIndex === 4) {
+
+      if (currentSort.index === headerIndex) {
         currentSort.asc = !currentSort.asc;
       } else {
         currentSort.index = headerIndex;
         currentSort.asc = false;
       }
-    
+
       tableData.sort((a, b) => {
+
         const totalA = clearsMeta[a[0]]?.total || 0;
         const totalB = clearsMeta[b[0]]?.total || 0;
-    
+
         return currentSort.asc
           ? totalA - totalB
           : totalB - totalA;
       });
-    
+
       renderTable();
       return;
+    }
+    
+    return;
   }
-  
+
+  // Ratings Mode
   const dataIndex = headerIndex - 1;
 
   if (currentSort.index === headerIndex) {
@@ -245,19 +263,19 @@ function sortTable(headerIndex) {
   }
 
   tableData.sort((a, b) => {
-  
+
     const valA = a[dataIndex];
     const valB = b[dataIndex];
-  
+
     if (valA === "N/A") return 1;
     if (valB === "N/A") return -1;
-  
+
     if (!isNaN(valA) && !isNaN(valB)) {
       return currentSort.asc
         ? parseFloat(valA) - parseFloat(valB)
         : parseFloat(valB) - parseFloat(valA);
     }
-  
+
     return currentSort.asc
       ? String(valA).localeCompare(String(valB))
       : String(valB).localeCompare(String(valA));

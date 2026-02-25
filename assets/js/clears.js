@@ -69,21 +69,45 @@ fetch(`${API_URL}?view=clear-list`)
 /* ================= EVENT DELEGATION ================= */
 
 clearTbody.addEventListener("click", (e) => {
+  
+  const badge = e.target.closest(".role-badge");
 
-  const clickableCell = e.target.closest(".clickable-cell");
-  if (
-    clickableCell?.dataset.filterIndex) {
-    applyExactFilter(
-      parseInt(clickableCell.dataset.filterIndex),
-      clickableCell.dataset.value
-    );
+  if (badge?.dataset.secret === "curveWAH") {
+    e.stopPropagation();
+    SecretManager.toggleCurveWAH();
     return;
   }
 
-  const badge = e.target.closest(".role-badge");
-  if (badge?.dataset.secret === "curveWAH") {
-    SecretManager.toggleCurveWAH();
+  const clickableCell = e.target.closest(".clickable-cell");
+
+  if (!clickableCell?.dataset.filterIndex) return;
+  
+  const columnIndex = parseInt(clickableCell.dataset.filterIndex);
+  const value = clickableCell.dataset.value;
+
+  const columnMap = {
+    0: "date",
+    1: "game",
+    2: "country",
+    4: "player"
+  };
+
+  const selectedColumn = columnMap[columnIndex];
+  
+  if (selectedColumn === "game" && 
+      SecretManager.isSecretModeActive()
+  ) {
+    return;
   }
+  
+  if (
+    selectedColumn === "player" &&
+    SecretManager.isSecretModeActive()
+  ) {
+    SecretManager.resetSecrets();
+  }
+
+  applyExactFilter(columnIndex, value);
 });
 
 clearTbody.addEventListener("mouseover", (e) => {

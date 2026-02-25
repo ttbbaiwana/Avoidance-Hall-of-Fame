@@ -646,14 +646,12 @@ function setupSearch() {
 
   updateSearchPlaceholder();
 
-  document
-    .querySelectorAll('input[name="clear-mode"]')
-    .forEach(radio => 
-      radio.addEventListener("change", e => {
-        clearMode = e.target.value;
-        applyFilter();
-      });
+  document.querySelectorAll('input[name="clear-mode"]').forEach(radio => {
+    radio.addEventListener("change", e => {
+      clearMode = e.target.value;
+      applyFilter();
     });
+  });
 
   document
     .getElementById("show-makers")

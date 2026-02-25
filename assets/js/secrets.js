@@ -51,12 +51,8 @@ const SecretManager = (() => {
     curveWAHActive: false,
     oiiaAvailable: false
   };
-
-  let hooks = {
-    applyFilter: null,
-    getSearchState: null,
-    getColumnSelect: null
-  };
+  
+  let hooks = null;
 
   /* ================= INITIALIZATION ================= */
 
@@ -68,6 +64,7 @@ const SecretManager = (() => {
   /* ================= RUMA SECRET ================= */
 
   function isRumaSearchActive() {
+    if (!isInitialized()) return false;
     const { column, input } = hooks.getSearchState();
     return column === "game" && input === "I wanna Ruma";
   }
@@ -99,7 +96,7 @@ const SecretManager = (() => {
   /* ================= OIIA SECRET ================= */
 
   function updateOiiaAvailability() {
-
+    if (!isInitialized()) return;
     const { column, input } = hooks.getSearchState();
 
     state.oiiaAvailable =
@@ -127,7 +124,7 @@ const SecretManager = (() => {
   /* ================= CURVEWAH SECRET ================= */
 
   function toggleCurveWAH() {
-  
+    if (!isInitialized()) return;
     state.curveWAHActive = !state.curveWAHActive;
   
     const columnSelect = hooks.getColumnSelect();
@@ -151,7 +148,7 @@ const SecretManager = (() => {
   /* ================= APPLY SECRETS ================= */
 
   function applySecrets(column, data, fullData) {
-
+    if (!isInitialized()) return data;
     updateOiiaAvailability();
   
     // OIIA
@@ -188,7 +185,7 @@ const SecretManager = (() => {
     return data;
   }
   
-  /* ================= RESET SECRETS ================= */
+  /* ================= OTHER ================= */
   function resetSecrets() {
     state.rumaActive = false;
     state.curveWAHActive = false;
@@ -197,6 +194,10 @@ const SecretManager = (() => {
   function isSecretModeActive() {
     return state.rumaActive ||
            state.curveWAHActive;
+  }
+
+  function isInitialized() {
+    return hooks !== null;
   }
 
   /* ================= PUBLIC API ================= */

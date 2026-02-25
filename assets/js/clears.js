@@ -198,12 +198,15 @@ function sortData() {
 
     const valA = a[col];
     const valB = b[col];
-
+    
     if (currentSort === "date") {
     
       filteredData.forEach(row => {
         if (!row._ts) {
-          row._ts = new Date(row[0]).getTime();
+          const val = row[0];
+          row._ts = val instanceof Date
+            ? val.getTime()
+            : new Date(val).getTime();
         }
       });
     

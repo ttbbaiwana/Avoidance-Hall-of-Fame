@@ -197,7 +197,6 @@ const SecretManager = (() => {
     isSecretGame,
     getSecretGameNames,
     getSecretStyle,
-    isSecretOverrideActive,
     resetSecrets
   };
 

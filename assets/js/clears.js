@@ -71,7 +71,10 @@ fetch(`${API_URL}?view=clear-list`)
 clearTbody.addEventListener("click", (e) => {
 
   const clickableCell = e.target.closest(".clickable-cell");
-  if (clickableCell?.dataset.filterIndex) {
+  if (
+    clickableCell?.dataset.filterIndex &&
+    !SecretManager.isSecretOverrideActive()
+  ) {
     applyExactFilter(
       parseInt(clickableCell.dataset.filterIndex),
       clickableCell.dataset.value
@@ -629,9 +632,6 @@ function updateSearchPlaceholder() {
 
   const columnSelect = document.getElementById("search-column");
   const input = document.getElementById("search-input");
-
-  if (columnSelect.value === "oiia-secret") return;
-
   const selectedText = columnSelect.options[columnSelect.selectedIndex].text;
 
   input.placeholder = `Search ${selectedText}...`;
@@ -877,7 +877,8 @@ function applyExactFilter(columnIndex, value) {
   }
 
   exactMatchMode = true;
-
+  SecretManager.resetSecrets();
+  
   applyFilter();
 
   window.scrollTo({

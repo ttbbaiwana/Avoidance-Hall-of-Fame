@@ -229,9 +229,13 @@ function sortData() {
     }
 
     if (currentSort === "player") {
+    
+      const strA = String(valA ?? "");
+      const strB = String(valB ?? "");
+    
       return currentOrder === "asc"
-        ? valA.localeCompare(valB)
-        : valB.localeCompare(valA);
+        ? strA.localeCompare(strB)
+        : strB.localeCompare(strA);
     }
 
     if (currentSort === "death") {

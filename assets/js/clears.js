@@ -94,8 +94,9 @@ clearTbody.addEventListener("click", (e) => {
 
   const selectedColumn = columnMap[columnIndex];
   
-  if (selectedColumn === "game" && 
-      SecretManager.isSecretModeActive()
+  if (
+    selectedColumn === "game" &&
+    SecretManager.isSecretGame(value)
   ) {
     return;
   }
@@ -729,6 +730,7 @@ function setupSearch() {
     input.classList.remove("hidden");
   
     updateSearchPlaceholder();
+    SecretManager.resetSecrets();
     filteredData = getBaseVisibleData();
     sortData();
     renderTable();

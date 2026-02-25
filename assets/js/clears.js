@@ -477,9 +477,7 @@ function renderTable() {
       }
 
       else if (index === 5 || index === 6) {
-        td.textContent = cell
-          ? cell.replace(".000", "")
-          : "-";
+        td.textContent = cell ? cell : "-";
       }
 
       else if (index === 7 && cell?.startsWith("http")) {

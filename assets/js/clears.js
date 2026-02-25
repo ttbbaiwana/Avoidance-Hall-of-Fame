@@ -93,7 +93,7 @@ clearTbody.addEventListener("click", (e) => {
   const selectedColumn = columnMap[columnIndex];
   
   if (
-    selectedColumn " &&
+    selectedColumn === "game" &&
     SecretManager.isSecretGame(value)
   ) {
     return;

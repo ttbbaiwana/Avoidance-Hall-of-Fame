@@ -44,7 +44,7 @@ document.querySelectorAll('input[name="view-mode"]').forEach(radio => {
   });
 });
 
-fetch(`${API_URL}?view=ahof`)
+fetch("data/ahof.json")
   .then(res => res.json())
   .then(json => {
     headers = json.headers;

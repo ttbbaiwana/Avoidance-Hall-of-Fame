@@ -203,8 +203,8 @@ function sortData() {
     
       filteredData.sort((a, b) => {
     
-        const timeA = Date.parse(a[0]) || 0;
-        const timeB = Date.parse(b[0]) || 0;
+        const timeA = new Date(a[0]).getTime();
+        const timeB = new Date(b[0]).getTime();
     
         return currentOrder === "asc"
           ? timeA - timeB

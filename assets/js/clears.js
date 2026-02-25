@@ -93,7 +93,7 @@ clearTbody.addEventListener("click", (e) => {
   const selectedColumn = columnMap[columnIndex];
   
   if (
-    selectedColumn === "game" &&
+    selectedColumn " &&
     SecretManager.isSecretGame(value)
   ) {
     return;
@@ -367,9 +367,15 @@ function renderTable() {
         lastGame = game;
       }
     
-      if (type === "M" || type === "T") {
-        displayNumber = "";
-      } else {
+      if (type === "M") {
+        displayNumber = "M";
+        numberTd.classList.add("maker-number");
+      }
+      else if (type === "T") {
+        displayNumber = "T";
+        numberTd.classList.add("tester-number");
+      }
+      else {
         displayNumber = gameCounter++;
       }
     }

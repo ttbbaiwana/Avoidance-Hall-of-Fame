@@ -18,8 +18,6 @@ let headers = [];
 let currentSort = "date";
 let currentOrder = "desc";
 let clearMode = "all";
-let showMakers = true;
-let showTesters = true;
 let exactMatchMode = false;
 
 let autocompleteSources = {
@@ -265,17 +263,14 @@ function renderTable() {
   /* ===== Build first-clear map ===== */
 
   const firstClearMap = {};
-
+  
   filteredData.forEach(row => {
   
     const game = row[1];
     const date = new Date(row[0]);
     const type = row[8];
   
-    const isMakerOrTester =
-      type === "M" || type === "T";
-  
-    if (isMakerOrTester) return;
+    if (type === "M" || type === "T") return;
   
     if (
       !firstClearMap[game] ||
@@ -347,13 +342,7 @@ function renderTable() {
 
     const game = row[1];
     const type = row[8];
-
-    const hiddenRole =
-      (type === "M" && !showMakers) ||
-      (type === "T" && !showTesters);
-
-    if (hiddenRole) tr.classList.add("role-hidden-row");
-
+    
     if (
       currentSort === "game" &&
       clearMode === "all" &&
@@ -378,10 +367,7 @@ function renderTable() {
         lastGame = game;
       }
     
-      const isMakerOrTester =
-        type === "M" || type === "T";
-    
-      if (isMakerOrTester) {
+      if (type === "M" || type === "T") {
         displayNumber = "";
       } else {
         displayNumber = gameCounter++;
@@ -658,10 +644,7 @@ function updateFilterSummary() {
   else {
     parts.push("All Clears");
   }
-
-  if (!showMakers) parts.push("Makers Hidden");
-  if (!showTesters) parts.push("Testers Hidden");
-
+  
   const selectedColumn = columnSelect.value;
 
   if (selectedColumn === "country" && countrySelect.value) {
@@ -699,21 +682,7 @@ function setupSearch() {
       applyFilter();
     });
   });
-
-  document
-    .getElementById("show-makers")
-    .addEventListener("change", e => {
-      showMakers = e.target.checked;
-      applyFilter();
-    });
-
-  document
-    .getElementById("show-testers")
-    .addEventListener("change", e => {
-      showTesters = e.target.checked;
-      applyFilter();
-    });
-
+  
   input.addEventListener("input", () => {
     exactMatchMode = false;
     applyFilter();

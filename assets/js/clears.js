@@ -200,18 +200,9 @@ function sortData() {
     const valB = b[col];
     
     if (currentSort === "date") {
-    
-      filteredData.sort((a, b) => {
-    
-        const timeA = new Date(a[0]).getTime();
-        const timeB = new Date(b[0]).getTime();
-    
-        return currentOrder === "asc"
-          ? timeA - timeB
-          : timeB - timeA;
-      });
-    
-      return;
+      const dA = new Date(valA);
+      const dB = new Date(valB);
+      return currentOrder === "asc" ? dA - dB : dB - dA;
     }
 
     if (currentSort === "game") {

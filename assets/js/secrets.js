@@ -127,7 +127,18 @@ const SecretManager = (() => {
   /* ================= CURVEWAH SECRET ================= */
 
   function toggleCurveWAH() {
+  
     state.curveWAHActive = !state.curveWAHActive;
+  
+    // Reset search UI
+    const columnSelect = hooks.getColumnSelect();
+    const searchInput = document.getElementById("search-input");
+    const countrySelect = document.getElementById("country-select");
+  
+    columnSelect.value = "date";
+    searchInput.value = "";
+    countrySelect.value = "";
+  
     hooks.applyFilter();
   }
 
@@ -164,6 +175,13 @@ const SecretManager = (() => {
     return data;
   }
 
+  function isSecretOverrideActive() {
+    return state.rumaActive ||
+           state.curveWAHActive ||
+           state.oiiaAvailable &&
+           hooks.getSearchState().column === "oiia-secret";
+  }
+
   /* ================= RESET SECRETS ================= */
   function resetSecrets() {
     state.rumaActive = false;
@@ -180,6 +198,7 @@ const SecretManager = (() => {
     isSecretGame,
     getSecretGameNames,
     getSecretStyle,
+    isSecretOverrideActive,
     resetSecrets
   };
 

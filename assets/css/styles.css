@@ -499,7 +499,7 @@ body {
 }
 
 /* =========================
-   Maker/Tester Badges
+   Badges
 ========================= */
 .maker-badge {
   background-color: #6a1b9a; /* purple */
@@ -517,6 +517,26 @@ body {
 .tester-number {
   color: #ef6c00;
   font-weight: 700;
+}
+
+.game-cell-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.variant-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #444;
+  color: #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  line-height: 16px;
+  cursor: default;
 }
 
 /* =========================

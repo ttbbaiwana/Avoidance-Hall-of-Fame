@@ -12,6 +12,16 @@ const avoidanceDifficultyMap = Object.fromEntries(
   avoidanceConfig.map((a, index) => [a.name, index])
 );
 
+const gameStyleMap = {};
+
+Object.keys(avoidanceColorMap).forEach(name => {
+  const color = avoidanceColorMap[name];
+  gameStyleMap[name] = {
+    backgroundColor: color,
+    textColor: getContrastTextColor(color)
+  };
+});
+
 let fullData = [];
 let filteredData = [];
 let headers = [];
@@ -190,9 +200,20 @@ function sortData() {
     const valB = b[col];
 
     if (currentSort === "date") {
-      const dA = new Date(valA);
-      const dB = new Date(valB);
-      return currentOrder === "asc" ? dA - dB : dB - dA;
+    
+      filteredData.forEach(row => {
+        if (!row._ts) {
+          row._ts = new Date(row[0]).getTime();
+        }
+      });
+    
+      filteredData.sort((a, b) =>
+        currentOrder === "asc"
+          ? a._ts - b._ts
+          : b._ts - a._ts
+      );
+    
+      return;
     }
 
     if (currentSort === "game") {
@@ -277,7 +298,7 @@ function sortData() {
 /* ================= RENDER ================= */
 
 function renderTable() {
-
+  
   clearThead.textContent = "";
   clearTbody.textContent = "";
 
@@ -290,16 +311,23 @@ function renderTable() {
   filteredData.forEach(row => {
   
     const game = row[1];
-    const date = new Date(row[0]);
+    const rawDate = row[0];
     const type = row[8];
   
     if (type === "M" || type === "T") return;
   
+    const date = rawDate ? new Date(rawDate) : null;
+  
+    if (!date) return;
+  
     if (
       !firstClearMap[game] ||
-      date < new Date(firstClearMap[game][0])
+      date < firstClearMap[game].date
     ) {
-      firstClearMap[game] = row;
+      firstClearMap[game] = {
+        row,
+        date
+      };
     }
   });
 
@@ -369,7 +397,7 @@ function renderTable() {
     if (
       currentSort === "game" &&
       clearMode === "all" &&
-      firstClearMap[game] === row
+      firstClearMap[game]?.row === row
     ) {
       tr.classList.add("first-clear-row");
     }
@@ -444,11 +472,10 @@ function renderTable() {
           td.style.fontWeight = secretStyle.fontWeight;      
         }
         else {
-          const bg = avoidanceColorMap[cell];
-      
-          if (bg) {
-            td.style.backgroundColor = bg;
-            td.style.color = getContrastTextColor(bg);
+          const style = gameStyleMap[cell];
+          if (style) {
+            td.style.backgroundColor = style.backgroundColor;
+            td.style.color = style.textColor;
             td.style.fontWeight = "600";
           }
         }
@@ -468,6 +495,7 @@ function renderTable() {
         const avatar = document.createElement("img");
         avatar.className = "avatar-img";
         avatar.loading = "lazy";
+        avatar.decoding = "async";
         avatar.referrerPolicy = "no-referrer";
         avatar.src = row[3] || "assets/images/Default.jpg";
         avatar.onerror = () => avatar.src = "assets/images/Default.jpg";

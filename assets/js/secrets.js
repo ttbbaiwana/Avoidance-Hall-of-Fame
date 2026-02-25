@@ -130,13 +130,13 @@ const SecretManager = (() => {
   
     state.curveWAHActive = !state.curveWAHActive;
   
-    // Reset search UI
     const columnSelect = hooks.getColumnSelect();
-    const searchInput = document.getElementById("search-input");
-    const countrySelect = document.getElementById("country-select");
+    const input = document.getElementById("search-input");
+    const countrySelect =
+      document.getElementById("country-select");
   
     columnSelect.value = "date";
-    searchInput.value = "";
+    input.value = "";
     countrySelect.value = "";
   
     hooks.applyFilter();
@@ -156,6 +156,13 @@ const SecretManager = (() => {
   
     // OIIA
     if (column === "oiia-secret") {
+    
+      // Reset dropdown back to Date immediately
+      const columnSelect = hooks.getColumnSelect();
+      columnSelect.value = "date";
+    
+      updateSearchPlaceholder();
+    
       return fullData.filter(row =>
         row[1] === SECRET_GAMES.oiia.name
       );
@@ -187,6 +194,11 @@ const SecretManager = (() => {
     state.curveWAHActive = false;
   }
 
+  function isSecretModeActive() {
+    return state.rumaActive ||
+           state.curveWAHActive;
+  }
+
   /* ================= PUBLIC API ================= */
 
   return {
@@ -197,7 +209,8 @@ const SecretManager = (() => {
     isSecretGame,
     getSecretGameNames,
     getSecretStyle,
-    resetSecrets
+    resetSecrets,
+    isSecretModeActive
   };
 
 })();

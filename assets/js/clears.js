@@ -203,13 +203,8 @@ function sortData() {
     
       filteredData.sort((a, b) => {
     
-        const timeA = a[0]
-          ? new Date(a[0]).getTime()
-          : 0;
-    
-        const timeB = b[0]
-          ? new Date(b[0]).getTime()
-          : 0;
+        const timeA = Date.parse(a[0]) || 0;
+        const timeB = Date.parse(b[0]) || 0;
     
         return currentOrder === "asc"
           ? timeA - timeB
@@ -461,7 +456,13 @@ function renderTable() {
       }
       
       if (index === 0) {
-        td.textContent = cell ? formatDateYYYYMMDD(cell) : "-";
+          if (!cell) {
+            td.textContent = "-";
+          } else {    
+            const formatted = formatDateYYYYMMDD(cell);    
+            td.textContent = formatted;
+            td.dataset.value = formatted;
+          }
       }
       
       else if (index === 1) {
@@ -593,7 +594,13 @@ function applyFilter() {
         return false;
       }
     
-      const value = String(cell).toLowerCase();
+      let value;
+
+      if (colIndex === 0 && cell) {
+        value = formatDateYYYYMMDD(cell).toLowerCase();
+      } else {
+        value = String(cell ?? "").toLowerCase();
+      }
     
       return exactMatchMode
         ? value === query

@@ -144,12 +144,29 @@ function buildAutocompleteSources() {
 
 /* ================= SORT ================= */
 
-function timeToSeconds(timeStr) {
-  if (!timeStr || timeStr === "-") return 0;
-  const parts = timeStr.split(":").map(Number);
-  return parts.length === 3
-    ? parts[0] * 3600 + parts[1] * 60 + parts[2]
-    : 0;
+function timeToSeconds(value) {
+
+  if (!value) return 0;
+
+  // If already Date object
+  if (value instanceof Date) {
+    return (
+      value.getHours() * 3600 +
+      value.getMinutes() * 60 +
+      value.getSeconds()
+    );
+  }
+  
+  if (typeof value === "string") {
+    const parts = value.split(":").map(Number);
+    if (parts.length === 3) {
+      return parts[0] * 3600 +
+             parts[1] * 60 +
+             parts[2];
+    }
+  }
+
+  return 0;
 }
 
 function sortData() {
@@ -405,8 +422,11 @@ function renderTable() {
         td.dataset.filterIndex = index;
         td.dataset.value = cell;
       }
-
-      if (index === 1) {
+      if (index === 0) {
+        td.textContent = cell ? formatDateYYYYMMDD(cell) : "-";
+      }
+      
+      else if (index === 1) {
       
         td.textContent = cell;
         
@@ -487,11 +507,7 @@ function renderTable() {
         a.target = "_blank";
         td.appendChild(a);
       }
-
-      else {
-        td.textContent = cell;
-      }
-
+      
       tr.appendChild(td);
     }
 
@@ -532,11 +548,15 @@ function applyFilter() {
     const colIndex = columnIndexMap[column];
 
     filteredData = filteredData.filter(row => {
+    
       const cell = row[colIndex];
-      if (!cell) return false;
-
-      const value = cell.toLowerCase();
-
+    
+      if (cell === null || cell === undefined) {
+        return false;
+      }
+    
+      const value = String(cell).toLowerCase();
+    
       return exactMatchMode
         ? value === query
         : value.includes(query);
@@ -905,4 +925,15 @@ function applyExactFilter(columnIndex, value) {
     top: 0,
     behavior: "smooth"
   });
+}
+
+function formatDateYYYYMMDD(value) {
+
+  const date = new Date(value);
+
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }

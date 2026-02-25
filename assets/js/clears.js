@@ -22,6 +22,12 @@ Object.keys(avoidanceColorMap).forEach(name => {
   };
 });
 
+const avatarToggle = document.getElementById("toggle-avatars");
+
+avatarToggle.addEventListener("change", () => {
+  clearTable.classList.toggle("hide-avatars", !avatarToggle.checked);
+});
+
 let fullData = [];
 let filteredData = [];
 let headers = [];

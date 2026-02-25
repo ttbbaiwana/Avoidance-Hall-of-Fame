@@ -151,22 +151,28 @@ const SecretManager = (() => {
   /* ================= APPLY SECRETS ================= */
 
   function applySecrets(column, data, fullData) {
-  
-    updateOiiaAvailability();
 
+    updateOiiaAvailability();
+  
+    // OIIA
     if (column === "oiia-secret") {
       return fullData.filter(row =>
         row[1] === SECRET_GAMES.oiia.name
       );
     }
-    
-    if (state.rumaActive) {
+  
+    // Ruma
+    if (state.rumaActive && isRumaSearchActive()) {
       return fullData.filter(row =>
         row[1] === SECRET_GAMES.ruma.name
       );
     }
-    
-    if (state.curveWAHActive) {
+  
+    // CurveWAH
+    const { column: col, input } = hooks.getSearchState();
+    const noSearchActive = !input && col === "date";
+  
+    if (state.curveWAHActive && noSearchActive) {
       return fullData.filter(row =>
         row[1] === SECRET_GAMES.curveWAH.name
       );

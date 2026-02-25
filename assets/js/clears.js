@@ -27,7 +27,7 @@ let autocompleteSources = {
 
 /* ================= FETCH ================= */
 
-fetch(`${API_URL}?view=clear-list`)
+fetch("data/clear-list.json")
   .then(res => res.json())
   .then(json => {
 

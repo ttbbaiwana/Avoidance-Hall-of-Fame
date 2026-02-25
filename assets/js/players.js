@@ -232,24 +232,41 @@ function setupPlayersAutocomplete() {
 
   input.addEventListener("input", () => {
 
-    const value = input.value.toLowerCase();
-    list.innerHTML = "";
+    const query = input.value.trim().toLowerCase();
 
-    if (!value) {
+    list.textContent = "";
+
+    if (!query) {
       list.classList.add("hidden");
       return;
     }
-
-    const source = [...new Set(playersFullData.map(row => row[2]))].sort();
+    
+    const source = [
+      ...new Set(
+        playersFullData
+          .map(row => String(row[2] ?? ""))
+          .filter(name => name !== "")
+      )
+    ].sort();
 
     const startsWith = [];
     const includes = [];
 
-    source.forEach(name => {
+    for (const name of source) {
+
       const lower = name.toLowerCase();
-      if (lower.startsWith(value)) startsWith.push(name);
-      else if (lower.includes(value)) includes.push(name);
-    });
+
+      if (lower.startsWith(query)) {
+        startsWith.push(name);
+      }
+      else if (lower.includes(query)) {
+        includes.push(name);
+      }
+
+      if (startsWith.length + includes.length >= 20) {
+        break;
+      }
+    }
 
     const matches = [...startsWith, ...includes].slice(0, 10);
 
@@ -258,22 +275,33 @@ function setupPlayersAutocomplete() {
       return;
     }
 
+    const fragment = document.createDocumentFragment();
+
     matches.forEach(match => {
+
       const div = document.createElement("div");
-      div.classList.add("autocomplete-item");
+
+      div.className = "autocomplete-item";
+      div.dataset.value = match;
       div.textContent = match;
 
-      div.addEventListener("click", () => {
-        input.value = match;
-        playersExactMatchMode = true;
-        list.classList.add("hidden");
-        applyPlayersFilter();
-      });
-
-      list.appendChild(div);
+      fragment.appendChild(div);
     });
 
+    list.appendChild(fragment);
     list.classList.remove("hidden");
+  });
+  
+  list.addEventListener("click", e => {
+
+    const item = e.target.closest(".autocomplete-item");
+
+    if (!item) return;
+
+    input.value = item.dataset.value;
+    playersExactMatchMode = true;
+    list.classList.add("hidden");
+    applyPlayersFilter();
   });
 
   document.addEventListener("click", e => {

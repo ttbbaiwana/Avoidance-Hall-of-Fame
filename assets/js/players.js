@@ -6,7 +6,7 @@ let playersExactMatchMode = false;
 
 /* ================= FETCH ================= */
 
-fetch(`${API_URL}?view=players`)
+fetch("data/players.json")
   .then(res => res.json())
   .then(json => {
     playersFullData = json.data;

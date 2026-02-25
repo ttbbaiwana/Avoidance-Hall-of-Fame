@@ -135,7 +135,9 @@ function buildAutocompleteSources() {
       gameSet.add(game);
     }
 
-    playerSet.add(player);
+    if (player !== null && player !== undefined) {
+      playerSet.add(String(player));
+    }
   }
 
   autocompleteSources.games = Array.from(gameSet).sort();
@@ -799,16 +801,18 @@ function setupAutocomplete() {
     const includesMatches = [];
 
     for (const item of source) {
-
-      const lowerItem = item.toLowerCase();
-
+    
+      if (item === null || item === undefined) continue;
+    
+      const lowerItem = String(item).toLowerCase();
+    
       if (lowerItem.startsWith(query)) {
         startsWithMatches.push(item);
       }
       else if (lowerItem.includes(query)) {
         includesMatches.push(item);
       }
-
+    
       if (startsWithMatches.length +
           includesMatches.length >= 20) {
         break;

@@ -72,9 +72,7 @@ clearTbody.addEventListener("click", (e) => {
 
   const clickableCell = e.target.closest(".clickable-cell");
   if (
-    clickableCell?.dataset.filterIndex &&
-    !SecretManager.isSecretOverrideActive()
-  ) {
+    clickableCell?.dataset.filterIndex) {
     applyExactFilter(
       parseInt(clickableCell.dataset.filterIndex),
       clickableCell.dataset.value
@@ -669,13 +667,11 @@ function setupSearch() {
 
   input.addEventListener("input", () => {
     exactMatchMode = false;
-    SecretManager.resetSecrets();
     applyFilter();
   });
 
   countrySelect.addEventListener("change", () => {
     exactMatchMode = false;
-    SecretManager.resetSecrets();
     applyFilter();
   });
 
@@ -693,8 +689,7 @@ function setupSearch() {
       input.classList.remove("hidden");
       updateSearchPlaceholder();
     }
-  
-    SecretManager.resetSecrets();
+    
     applyFilter();
   });
 
@@ -710,9 +705,6 @@ function setupSearch() {
     input.classList.remove("hidden");
   
     updateSearchPlaceholder();
-  
-    SecretManager.resetSecrets();
-  
     filteredData = getBaseVisibleData();
     sortData();
     renderTable();
@@ -877,7 +869,6 @@ function applyExactFilter(columnIndex, value) {
   }
 
   exactMatchMode = true;
-  SecretManager.resetSecrets();
   
   applyFilter();
 

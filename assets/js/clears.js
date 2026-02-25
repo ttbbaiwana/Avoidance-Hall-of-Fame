@@ -201,20 +201,20 @@ function sortData() {
     
     if (currentSort === "date") {
     
-      filteredData.forEach(row => {
-        if (!row._ts) {
-          const val = row[0];
-          row._ts = val instanceof Date
-            ? val.getTime()
-            : new Date(val).getTime();
-        }
-      });
+      filteredData.sort((a, b) => {
     
-      filteredData.sort((a, b) =>
-        currentOrder === "asc"
-          ? a._ts - b._ts
-          : b._ts - a._ts
-      );
+        const timeA = a[0]
+          ? new Date(a[0]).getTime()
+          : 0;
+    
+        const timeB = b[0]
+          ? new Date(b[0]).getTime()
+          : 0;
+    
+        return currentOrder === "asc"
+          ? timeA - timeB
+          : timeB - timeA;
+      });
     
       return;
     }
@@ -459,6 +459,7 @@ function renderTable() {
         td.dataset.filterIndex = index;
         td.dataset.value = cell;
       }
+      
       if (index === 0) {
         td.textContent = cell ? formatDateYYYYMMDD(cell) : "-";
       }

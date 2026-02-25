@@ -180,14 +180,7 @@ const SecretManager = (() => {
   
     return data;
   }
-
-  function isSecretOverrideActive() {
-    return state.rumaActive ||
-           state.curveWAHActive ||
-           state.oiiaAvailable &&
-           hooks.getSearchState().column === "oiia-secret";
-  }
-
+  
   /* ================= RESET SECRETS ================= */
   function resetSecrets() {
     state.rumaActive = false;

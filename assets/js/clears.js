@@ -267,19 +267,20 @@ function renderTable() {
   const firstClearMap = {};
 
   filteredData.forEach(row => {
-
+  
     const game = row[1];
     const date = new Date(row[0]);
     const type = row[8];
-
-    const hidden =
-      (type === "M" && !showMakers) ||
-      (type === "T" && !showTesters);
-
-    if (hidden) return;
-
-    if (!firstClearMap[game] ||
-        date < new Date(firstClearMap[game][0])) {
+  
+    const isMakerOrTester =
+      type === "M" || type === "T";
+  
+    if (isMakerOrTester) return;
+  
+    if (
+      !firstClearMap[game] ||
+      date < new Date(firstClearMap[game][0])
+    ) {
       firstClearMap[game] = row;
     }
   });
@@ -371,13 +372,20 @@ function renderTable() {
     let displayNumber;
 
     if (currentSort === "game" && clearMode === "all") {
-
+    
       if (game !== lastGame) {
         gameCounter = 1;
         lastGame = game;
       }
-
-      displayNumber = hiddenRole ? "" : gameCounter++;
+    
+      const isMakerOrTester =
+        type === "M" || type === "T";
+    
+      if (isMakerOrTester) {
+        displayNumber = "";
+      } else {
+        displayNumber = gameCounter++;
+      }
     }
     else {
       displayNumber = rowIndex + 1;
@@ -587,19 +595,35 @@ function applyClearMode() {
 
     const game = row[1];
     const date = new Date(row[0]);
+    const type = row[8];
+
+    const isMakerOrTester = type === "M" || type === "T";
 
     if (!gameMap[game]) {
-      gameMap[game] = row;
+      if (clearMode === "first") {
+        if (!isMakerOrTester) {
+          gameMap[game] = row;
+        }
+      } else {
+        gameMap[game] = row;
+      }
+
       return;
     }
 
     const existingDate = new Date(gameMap[game][0]);
 
-    if (
-      (clearMode === "first" && date < existingDate) ||
-      (clearMode === "latest" && date > existingDate)
-    ) {
-      gameMap[game] = row;
+    if (clearMode === "first") {
+      if (
+        !isMakerOrTester &&
+        date < existingDate
+      ) {
+        gameMap[game] = row;
+      }
+    } else if (clearMode === "latest") {
+      if (date > existingDate) {
+        gameMap[game] = row;
+      }
     }
   });
 

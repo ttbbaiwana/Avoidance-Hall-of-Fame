@@ -782,7 +782,6 @@ function setupSearch() {
     input.value = "";
     countrySelect.value = "";
     columnSelect.value = "date";
-  
     exactMatchMode = false;
   
     countrySelect.classList.add("hidden");
@@ -790,9 +789,7 @@ function setupSearch() {
   
     updateSearchPlaceholder();
     SecretManager.resetSecrets();
-    filteredData = getBaseVisibleData();
-    sortData();
-    renderTable();
+    applyFilter();
   });
 }
 

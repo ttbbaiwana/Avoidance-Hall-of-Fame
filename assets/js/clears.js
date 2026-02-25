@@ -359,7 +359,7 @@ function renderTable() {
     }
 
     let displayNumber;
-
+    
     if (currentSort === "game" && clearMode === "all") {
     
       if (game !== lastGame) {
@@ -369,11 +369,9 @@ function renderTable() {
     
       if (type === "M") {
         displayNumber = "M";
-        numberTd.classList.add("maker-number");
       }
       else if (type === "T") {
         displayNumber = "T";
-        numberTd.classList.add("tester-number");
       }
       else {
         displayNumber = gameCounter++;
@@ -382,9 +380,17 @@ function renderTable() {
     else {
       displayNumber = rowIndex + 1;
     }
-
+    
     const numberTd = document.createElement("td");
     numberTd.textContent = displayNumber;
+    
+    if (displayNumber === "M") {
+      numberTd.classList.add("maker-number");
+    }
+    else if (displayNumber === "T") {
+      numberTd.classList.add("tester-number");
+    }
+    
     tr.appendChild(numberTd);
 
     for (let index = 0; index < row.length; index++) {

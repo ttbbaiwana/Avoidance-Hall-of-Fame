@@ -468,6 +468,10 @@ body {
   object-fit: cover;
 }
 
+.hide-avatars .avatar-img {
+  display: none;
+}
+
 /* =========================
    Clear Mode Options
 ========================= */

@@ -28,6 +28,14 @@ avatarToggle.addEventListener("change", () => {
   clearTable.classList.toggle("hide-avatars", !avatarToggle.checked);
 });
 
+const GAME_VARIANTS = {
+  "I wanna HIVAC - Oblivion": {
+    versions: ["1.0", "1.1"],
+    defaultPreference: ["1.0", "1.1"],
+    columnIndex: 9
+  }
+};
+
 let fullData = [];
 let filteredData = [];
 let headers = [];
@@ -441,7 +449,7 @@ function renderTable() {
 
     for (let index = 0; index < row.length; index++) {
 
-      if (index === 3 || index === 8) continue;
+      if (index === 3 || index === 8 || index == 9) continue;
 
       const cell = row[index];
       const td = document.createElement("td");
@@ -463,8 +471,33 @@ function renderTable() {
       }
       
       else if (index === 1) {
+        
+        const gameName = cell;
+        
+        const wrapper = document.createElement("div");
+        wrapper.className = "game-cell-wrapper";
       
-        td.textContent = cell;
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = gameName;
+      
+        wrapper.appendChild(nameSpan);
+      
+        const variantConfig = GAME_VARIANTS[gameName];
+      
+        if (variantConfig) {
+      
+          const version = row[variantConfig.columnIndex];
+      
+          if (version) {
+            const badge = document.createElement("span");
+            badge.className = "variant-badge";
+            badge.textContent = "?";
+            badge.title = `v${version}`;
+            wrapper.appendChild(badge);
+          }
+        }
+      
+        td.appendChild(wrapper);
         
         const secretStyle = SecretManager.getSecretStyle(cell);
       
@@ -610,7 +643,10 @@ function applyFilter() {
     filteredData,
     fullData
   );
-
+  
+  filteredData = normalizeGameVariants(filteredData);
+  updateVariantToggle()
+  
   applyClearMode();
   sortData();
   renderTable();
@@ -977,4 +1013,98 @@ function formatDateYYYYMMDD(value) {
   const day = String(date.getUTCDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+function normalizeGameVariants(data) {
+  
+  const result = [];
+  const variantMaps = {};
+
+  const selectedVariant = document.querySelector(
+    'input[name="variant-toggle"]:checked'
+  )?.value;
+  
+  data.forEach(row => {
+
+    const game = row[1];
+
+    if (!GAME_VARIANTS[game]) {
+      result.push(row);
+      return;
+    }
+
+    const config = GAME_VARIANTS[game];
+    const version = row[config.columnIndex];
+    const player = row[4];
+
+    if (!variantMaps[game]) {
+      variantMaps[game] = {};
+    }
+
+    if (!variantMaps[game][player]) {
+      variantMaps[game][player] = {};
+    }
+
+    variantMaps[game][player][version] = row;
+  });
+
+  Object.entries(variantMaps).forEach(([game, players]) => {
+
+    const config = GAME_VARIANTS[game];
+
+    Object.values(players).forEach(playerVersions => {
+
+      if (selectedVariant) {
+        if (playerVersions[selectedVariant]) {
+          result.push(playerVersions[selectedVariant]);
+        }
+        return;
+      }
+      
+      for (const preferredVersion of config.defaultPreference) {
+        if (playerVersions[preferredVersion]) {
+          result.push(playerVersions[preferredVersion]);
+          return;
+        }
+      }
+      
+      const anyVersion = Object.values(playerVersions)[0];
+      if (anyVersion) result.push(anyVersion);
+    });
+  });
+
+  return result;
+}
+
+function updateVariantToggle() {
+
+  const container = document.getElementById("variant-toggle-container");
+
+  const column = document.getElementById("search-column").value;
+
+  const input = document.getElementById("search-input").value;
+
+  if (column !== "game" || !GAME_VARIANTS[input]) {
+    container.classList.add("hidden");
+    container.innerHTML = "";
+    return;
+  }
+
+  const config = GAME_VARIANTS[input];
+
+  container.innerHTML = config.versions.map((version, index) => `
+    <label>
+      <input type="radio"
+             name="variant-toggle"
+             value="${version}"
+             ${index === 0 ? "checked" : ""}>
+      v${version}
+    </label>
+  `).join("");
+
+  container.classList.remove("hidden");
+
+  container.querySelectorAll("input").forEach(radio => {
+    radio.addEventListener("change", applyFilter);
+  });
 }

@@ -197,26 +197,27 @@ function applyPlayersFilter() {
   const column = document.getElementById("players-search-column").value;
   const input = document.getElementById("players-search-input");
   const countrySelect = document.getElementById("players-country-select");
-
   const query = input.value.trim().toLowerCase();
 
   playersFilteredData = [...playersFullData];
 
   if (column === "country" && countrySelect.value) {
-
-    playersFilteredData = playersFilteredData.filter(row =>
-      row[0] === countrySelect.value
-    );
+    playersFilteredData =
+      playersFilteredData.filter(row =>
+        row[0] === countrySelect.value
+      );
   }
 
   else if (column === "player" && query) {
 
     playersFilteredData = playersFilteredData.filter(row => {
-      const value = row[2].toLowerCase();
-      return playersExactMatchMode
-        ? value === query
-        : value.includes(query);
-    });
+
+        const value = String(row[2] ?? "").toLowerCase();
+
+        return playersExactMatchMode
+          ? value === query
+          : value.includes(query);
+      });
   }
 
   renderPlayers(playersFilteredData);

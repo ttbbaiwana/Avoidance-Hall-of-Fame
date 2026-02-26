@@ -158,6 +158,52 @@ const PLATFORM_ICONS = {
   bsky: "bluesky.png"
 };
 
+const COUNTRY_NAMES = {
+  AR: "Argentina",
+  AT: "Austria",
+  AU: "Australia",
+  BG: "Bulgaria",
+  BR: "Brazil",
+  BY: "Belarus",
+  CA: "Canada",
+  CL: "Chile",
+  CN: "China",
+  DE: "Germany",
+  DK: "Denmark",
+  DZ: "Algeria",
+  ES: "Spain",
+  FI: "Finland",
+  FR: "France",
+  GB: "Great Britian",
+  GR: "Greece",
+  GT: "Guatamala",
+  HU: "Hungary",
+  ID: "Indonesia",
+  IL: "Israel",
+  IR: "Iran",
+  JP: "Japan",
+  KR: "South Korea",
+  KW: "Kuwait",
+  KZ: "Kazakhstan",
+  LV: "Latvia",
+  MX: "Mexico",
+  NL: "Netherlands",
+  NZ: "New Zealand",
+  PE: "Peru",
+  PL: "Poland",
+  QA: "Qatar",
+  RO: "Romania",
+  RU: "Russia",
+  SE: "Sweden",
+  SG: "Singapore",
+  TR: "Turkey",
+  UA: "Ukraine",
+  US: "United States",
+  UZ: "Uzbekistan",
+  VE: "Venezeula",
+  VN: "Vietnam"
+};
+
 const API_CONFIG = {
   BASE_URL: "https://script.google.com/macros/s/AKfycbxHXhpmIeGkBJsFQj0YXet5bvKwEaRyo5XQYGhaMGgiJERENpK2xEZ_3K33W4m7tJMDOQ/exec"
 };
@@ -172,4 +218,14 @@ function getContrastTextColor(hex) {
 
   const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
   return luminance > 0.6 ? "#000000" : "#ffffff";
+}
+
+function countryCodeToEmoji(code) {
+  if (!code) return "";
+
+  return code
+    .toUpperCase()
+    .replace(/./g, char =>
+      String.fromCodePoint(127397 + char.charCodeAt())
+    );
 }

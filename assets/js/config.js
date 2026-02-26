@@ -229,3 +229,9 @@ function countryCodeToEmoji(code) {
       String.fromCodePoint(127397 + char.charCodeAt())
     );
 }
+
+function formatCountryDisplay(code) {
+  const flag = countryCodeToEmoji(code);
+  const name = COUNTRY_NAMES?.[code] || code;
+  return `${flag} ${name}`;
+}

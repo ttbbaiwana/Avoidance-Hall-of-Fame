@@ -193,7 +193,7 @@ body {
 
 /* Number column */
 .ahof-table td:first-child {
-  font-weight: 700;
+  font-weight: 600;
   width: 50px;
   border-right: 1px solid #ddd;
 }
@@ -243,35 +243,6 @@ body {
 
 .stat-total {
   font-weight: 600;
-}
-
-/* =========================================================
-   6. TABLE LINKS / INTERACTION
-========================================================= */
-
-.ahof-game-link,
-.ahof-player-link {
-  cursor: pointer;
-  transition: font-weight 0.1s ease;
-}
-
-.ahof-game-link:hover {
-  font-weight: 700;
-}
-
-.ahof-player-link:hover {
-  font-weight: 600;
-}
-
-.clickable-cell {
-  cursor: pointer;
-}
-
-.flag-icon {
-  width: 24px;
-  height: 18px;
-  border-radius: 2px;
-  box-shadow: 0 0 1px rgba(0,0,0,0.3);
 }
 
 .player-cell {

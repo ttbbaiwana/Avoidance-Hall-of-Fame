@@ -320,6 +320,7 @@ function updatePlayersPlaceholder() {
 }
 
 function populateCountryDropdown() {
+
   const select = document.getElementById("players-country-select");
 
   const countries = [...new Set(playersFullData.map(row => row[0]))]
@@ -331,7 +332,7 @@ function populateCountryDropdown() {
   countries.forEach(country => {
     const option = document.createElement("option");
     option.value = country;
-    option.textContent = country;
+    option.textContent = formatCountryDisplay(country);
     select.appendChild(option);
   });
 }
@@ -350,7 +351,7 @@ function updatePlayersFilterSummary() {
   let text = "Showing: All Players";
 
   if (column === "country" && countrySelect.value) {
-    text = `Showing: Country = ${countrySelect.value}`;
+    text = `Showing: Country = ${formatCountryDisplay(countrySelect.value)}`;
   }
   else if (input.value.trim()) {
     text = `Showing: Player = ${input.value.trim()}`;

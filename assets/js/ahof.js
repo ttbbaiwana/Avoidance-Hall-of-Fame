@@ -139,7 +139,6 @@ function renderTable() {
     if (bg) {
       gameTd.style.backgroundColor = bg;
       gameTd.style.color = getContrastTextColor(bg);
-      gameTd.style.fontWeight = "600";
     }
 
     gameTd.appendChild(gameSpan);

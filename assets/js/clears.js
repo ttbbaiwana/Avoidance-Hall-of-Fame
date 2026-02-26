@@ -39,11 +39,6 @@ const GAME_VARIANTS = {
     defaultPreference: ["Very Hard", "M@STER"],
     columnIndex: 9
   },
-  "I wanna know the everlasting stories": {
-    versions: ["Normal", "Impossible Mode"],
-    defaultPreference: ["Normal", "Impossible Mode"],
-    columnIndex: 9
-  },
   "I wanna grand of the perfect bear": {
     versions: ["Normal", "強化版"],
     defaultPreference: ["Normal", "強化版"],

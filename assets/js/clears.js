@@ -673,9 +673,7 @@ function populateCountryDropdown() {
 
   const select = document.getElementById("country-select");
 
-  const countries = [...new Set(
-    fullData.map(row => row[2])
-  )]
+  const countries = [...new Set(fullData.map(row => row[2]))]
     .filter(Boolean)
     .sort();
 
@@ -685,7 +683,9 @@ function populateCountryDropdown() {
 
     const option = document.createElement("option");
     option.value = country;
-    option.textContent = country;
+
+    option.textContent = formatCountryDisplay(country);
+
     select.appendChild(option);
   });
 }

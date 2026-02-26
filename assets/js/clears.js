@@ -548,11 +548,7 @@ function renderTable() {
         const name = document.createElement("span");
         name.textContent = cell;
 
-        const avatarWrapper = document.createElement("div");
-        avatarWrapper.className = "avatar-wrapper";
-        avatarWrapper.appendChild(avatar);
-        
-        wrapper.appendChild(avatarWrapper);
+        wrapper.appendChild(avatar);
         wrapper.appendChild(name);
         
         if (type === "M" || type === "T") {

@@ -244,8 +244,9 @@ body {
 .player-cell {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .avatar-img {

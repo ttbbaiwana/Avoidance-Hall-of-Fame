@@ -300,6 +300,10 @@ body {
 .maker-number { color: #6a1b9a; font-weight: 700; }
 .tester-number { color: #ef6c00; font-weight: 700; }
 
+#clear-table tbody tr.first-clear-row td {
+  background-color: rgba(255, 215, 0, 0.15);
+}
+
 /* =========================================================
    7. FILTER / SEARCH UI
 ========================================================= */

@@ -219,20 +219,6 @@ body {
   font-weight: 700;
 }
 
-/* Player names */
-.ahof-player-link {
-  cursor: pointer;
-  transition: font-weight 0.1s ease;
-}
-
-.ahof-player-link:hover {
-  font-weight: 600;
-}
-
-.ahof-total {
-  font-weight: 700;
-}
-
 .flag-icon {
   width: 24px;
   height: 18px;
@@ -253,6 +239,10 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.stat-total {
+  font-weight: 600;
 }
 
 /* =========================================================

@@ -49,7 +49,7 @@ const GAME_VARIANTS = {
 let fullData = [];
 let filteredData = [];
 let headers = [];
-let currentSort = "game";
+let currentSort = "date";
 let currentOrder = "desc";
 let clearMode = "all";
 let exactMatchMode = false;
@@ -839,7 +839,7 @@ function setupSearch() {
   
     input.value = "";
     countrySelect.value = "";
-    columnSelect.value = "date";
+    columnSelect.value = "game";
     exactMatchMode = false;
   
     countrySelect.classList.add("hidden");

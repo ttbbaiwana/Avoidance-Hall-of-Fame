@@ -143,9 +143,9 @@ body {
   background: #333;
 }
 
-/* =========================================================
-   5. TABLES (AHoF + Clears Shared)
-========================================================= */
+/* =========================
+   5. Shared Table Styles
+========================= */
 
 .ahof-table {
   border-collapse: collapse;
@@ -175,7 +175,6 @@ body {
   background: #222;
 }
 
-/* Sticky header */
 .ahof-table thead th {
   position: sticky;
   top: 0;
@@ -183,19 +182,12 @@ body {
   z-index: 2;
 }
 
-/* Zebra rows */
 .ahof-table tbody tr:nth-child(even) {
   background: #f6f6f6;
 }
 
-/* Row hover */
 .ahof-table tbody tr:hover {
   background: #ececec;
-}
-
-/* Bold non-number cells on hover */
-.ahof-table tbody tr:hover td:not(:first-child) {
-  font-weight: 600;
 }
 
 /* Number column */
@@ -205,23 +197,35 @@ body {
   border-right: 1px solid #ddd;
 }
 
-/* Table wrapper */
-.table-wrapper {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: auto;
-  border: 1px solid #ddd;
-  min-height: 0;
+/* Clickable cells */
+.clickable-cell {
+  cursor: pointer;
+  transition: font-weight 0.1s ease;
 }
 
-/* Special rows */
-.game-divider td {
-  border-top: 3px solid #000;
-  padding-top: 8px;
+.clickable-cell:hover {
+  font-weight: 600;
 }
 
-.first-clear-row td {
-  background-color: rgba(255, 215, 0, 0.12);
+/* Game names */
+.ahof-game-link {
+  font-weight: 600;
+  cursor: pointer;
+  transition: font-weight 0.1s ease;
+}
+
+.ahof-game-link:hover {
+  font-weight: 700;
+}
+
+/* Player names */
+.ahof-player-link {
+  cursor: pointer;
+  transition: font-weight 0.1s ease;
+}
+
+.ahof-player-link:hover {
+  font-weight: 600;
 }
 
 /* =========================================================

@@ -50,7 +50,17 @@ body {
   padding-left: 24px;
 }
 
-.ahof-page .ahof-table td:nth-child(4) {
+.ahof-page .ahof-table th:nth-child(3) {
+  text-align: left;
+  padding-left: 24px;
+}
+
+.ahof-page .ahof-table th:nth-child(4) {
+  text-align: left;
+}
+
+#clear-table th:nth-child(5),
+#clear-table td:nth-child(5) {
   text-align: left;
 }
 

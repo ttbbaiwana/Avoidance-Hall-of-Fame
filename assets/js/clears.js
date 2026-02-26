@@ -965,9 +965,21 @@ function applyUrlFilters() {
 
     input.value = playerParam;
     exactMatchMode = true;
+
+    updateSearchPlaceholder();
+    applyFilter();
+    
+    if (gameParam) {
+      filteredData = filteredData.filter(row =>
+        row[1] === gameParam
+      );
+      renderTable();
+    }
+
+    return;
   }
 
-  else if (gameParam) {
+  if (gameParam) {
     columnSelect.value = "game";
 
     input.classList.remove("hidden");
@@ -975,10 +987,10 @@ function applyUrlFilters() {
 
     input.value = gameParam;
     exactMatchMode = true;
-  }
 
-  updateSearchPlaceholder();
-  applyFilter();
+    updateSearchPlaceholder();
+    applyFilter();
+  }
 }
 
 function applyExactFilter(columnIndex, value) {

@@ -208,12 +208,11 @@ body {
 
 .ahof-player-link {
   cursor: pointer;
-  font-weight: 600;
   transition: font-weight 0.1s ease;
 }
 
 .ahof-player-link:hover {
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .ahof-game-link {
@@ -580,7 +579,7 @@ body {
 }
 
 .hover-game:hover {
-  filter: brightness(1.15);
+  font-weight: 700;
 }
 
 .hover-flag {

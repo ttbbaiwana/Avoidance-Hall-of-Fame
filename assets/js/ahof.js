@@ -194,7 +194,7 @@ function renderTable() {
 
     else {
 
-      for (let i = 1; i <= 9; i++) {
+      for (let i = 1; i <= 8; i++) {
 
         const cell = row[i];
         const td = document.createElement("td");

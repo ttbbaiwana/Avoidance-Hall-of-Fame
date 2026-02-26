@@ -30,8 +30,8 @@ avatarToggle.addEventListener("change", () => {
 
 const GAME_VARIANTS = {
   "I wanna HIVAC - Oblivion": {
-    versions: ["1.0", "1.1"],
-    defaultPreference: ["1.0", "1.1"],
+    versions: ["v1.0", "v1.1"],
+    defaultPreference: ["v1.0", "v1.1"],
     columnIndex: 9
   }
 };

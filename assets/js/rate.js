@@ -31,11 +31,12 @@ async function fetchValidPlayerNames() {
   try {
     const res = await fetch("data/players.json");
     const json = await res.json();
-
-    // Player column index = 2 (Country, Avatar, Player...)
-    validPlayerNames = [...new Set(
-      json.data.map(row => row[2])
-    )].sort();
+	  
+	validPlayerNames = [...new Set(
+	  json.data
+	    .map(row => String(row[2] ?? "").trim())
+	    .filter(name => name !== "")
+	)].sort();
 
     setupNameAutocomplete();
   } catch (err) {

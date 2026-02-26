@@ -194,7 +194,7 @@ function renderTable() {
 
     else {
 
-      for (let i = 1; i <= 8; i++) {
+      for (let i = 1; i <= 9; i++) {
 
         const cell = row[i];
         const td = document.createElement("td");
@@ -340,7 +340,7 @@ function getRedGreenColor(value) {
 
 function applyRatingColor(td, columnIndex, value) {
   
-  if (columnIndex >= 1 && columnIndex <= 8) {
+  if (columnIndex >= 1 && columnIndex <= 7) {
     td.style.color = getBlueRedColor(value);
     td.classList.add("stat-colored");
     return;

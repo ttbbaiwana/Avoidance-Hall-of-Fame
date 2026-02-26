@@ -88,7 +88,7 @@ function renderTable() {
 
         if (title === "Total Clears") {
           th.style.cursor = "pointer";
-          th.onclick = () => sortTable(12);
+          th.onclick = () => sortTable(14);
         }
 
         headerRow.appendChild(th);
@@ -148,9 +148,9 @@ function renderTable() {
 
     if (!showRatings) {
 
-      const first = row[10] || "-";
-      const latest = row[11] || "-";
-      const total = row[12] || "0";
+      const first = row[11] || "-";
+      const latest = row[13] || "-";
+      const total = row[14] || "0";
 
       // First
       const firstTd = document.createElement("td");

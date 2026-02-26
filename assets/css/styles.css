@@ -242,18 +242,9 @@ body {
 }
 
 .player-cell {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.avatar-wrapper {
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
 }
 
 .avatar-img {
@@ -261,7 +252,6 @@ body {
   height: 28px;
   border-radius: 50%;
   object-fit: cover;
-  display: block;
 }
 
 .hide-avatars .avatar-img {

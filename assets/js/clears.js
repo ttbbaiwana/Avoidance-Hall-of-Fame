@@ -344,7 +344,7 @@ function renderTable() {
 
   headers.forEach((h, index) => {
 
-    if (index === 3 || index === 8) return;
+    if (index === 3 || index === 8 || index === 9) return;
 
     const th = document.createElement("th");
     th.textContent = h;
@@ -1079,9 +1079,7 @@ function normalizeGameVariants(data) {
 function updateVariantToggle() {
 
   const container = document.getElementById("variant-toggle-container");
-
   const column = document.getElementById("search-column").value;
-
   const input = document.getElementById("search-input").value;
 
   if (column !== "game" || !GAME_VARIANTS[input]) {
@@ -1091,14 +1089,23 @@ function updateVariantToggle() {
   }
 
   const config = GAME_VARIANTS[input];
+  
+  const currentSelected = document.querySelector(
+    'input[name="variant-toggle"]:checked'
+  )?.value;
 
-  container.innerHTML = config.versions.map((version, index) => `
+  const selectedVersion =
+    currentSelected && config.versions.includes(currentSelected)
+      ? currentSelected
+      : config.versions[0];
+
+  container.innerHTML = config.versions.map(version => `
     <label>
       <input type="radio"
-             name="variant-toggle"
-             value="${version}"
-             ${index === 0 ? "checked" : ""}>
-      v${version}
+        name="variant-toggle"
+        value="${version}"
+        ${version === selectedVersion ? "checked" : ""}>
+        ${version}
     </label>
   `).join("");
 

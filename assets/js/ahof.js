@@ -28,7 +28,7 @@ ahofTbody.addEventListener("click", (e) => {
     return;
   }
 
-  const playerEl = e.target.closest(".ahof-player-link");
+  const playerEl = e.target.closest(".clickable-cell");
   if (playerEl) {
     const player = playerEl.dataset.player;
     const game = playerEl.dataset.game;
@@ -158,7 +158,7 @@ function renderTable() {
       if (first !== "-") {
         const span = document.createElement("span");
         span.textContent = first;
-        span.className = "ahof-player-link";
+        span.className = "clickable-cell";
         span.dataset.player = first;
         span.dataset.game = gameName;
         firstTd.appendChild(span);
@@ -174,7 +174,7 @@ function renderTable() {
       if (latest !== "-") {
         const span = document.createElement("span");
         span.textContent = latest;
-        span.className = "ahof-player-link";
+        span.className = "clickable-cell";
         span.dataset.player = latest;
         span.dataset.game = gameName;
         latestTd.appendChild(span);

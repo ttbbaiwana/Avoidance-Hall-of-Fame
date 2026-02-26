@@ -354,49 +354,75 @@ function setupNameAutocomplete() {
 
   input.addEventListener("input", () => {
 
-    const value = input.value.toLowerCase();
-    list.innerHTML = "";
+    const query = input.value.trim().toLowerCase();
+    list.textContent = "";
 
-    if (!value) {
+    if (!query) {
       list.classList.add("hidden");
+      validateGate();
       return;
     }
 
-    const startsWith = [];
-    const includes = [];
+    const startsWithMatches = [];
+    const includesMatches = [];
 
-    validPlayerNames.forEach(name => {
+    for (const name of validPlayerNames) {
+
       const lower = name.toLowerCase();
 
-      if (lower.startsWith(value)) startsWith.push(name);
-      else if (lower.includes(value)) includes.push(name);
-    });
+      if (lower.startsWith(query)) {
+        startsWithMatches.push(name);
+      }
+      else if (lower.includes(query)) {
+        includesMatches.push(name);
+      }
 
-    const matches = [...startsWith, ...includes].slice(0, 10);
+      if (startsWithMatches.length + includesMatches.length >= 20) {
+        break;
+      }
+    }
 
-    if (!matches.length) {
+    const matches = [
+      ...startsWithMatches,
+      ...includesMatches
+    ].slice(0, 10);
+
+    if (matches.length === 0) {
       list.classList.add("hidden");
+      validateGate();
       return;
     }
 
+    const fragment = document.createDocumentFragment();
+
     matches.forEach(match => {
+
       const div = document.createElement("div");
-      div.classList.add("autocomplete-item");
+      div.className = "autocomplete-item";
+      div.dataset.value = match;
       div.textContent = match;
 
-      div.addEventListener("click", () => {
-        input.value = match;
-        list.classList.add("hidden");
-        validateGate();
-      });
-
-      list.appendChild(div);
+      fragment.appendChild(div);
     });
 
+    list.appendChild(fragment);
     list.classList.remove("hidden");
+
+    validateGate();
   });
 
-  document.addEventListener("click", e => {
+  list.addEventListener("click", (e) => {
+
+    const item = e.target.closest(".autocomplete-item");
+    if (!item) return;
+
+    input.value = item.dataset.value;
+    list.classList.add("hidden");
+
+    validateGate();
+  });
+
+  document.addEventListener("click", (e) => {
     if (!e.target.closest(".autocomplete-wrapper")) {
       list.classList.add("hidden");
     }

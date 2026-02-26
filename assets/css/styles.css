@@ -45,8 +45,8 @@ body {
   }
 }
 
-.ahof-page .ahof-table td:nth-child(3),
-.ahof-page .ahof-table td:nth-child(4) {
+.ahof-page .ahof-table.clears-mode td:nth-child(3),
+.ahof-page .ahof-table.clears-mode td:nth-child(4) {
   text-align: left;
   padding-left: 30px;
 }

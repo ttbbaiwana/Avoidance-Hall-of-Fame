@@ -947,6 +947,7 @@ function setupAutocomplete() {
 function applyUrlFilters() {
 
   const params = new URLSearchParams(window.location.search);
+
   const playerParam = params.get("player");
   const gameParam = params.get("game");
 
@@ -958,20 +959,26 @@ function applyUrlFilters() {
 
   if (playerParam) {
     columnSelect.value = "player";
+
     input.classList.remove("hidden");
     countrySelect.classList.add("hidden");
+
     input.value = playerParam;
     exactMatchMode = true;
   }
 
-  applyFilter();
+  else if (gameParam) {
+    columnSelect.value = "game";
 
-  if (gameParam) {
-    filteredData = filteredData.filter(row =>
-        row[1] === gameParam
-      );
-    renderTable();
+    input.classList.remove("hidden");
+    countrySelect.classList.add("hidden");
+
+    input.value = gameParam;
+    exactMatchMode = true;
   }
+
+  updateSearchPlaceholder();
+  applyFilter();
 }
 
 function applyExactFilter(columnIndex, value) {

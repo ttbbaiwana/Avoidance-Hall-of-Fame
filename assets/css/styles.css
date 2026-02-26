@@ -526,17 +526,33 @@ body {
 }
 
 .variant-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   font-size: 0.75rem;
   font-weight: 700;
-  background: #444;
-  color: #fff;
-  border-radius: 50%;
+
   width: 16px;
   height: 16px;
-  text-align: center;
-  line-height: 16px;
-  cursor: default;
+
+  border-radius: 50%;
+
+  background: #444;
+  color: #fff;
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.variant-badge:hover {
+  background: #ff9800;
+  color: #000;
+  transform: scale(1.15);
+}
+
+.variant-badge:active {
+  transform: scale(1.05);
 }
 
 /* =========================

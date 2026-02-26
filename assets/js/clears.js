@@ -490,6 +490,7 @@ function renderTable() {
       
         const nameSpan = document.createElement("span");
         nameSpan.textContent = gameName;
+        nameSpan.className = "ahof-game-link";
       
         wrapper.appendChild(nameSpan);
       
@@ -514,15 +515,13 @@ function renderTable() {
       
         if (secretStyle) {     
           td.style.backgroundColor = secretStyle.backgroundColor;      
-          td.style.color = getContrastTextColor(secretStyle.backgroundColor);      
-          td.style.fontWeight = secretStyle.fontWeight;      
+          td.style.color = getContrastTextColor(secretStyle.backgroundColor);  
         }
         else {
           const style = gameStyleMap[cell];
           if (style) {
             td.style.backgroundColor = style.backgroundColor;
             td.style.color = style.textColor;
-            td.style.fontWeight = "600";
           }
         }
       }

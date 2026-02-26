@@ -345,8 +345,8 @@ function applyRatingColor(td, columnIndex, value) {
     return;
   }
 
-  if (columnIndex == 8) {
-    td.classList.add("rating-total");
+  if (columnIndex === 8) {
+    td.style.fontWeight = "600";
     return;
   }
 

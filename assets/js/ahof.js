@@ -347,7 +347,8 @@ function applyRatingColor(td, columnIndex, value) {
   }
 
   if (columnIndex == 8) {
-    td.classList.add("stat-total");
+    td.classList.add("rating-total");
+    return;
   }
 
   // Quality column

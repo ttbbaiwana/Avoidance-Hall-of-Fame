@@ -548,9 +548,13 @@ function renderTable() {
         const name = document.createElement("span");
         name.textContent = cell;
 
-        wrapper.appendChild(avatar);
+        const avatarWrapper = document.createElement("div");
+        avatarWrapper.className = "avatar-wrapper";
+        avatarWrapper.appendChild(avatar);
+        
+        wrapper.appendChild(avatarWrapper);
         wrapper.appendChild(name);
-
+        
         if (type === "M" || type === "T") {
 
           const badge = document.createElement("span");

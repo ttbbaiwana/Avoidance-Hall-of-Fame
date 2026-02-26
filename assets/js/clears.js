@@ -33,6 +33,21 @@ const GAME_VARIANTS = {
     versions: ["v1.0", "v1.1"],
     defaultPreference: ["v1.0", "v1.1"],
     columnIndex: 9
+  },
+  "I wanna be THE iDOLM@STER - Kotori Otonashi": {
+    versions: ["Very Hard", "M@STER"],
+    defaultPreference: ["Very Hard", "M@STER"],
+    columnIndex: 9
+  },
+  "I wanna know the everlasting stories": {
+    versions: ["Normal", "Impossible Mode"],
+    defaultPreference: ["Normal", "Impossible Mode"],
+    columnIndex: 9
+  },
+  "I wanna grand of the perfect bear": {
+    versions: ["Normal", "強化版"],
+    defaultPreference: ["Normal", "強化版"],
+    columnIndex: 9
   }
 };
 
@@ -492,7 +507,7 @@ function renderTable() {
             const badge = document.createElement("span");
             badge.className = "variant-badge";
             badge.textContent = "?";
-            badge.title = `v${version}`;
+            badge.title = `${version}`;
             wrapper.appendChild(badge);
           }
         }

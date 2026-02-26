@@ -29,7 +29,7 @@ function getContrastTextColor(hex) {
 
 async function fetchValidPlayerNames() {
   try {
-    const res = await fetch(`${GOOGLE_SCRIPT_URL}?view=players`);
+    const res = await fetch("data/players.json");
     const json = await res.json();
 
     // Player column index = 2 (Country, Avatar, Player...)

@@ -40,6 +40,10 @@ ahofTbody.addEventListener("click", (e) => {
 document.querySelectorAll('input[name="view-mode"]').forEach(radio => {
   radio.addEventListener("change", e => {
     showRatings = e.target.value === "ratings";
+
+    ahofTable.classList.toggle("ratings-mode", showRatings);
+    ahofTable.classList.toggle("clears-mode", !showRatings);
+
     renderTable();
   });
 });
@@ -52,6 +56,7 @@ fetch("data/ahof.json")
     renderTable();
     document.getElementById("loader").classList.add("hidden");
     document.getElementById("ahof").classList.remove("hidden");
+    ahofTable.classList.add("clears-mode");
   })
   .catch(err => {
     document.getElementById("loader").innerHTML =

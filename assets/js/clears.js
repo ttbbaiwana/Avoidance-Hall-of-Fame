@@ -43,6 +43,11 @@ const GAME_VARIANTS = {
     versions: ["Normal", "強化版"],
     defaultPreference: ["Normal", "強化版"],
     columnIndex: 9
+  },
+  "I wanna kill the Kamilia 2 WARPED - Bottomless Abyss": {
+    versions: ["K2W", "NPM"],
+    defaultPreference: ["K2W", "NPM"],
+    columnIndex: 9
   }
 };
 

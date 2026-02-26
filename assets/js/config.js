@@ -181,6 +181,7 @@ const COUNTRY_NAMES = {
   ID: "Indonesia",
   IL: "Israel",
   IR: "Iran",
+  IT: "Italy",
   JP: "Japan",
   KR: "South Korea",
   KW: "Kuwait",

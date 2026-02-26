@@ -342,7 +342,6 @@ function applyRatingColor(td, columnIndex, value) {
   
   if (columnIndex >= 1 && columnIndex <= 7) {
     td.style.color = getBlueRedColor(value);
-    td.classList.add("stat-colored");
     return;
   }
 
@@ -354,6 +353,5 @@ function applyRatingColor(td, columnIndex, value) {
   // Quality column
   if (columnIndex === 9) {
     td.style.color = getRedGreenColor(value);
-    td.classList.add("stat-colored");
   }
 }

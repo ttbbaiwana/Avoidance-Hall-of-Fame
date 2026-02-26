@@ -346,6 +346,10 @@ function applyRatingColor(td, columnIndex, value) {
     return;
   }
 
+  if (columnIndex == 8) {
+    td.classList.add("stat-total");
+  }
+
   // Quality column
   if (columnIndex === 9) {
     td.style.color = getRedGreenColor(value);

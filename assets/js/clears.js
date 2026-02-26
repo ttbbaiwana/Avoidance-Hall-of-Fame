@@ -776,9 +776,9 @@ function updateFilterSummary() {
   }
 
   if (selectedColumn === "country" && countrySelect.value) {
-    parts.push(`Country = ${countrySelect.value}`);
+    parts.push(`Country = ${formatCountryDisplay(countrySelect.value)}`);
   }
-
+  
   summaryEl.textContent = `Showing: ${parts.join(" | ")}`;
 }
 

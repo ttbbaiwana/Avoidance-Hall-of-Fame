@@ -241,10 +241,6 @@ body {
   gap: 8px;
 }
 
-.stat-total {
-  font-weight: 600;
-}
-
 .player-cell {
   display: flex;
   align-items: center;

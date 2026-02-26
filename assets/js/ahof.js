@@ -59,6 +59,12 @@ fetch("data/ahof.json")
     console.error(err);
   });
 
+const avatarToggleAHoF = document.getElementById("toggle-avatars-ahof");
+
+avatarToggleAHoF?.addEventListener("change", () => {
+  ahofTable.classList.toggle("hide-avatars", !avatarToggleAHoF.checked);
+});
+
 function renderTable() {
 
   ahofThead.textContent = "";
@@ -148,20 +154,37 @@ function renderTable() {
 
     if (!showRatings) {
 
+      const firstAvatar = row[10] || "assets/images/Default.jpg"
       const first = row[11] || "-";
+      const latestAvatar = row[12] || "assets/images/Default.jpg"
       const latest = row[13] || "-";
       const total = row[14] || "0";
 
       // First
       const firstTd = document.createElement("td");
 
-      if (first !== "-") {
-        const span = document.createElement("span");
-        span.textContent = first;
-        span.className = "clickable-cell";
-        span.dataset.player = first;
-        span.dataset.game = gameName;
-        firstTd.appendChild(span);
+      if (first !== "-") { 
+        const wrapper = document.createElement("div");
+        wrapper.className = "player-cell";
+      
+        const avatar = document.createElement("img");
+        avatar.className = "avatar-img";
+        avatar.loading = "lazy";
+        avatar.decoding = "async";
+        avatar.referrerPolicy = "no-referrer";
+        avatar.src = firstAvatar;
+        avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
+      
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = first;
+        nameSpan.className = "clickable-cell";
+        nameSpan.dataset.player = first;
+        nameSpan.dataset.game = gameName;
+      
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(nameSpan);
+      
+        firstTd.appendChild(wrapper);
       } else {
         firstTd.textContent = "-";
       }
@@ -172,12 +195,27 @@ function renderTable() {
       const latestTd = document.createElement("td");
 
       if (latest !== "-") {
-        const span = document.createElement("span");
-        span.textContent = latest;
-        span.className = "clickable-cell";
-        span.dataset.player = latest;
-        span.dataset.game = gameName;
-        latestTd.appendChild(span);
+        const wrapper = document.createElement("div");
+        wrapper.className = "player-cell";
+      
+        const avatar = document.createElement("img");
+        avatar.className = "avatar-img";
+        avatar.loading = "lazy";
+        avatar.decoding = "async";
+        avatar.referrerPolicy = "no-referrer";
+        avatar.src = latestAvatar;
+        avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
+      
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = latest;
+        nameSpan.className = "clickable-cell";
+        nameSpan.dataset.player = latest;
+        nameSpan.dataset.game = gameName;
+      
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(nameSpan);
+      
+        latestTd.appendChild(wrapper);
       } else {
         latestTd.textContent = "-";
       }

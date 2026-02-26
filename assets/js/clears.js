@@ -49,10 +49,11 @@ const GAME_VARIANTS = {
 let fullData = [];
 let filteredData = [];
 let headers = [];
-let currentSort = "date";
+let currentSort = "game";
 let currentOrder = "desc";
 let clearMode = "all";
 let exactMatchMode = false;
+let activeGameFilterFromUrl = null;
 
 let autocompleteSources = {
   games: [],
@@ -602,12 +603,12 @@ function renderTable() {
 /* ================= FILTER + SEARCH + URL ================= */
 
 function applyFilter() {
-
   const column = document.getElementById("search-column").value;
   const input = document.getElementById("search-input");
   const countrySelect = document.getElementById("country-select");
   const query = input.value.trim().toLowerCase();
-
+  
+  activeGameFilterFromUrl = null;
   filteredData = getBaseVisibleData();
 
   if (column === "country" && countrySelect.value) {
@@ -744,9 +745,6 @@ function updateRowCount() {
 function updateFilterSummary() {
 
   const summaryEl = document.getElementById("filter-summary");
-
-  if (!summaryEl) return;
-
   const columnSelect = document.getElementById("search-column");
   const input = document.getElementById("search-input");
   const countrySelect = document.getElementById("country-select");
@@ -762,15 +760,23 @@ function updateFilterSummary() {
   else {
     parts.push("All Clears");
   }
-  
+
   const selectedColumn = columnSelect.value;
+  
+  if (selectedColumn === "player" && input.value.trim() !== "") {
+    parts.push(`Player = ${input.value.trim()}`);
+  }
+  
+  if (selectedColumn === "game" && input.value.trim() !== "") {
+    parts.push(`Game = ${input.value.trim()}`);
+  }
+  
+  if (activeGameFilterFromUrl) {
+    parts.push(`Game = ${activeGameFilterFromUrl}`);
+  }
 
   if (selectedColumn === "country" && countrySelect.value) {
     parts.push(`Country = ${countrySelect.value}`);
-  }
-  else if (input.value.trim() !== "") {
-    const columnLabel = columnSelect.options[columnSelect.selectedIndex].text;
-    parts.push(`${columnLabel} = ${input.value.trim()}`);
   }
 
   summaryEl.textContent = `Showing: ${parts.join(" | ")}`;
@@ -970,9 +976,12 @@ function applyUrlFilters() {
     applyFilter();
     
     if (gameParam) {
+      activeGameFilterFromUrl = gameParam;
+    
       filteredData = filteredData.filter(row =>
         row[1] === gameParam
       );
+    
       renderTable();
     }
 

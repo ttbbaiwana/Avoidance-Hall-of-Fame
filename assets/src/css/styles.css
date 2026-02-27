@@ -382,10 +382,10 @@ body {
   width: 100px;
 }
 
-/* Game (longest column) */
+/* Game */
 #clear-table th:nth-child(3),
 #clear-table td:nth-child(3) {
-  width: 550px;
+  width: 500px;
 }
 
 /* Country */

@@ -350,6 +350,14 @@ body {
     padding-top: 10px
 }
 
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  min-height: 0;
+}
+
 .filter-bar {
     display: flex;
     flex-wrap: wrap;

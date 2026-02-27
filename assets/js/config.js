@@ -211,14 +211,26 @@ const API_CONFIG = {
 
 function getContrastTextColor(hex) {
   if (!hex) return "#000000";
-
+  
   const c = hex.replace("#", "");
   const r = parseInt(c.substr(0, 2), 16);
   const g = parseInt(c.substr(2, 2), 16);
   const b = parseInt(c.substr(4, 2), 16);
+  
+  function toLinear(channel) {
+    const v = channel / 255;
+    return v <= 0.04045
+      ? v / 12.92
+      : Math.pow((v + 0.055) / 1.055, 2.4);
+  }
 
-  const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
-  return luminance > 0.6 ? "#000000" : "#ffffff";
+  const R = toLinear(r);
+  const G = toLinear(g);
+  const B = toLinear(b);
+  const luminance = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  const whiteContrast = (1.0 + 0.05) / (luminance + 0.05);
+  const blackContrast = (luminance + 0.05) / (0.0 + 0.05);
+  return whiteContrast > blackContrast ? "#ffffff" : "#000000";
 }
 
 function countryCodeToEmoji(code) {

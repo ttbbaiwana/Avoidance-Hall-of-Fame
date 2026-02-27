@@ -31,7 +31,7 @@ body,html {
       right: 0;
       background: #000;
       flex-direction: column;
-      display: none;
+      display: none !important;
       padding: 0;
       margin: 0;
       z-index: 1000;
@@ -39,17 +39,17 @@ body,html {
     
     .nav-links a {
       padding-left:20px;
-      padding-top:15px;
+      padding-top:20px;
       margin:0;
       border-top: 1px solid #222;
     }
 
     .nav-links a:last-child {
-      padding-bottom:15px;
+      padding-bottom:20px;
     }
 
     .nav-links.show {
-      display: flex;
+      display: flex !important;
     }
 }
 

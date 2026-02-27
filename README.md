@@ -1,2 +1,2 @@
-# AHoF-Public-Stat-Rankings
-Form for retrieving AHoF data.
+# Avoidance-Hall-of-Fame
+Website for The Avoidance Hall of Fame.

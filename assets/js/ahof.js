@@ -159,9 +159,9 @@ function renderTable() {
 
     if (!showRatings) {
 
-      const firstAvatar = "https://images.hsingh.app/?url=" + row[10] + "&w=28&output=webp" || "assets/images/Default.jpg";
+      const firstAvatar = "https://images.hsingh.app/?url=" + row[10] + "&w=28&output=webp" || "assets/images/default.webp";
       const first = row[11] || "-";
-      const latestAvatar = "https://images.hsingh.app/?url=" + row[12] + "&w=28&output=webp" || "assets/images/Default.jpg";
+      const latestAvatar = "https://images.hsingh.app/?url=" + row[12] + "&w=28&output=webp" || "assets/images/default.webp";
       const latest = row[13] || "-";
       const total = row[14] || "0";
 
@@ -181,7 +181,7 @@ function renderTable() {
         avatar.width = "28";
         avatar.height = "28";
         avatar.alt = "Avatar";
-        avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
+        avatar.onerror = () => avatar.src = "assets/images/default.webp";
       
         const nameSpan = document.createElement("span");
         nameSpan.textContent = first;
@@ -215,7 +215,7 @@ function renderTable() {
         avatar.width = "28";
         avatar.height = "28";
         avatar.alt = "Avatar";
-        avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
+        avatar.onerror = () => avatar.src = "assets/images/default.webp";
       
         const nameSpan = document.createElement("span");
         nameSpan.textContent = latest;

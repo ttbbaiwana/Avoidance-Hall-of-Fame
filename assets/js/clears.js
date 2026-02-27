@@ -1,5 +1,3 @@
-const API_URL = API_CONFIG.BASE_URL;
-
 const clearTable = document.getElementById("clear-table");
 const clearThead = clearTable.querySelector("thead");
 const clearTbody = clearTable.querySelector("tbody");
@@ -465,7 +463,7 @@ function renderTable() {
 
     for (let index = 0; index < row.length; index++) {
 
-      if (index === 3 || index === 8 || index == 9) continue;
+      if (index === 3 || index === 8 || index === 9) continue;
 
       const cell = row[index];
       const td = document.createElement("td");
@@ -547,7 +545,9 @@ function renderTable() {
         avatar.loading = "lazy";
         avatar.decoding = "async";
         avatar.referrerPolicy = "no-referrer";
-        avatar.src = "https://images.hsingh.app/?url=" + row[3] + "&w=28&output=webp" || "assets/images/default.webp";
+        avatar.src = row[3]
+          ? "https://images.hsingh.app/?url=" + row[3] + "&w=28&output=webp"
+          : "assets/images/default.webp";
         avatar.width = "28";
         avatar.height = "28";
         avatar.alt = "Avatar";

@@ -49,8 +49,7 @@ body {
   width: 100%;
   padding-left: 5px;
   padding-right: 5px;
-  background-color: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(4px);
+  background-color: rgba(255, 255, 255, 0.97);
 }
 
 @media (max-width: 768px) {

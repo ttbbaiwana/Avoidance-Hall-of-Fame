@@ -547,7 +547,10 @@ function renderTable() {
         avatar.loading = "lazy";
         avatar.decoding = "async";
         avatar.referrerPolicy = "no-referrer";
-        avatar.src = row[3] || "assets/images/Default.jpg";
+        avatar.src = "https://images.hsingh.app/?url=" + row[3] + "&w=28&output=webp" || "assets/images/Default.jpg";
+        avatar.width = "28";
+        avatar.height = "28";
+        avatar.alt = "Avatar";
         avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
 
         const name = document.createElement("span");

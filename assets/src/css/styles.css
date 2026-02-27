@@ -370,32 +370,51 @@ body {
   height: 42px;
 }
 
-#clear-table th:first-child,
-#clear-table td:first-child {
+/* # column */
+#clear-table th:nth-child(1),
+#clear-table td:nth-child(1) {
   width: 50px;
 }
 
+/* Date */
 #clear-table th:nth-child(2),
 #clear-table td:nth-child(2) {
-  width: 620px; /* Game column */
+  width: 110px;
 }
 
+/* Game (longest column) */
 #clear-table th:nth-child(3),
 #clear-table td:nth-child(3) {
+  width: 620px;
+}
+
+/* Country */
+#clear-table th:nth-child(4),
+#clear-table td:nth-child(4) {
   width: 80px;
 }
 
-#clear-table th:nth-child(4),
-#clear-table td:nth-child(4) {
-  width: 300px; /* Player */
+/* Player */
+#clear-table th:nth-child(5),
+#clear-table td:nth-child(5) {
+  width: 280px;
 }
 
-#clear-table th:nth-child(5),
-#clear-table td:nth-child(5),
+/* Death */
 #clear-table th:nth-child(6),
-#clear-table td:nth-child(6),
+#clear-table td:nth-child(6) {
+  width: 80px;
+}
+
+/* Time */
 #clear-table th:nth-child(7),
 #clear-table td:nth-child(7) {
+  width: 80px;
+}
+
+/* Video */
+#clear-table th:nth-child(8),
+#clear-table td:nth-child(8) {
   width: 80px;
 }
 

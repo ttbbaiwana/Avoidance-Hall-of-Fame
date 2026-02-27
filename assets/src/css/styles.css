@@ -9,6 +9,46 @@ body,html {
     font-family: system-ui,sans-serif
 }
 
+.hamburger {
+    display: none;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+
+    .nav-container {
+        justify-content: space-between;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: #000;
+        flex-direction: column;
+        gap: 0;
+        display: none;
+    }
+
+    .nav-links a {
+        padding: 14px 20px;
+        border-top: 1px solid #222;
+    }
+
+    .nav-links.show {
+        display: flex;
+    }
+}
+
 body {
     display: flex;
     flex-direction: column;

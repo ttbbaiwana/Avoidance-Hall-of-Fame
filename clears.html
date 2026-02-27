@@ -5,7 +5,7 @@
   <title>AHoF - Clear List</title>
 	<meta name="description" content="View clear records, players, and game statistics for AHoF avoidances." />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="assets/src/css/styles.css">
+  <link rel="stylesheet" href="assets/dist/css/styles.min.css">
 	<link rel="icon" href="assets/images/favicon.ico">
 </head>
 
@@ -79,20 +79,19 @@
 	  <span id="row-count"></span>
 	</div>
 	
-	<div class="table-wrapper" style="position: relative; overflow-y: auto; height: 600px;">
-	  <table id="clear-table" class="ahof-table hidden">
-	    <thead></thead>
-	    <tbody></tbody>
-	  </table>
-	  <div id="virtual-spacer" style="height:0;"></div>
-	</div>
+  <div class="table-wrapper">
+    <table id="clear-table" class="ahof-table hidden">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
 	<br/>
 </main>
 
 <script src="assets/dist/js/config.min.js" defer></script>
 <script src="assets/dist/js/layout.min.js" defer></script>
 <script src="assets/dist/js/secrets.min.js" defer></script>
-<script src="assets/src/js/clears.js" defer></script>
+<script src="assets/dist/js/clears.min.js" defer></script>
 	
 </body>
 </html>

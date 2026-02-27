@@ -385,7 +385,7 @@ body {
 /* Game (longest column) */
 #clear-table th:nth-child(3),
 #clear-table td:nth-child(3) {
-  width: 620px;
+  width: 600px;
 }
 
 /* Country */
@@ -397,7 +397,7 @@ body {
 /* Player */
 #clear-table th:nth-child(5),
 #clear-table td:nth-child(5) {
-  width: 280px;
+  width: 120px;
 }
 
 /* Death */

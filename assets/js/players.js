@@ -111,6 +111,7 @@ function renderPlayers(data) {
       if (platform.key && PLATFORM_ICONS[platform.key]) {
         const icon = document.createElement("img");
         icon.src = `assets/images/icons/${PLATFORM_ICONS[platform.key]}`;
+        icon.alt = "";
         icon.classList.add("platform-icon");
         a.appendChild(icon);
       }

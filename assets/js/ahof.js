@@ -1,5 +1,3 @@
-const API_URL = API_CONFIG.BASE_URL;
-
 const avoidanceColorMap = Object.fromEntries(
   avoidanceConfig.map(a => [a.name, a.color])
 );
@@ -158,10 +156,13 @@ function renderTable() {
     /* ===== CLEARS MODE ===== */
 
     if (!showRatings) {
-
-      const firstAvatar = "https://images.hsingh.app/?url=" + row[10] + "&w=28&output=webp" || "assets/images/default.webp";
+      const firstAvatar = row[10]
+        ? "https://images.hsingh.app/?url=" + row[10] + "&w=28&output=webp"
+        : "assets/images/default.webp";
       const first = row[11] || "-";
-      const latestAvatar = "https://images.hsingh.app/?url=" + row[12] + "&w=28&output=webp" || "assets/images/default.webp";
+      const latestAvatar = row[12]
+        ? "https://images.hsingh.app/?url=" + row[12] + "&w=28&output=webp"
+        : "assets/images/default.webp";
       const latest = row[13] || "-";
       const total = row[14] || "0";
 
@@ -298,7 +299,7 @@ function sortTable(headerIndex) {
   // Clears Mode
   if (!showRatings) {
     // Total Clears
-    if (!showRatings && headerIndex === 14) {
+    if (headerIndex === 14) {
       if (currentSort.index === headerIndex) {
         currentSort.asc = !currentSort.asc;
       } else {

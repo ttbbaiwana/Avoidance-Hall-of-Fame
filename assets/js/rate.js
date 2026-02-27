@@ -14,29 +14,22 @@ const responses = {
 };
 
 let validPlayerNames = [];
-
-function getContrastTextColor(hex) {
-  const c = hex.replace("#", "");
-  const r = parseInt(c.substr(0, 2), 16);
-  const g = parseInt(c.substr(2, 2), 16);
-  const b = parseInt(c.substr(4, 2), 16);
-
-  // Perceived luminance (WCAG-ish)
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-  return luminance > 0.6 ? "#000000" : "#ffffff";
-}
+let validPlayerNamesLower = [];
 
 async function fetchValidPlayerNames() {
   try {
     const res = await fetch("data/players.json");
     const json = await res.json();
 	  
-	validPlayerNames = [...new Set(
-	  json.data
-	    .map(row => String(row[2] ?? "").trim())
-	    .filter(name => name !== "")
-	)].sort();
+		validPlayerNames = [...new Set(
+		  json.data
+		    .map(row => String(row[2] ?? "").trim())
+		    .filter(name => name !== "")
+		)].sort();
+		
+		validPlayerNamesLower = validPlayerNames.map(name =>
+  		name.toLowerCase()
+		);
 
     setupNameAutocomplete();
   } catch (err) {
@@ -50,25 +43,26 @@ fetchValidPlayerNames();
 function validateGate() {
   const clears = Number(clearsInput.value);
   const enteredName = nameInput.value.trim();
-	const nameFilled = validPlayerNames.includes(enteredName);
-	responses.meta.name = nameInput.value.trim();
+  const enteredLower = enteredName.toLowerCase();
+
+  const nameFilled = validPlayerNamesLower.includes(enteredLower);
+
+  responses.meta.name = enteredName;
 
   if (nameFilled && clears >= 5) {
     nextBtn.disabled = false;
     errorMsg.style.display = "none";
   } else {
     nextBtn.disabled = true;
-		if (!nameFilled && enteredName.length > 0) {
-		  errorMsg.innerText = "Name must match a valid AHoF player.";
-		  errorMsg.style.display = "block";
-		}
-		else if (clears > 0 && clears < 5) {
-		  errorMsg.innerText = "You must have at least 5 AHoF clears.";
-		  errorMsg.style.display = "block";
-		}
-		else {
-		  errorMsg.style.display = "none";
-		}
+    if (!nameFilled && enteredName.length > 0) {
+      errorMsg.innerText = "Name must match a valid AHoF player.";
+      errorMsg.style.display = "block";
+    } else if (clears > 0 && clears < 5) {
+      errorMsg.innerText = "You must have at least 5 AHoF clears.";
+      errorMsg.style.display = "block";
+    } else {
+      errorMsg.style.display = "none";
+    }
   }
 }
 
@@ -227,15 +221,15 @@ function createAvoidanceSection(name) {
 	  }
 	});
 
-	const submitBtn = document.createElement("button");
-	submitBtn.className = "primary-button hidden";
-	submitBtn.textContent = "Submit";
+	const sectionSubmitBtn = document.createElement("button");
+	sectionSubmitBtn.className = "primary-button hidden";
+	sectionSubmitBtn.textContent = "Submit";
 	
-	const submitStatus = document.createElement("p");
-	submitStatus.className = "submit-status";
+	const sectionSubmitStatus = document.createElement("p");
+	sectionSubmitStatus.className = "submit-status";
 	
-	section.appendChild(submitBtn);
-	section.appendChild(submitStatus);
+	section.appendChild(sectionSubmitBtn);
+	section.appendChild(sectionSubmitStatus);
 
 	function validateSingleAvoidance() {
 	  const data = responses.avoidances[name];
@@ -253,11 +247,11 @@ function createAvoidanceSection(name) {
 	  return true;
 	}
 
-	submitBtn.addEventListener("click", async () => {
+	sectionSubmitBtn.addEventListener("click", async () => {
 	  if (!validateSingleAvoidance()) return;
 	
-	  submitBtn.disabled = true;
-	  submitStatus.innerText = "Submitting...";
+	  sectionSubmitBtn.disabled = true;
+	  sectionSubmitStatus.innerText = "Submitting...";
 		
 	  const payload = {
 	    meta: responses.meta,
@@ -269,19 +263,22 @@ function createAvoidanceSection(name) {
 	  try {
 	    const res = await fetch(GOOGLE_SCRIPT_URL, {
 	      method: "POST",
+				headers: {
+				  "Content-Type": "application/json"
+				},
 	      body: JSON.stringify(payload)
 	    });
 	
 	    const result = await res.json();
 	
 	    if (result.status === "ok") {
-	      submitStatus.innerText = "Submitted successfully!";
+	      sectionSubmitStatus.innerText = "Submitted successfully!";
 	    } else {
 	      throw new Error("Submission failed");
 	    }
 	  } catch (err) {
-	    submitStatus.innerText = "Submission failed. Please try again.";
-	    submitBtn.disabled = false;
+	    sectionSubmitStatus.innerText = "Submission failed. Please try again.";
+	    sectionSubmitBtn.disabled = false;
 	    console.error(err);
 	  }
 	});
@@ -367,9 +364,10 @@ function setupNameAutocomplete() {
     const startsWithMatches = [];
     const includesMatches = [];
 
-    for (const name of validPlayerNames) {
-
-      const lower = name.toLowerCase();
+		for (let i = 0; i < validPlayerNames.length; i++) {
+		
+		  const name = validPlayerNames[i];
+		  const lower = validPlayerNamesLower[i];
 
       if (lower.startsWith(query)) {
         startsWithMatches.push(name);

@@ -159,9 +159,9 @@ function renderTable() {
 
     if (!showRatings) {
 
-      const firstAvatar = row[10] || "assets/images/Default.jpg"
+      const firstAvatar = "https://images.hsingh.app/?url=" + row[10] + "&w=28&output=webp" || "assets/images/Default.jpg";
       const first = row[11] || "-";
-      const latestAvatar = row[12] || "assets/images/Default.jpg"
+      const latestAvatar = "https://images.hsingh.app/?url=" + row[12] + "&w=28&output=webp" || "assets/images/Default.jpg";
       const latest = row[13] || "-";
       const total = row[14] || "0";
 
@@ -178,6 +178,9 @@ function renderTable() {
         avatar.decoding = "async";
         avatar.referrerPolicy = "no-referrer";
         avatar.src = firstAvatar;
+        avatar.width = "28";
+        avatar.height = "28";
+        avatar.alt = "Avatar";
         avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
       
         const nameSpan = document.createElement("span");
@@ -209,6 +212,9 @@ function renderTable() {
         avatar.decoding = "async";
         avatar.referrerPolicy = "no-referrer";
         avatar.src = latestAvatar;
+        avatar.width = "28";
+        avatar.height = "28";
+        avatar.alt = "Avatar";
         avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
       
         const nameSpan = document.createElement("span");

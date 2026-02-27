@@ -79,19 +79,20 @@
 	  <span id="row-count"></span>
 	</div>
 	
-  <div class="table-wrapper">
-    <table id="clear-table" class="ahof-table hidden">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
+	<div class="table-wrapper" style="position: relative; overflow-y: auto; height: 600px;">
+	  <table id="clear-table" class="ahof-table hidden">
+	    <thead></thead>
+	    <tbody></tbody>
+	  </table>
+	  <div id="virtual-spacer" style="height:0;"></div>
+	</div>
 	<br/>
 </main>
 
 <script src="assets/dist/js/config.min.js" defer></script>
 <script src="assets/dist/js/layout.min.js" defer></script>
 <script src="assets/dist/js/secrets.min.js" defer></script>
-<script src="assets/dist/js/clears.min.js" defer></script>
+<script src="assets/src/js/clears.js" defer></script>
 	
 </body>
 </html>

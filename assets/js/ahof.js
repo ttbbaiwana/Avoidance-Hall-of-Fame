@@ -291,8 +291,8 @@ function sortTable(headerIndex) {
 
   // Clears Mode
   if (!showRatings) {
-    // Total Clears column = index 4
-    if (!showRatings && headerIndex === 12) {
+    // Total Clears
+    if (!showRatings && headerIndex === 14) {
       if (currentSort.index === headerIndex) {
         currentSort.asc = !currentSort.asc;
       } else {
@@ -301,8 +301,8 @@ function sortTable(headerIndex) {
       }
     
       tableData.sort((a, b) => {
-        const totalA = parseInt(a[12]) || 0;
-        const totalB = parseInt(b[12]) || 0;
+        const totalA = parseInt(a[14]) || 0;
+        const totalB = parseInt(b[14]) || 0;
     
         return currentSort.asc
           ? totalA - totalB

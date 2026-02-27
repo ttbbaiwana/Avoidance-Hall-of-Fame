@@ -1,4 +1,4 @@
-const ROW_HEIGHT = 50;
+const ROW_HEIGHT = 42;
 const tableWrapper = document.querySelector(".table-wrapper");
 const virtualSpacer = document.getElementById("virtual-spacer");
 const clearTable = document.getElementById("clear-table");

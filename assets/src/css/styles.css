@@ -19,33 +19,37 @@ body,html {
 }
 
 @media (max-width: 768px) {
-
-    .nav-container {
-        justify-content: space-between;
-    }
-
+  
     .hamburger {
-        display: block;
+      display: block;
     }
 
     .nav-links {
-        position: absolute;
-        top: 60px;
-        left: 0;
-        right: 0;
-        background: #000;
-        flex-direction: column;
-        gap: 0;
-        display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #000;
+      flex-direction: column;
+      display: none;
+      padding: 0;
+      margin: 0;
+      z-index: 1000;
+    }
+    
+    .nav-links a {
+      padding-left:20px;
+      padding-top:15px;
+      margin:0;
+      border-top: 1px solid #222;
     }
 
-    .nav-links a {
-        padding: 14px 20px;
-        border-top: 1px solid #222;
+    .nav-links a:last-child {
+      padding-bottom:15px;
     }
 
     .nav-links.show {
-        display: flex;
+      display: flex;
     }
 }
 

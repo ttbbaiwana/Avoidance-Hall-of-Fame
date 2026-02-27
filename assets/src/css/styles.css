@@ -367,7 +367,49 @@ body {
 }
 
 #clear-table tbody tr {
-  height: 50px;
+  height: 42px;
+}
+
+/* Number column */
+#clear-table th:first-child,
+#clear-table td:first-child {
+  width: 42px;
+}
+
+/* Game column (2nd column including #) */
+#clear-table th:nth-child(2),
+#clear-table td:nth-child(2) {
+  width: 28%;
+}
+
+/* Country column */
+#clear-table th:nth-child(3),
+#clear-table td:nth-child(3) {
+  width: 80px;
+}
+
+/* Player column */
+#clear-table th:nth-child(4),
+#clear-table td:nth-child(4) {
+  width: 22%;
+}
+
+/* Death */
+#clear-table th:nth-child(5),
+#clear-table td:nth-child(5) {
+  width: 80px;
+}
+
+/* Time */
+#clear-table th:nth-child(6),
+#clear-table td:nth-child(6) {
+  width: 80px;
+}
+
+/* Video */
+#clear-table th:nth-child(7),
+#clear-table td:nth-child(7) {
+  width: 80px;
 }
 
 #clear-table tbody tr.first-clear-row td {

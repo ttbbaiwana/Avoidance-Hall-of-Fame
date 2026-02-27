@@ -37,7 +37,7 @@ function renderPlayers(data) {
   data.forEach(row => {
 
     const country = row[0];
-    const avatarUrl = "https://images.hsingh.app/?url=" + row[1] + "&w=48&output=webp" || "assets/images/Default.jpg";;
+    const avatarUrl = "https://images.hsingh.app/?url=" + row[1] + "&w=48&output=webp" || "assets/images/default.webp";
     const player = row[2];
     const channels = row.slice(3, 7).filter(Boolean);
     const socials = row[7];
@@ -53,11 +53,11 @@ function renderPlayers(data) {
     avatar.classList.add("player-avatar");
     avatar.loading = "lazy";
     avatar.referrerPolicy = "no-referrer";
-    avatar.src = avatarUrl || "assets/images/Default.jpg";
+    avatar.src = avatarUrl || "assets/images/default.webp";
     avatar.width = "48";
     avatar.height = "48";
     avatar.alt = "Avatar";
-    avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
+    avatar.onerror = () => avatar.src = "assets/images/default.webp";
 
     const flag = document.createElement("span");
     flag.classList.add("fi", `fi-${country.toLowerCase()}`);

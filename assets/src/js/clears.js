@@ -440,17 +440,25 @@ function renderTable() {
   /* ================= VIRTUALIZATION ================= */
 
   const totalHeight = rowMeta.length * ROW_HEIGHT;
-  virtualSpacer.style.height = totalHeight + "px";
+  virtualSpacer.style.height = 
+    Math.max(0, totalHeight - tableWrapper.clientHeight) + "px";
 
   function renderVisibleRows() {
-
+  
+    const totalHeight = rowMeta.length * ROW_HEIGHT;
+    const maxScrollTop = totalHeight - tableWrapper.clientHeight;
+  
+    if (tableWrapper.scrollTop > maxScrollTop) {
+      tableWrapper.scrollTop = Math.max(0, maxScrollTop);
+    }
+  
     clearTbody.textContent = "";
-
+  
     const scrollTop = tableWrapper.scrollTop;
     const startIdx = Math.floor(scrollTop / ROW_HEIGHT);
     const visibleCount =
-      Math.ceil(tableWrapper.clientHeight / ROW_HEIGHT) + 5;
-
+      Math.ceil(tableWrapper.clientHeight / ROW_HEIGHT) + 2;
+  
     const endIdx =
       Math.min(startIdx + visibleCount, rowMeta.length);
 

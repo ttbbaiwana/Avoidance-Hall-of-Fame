@@ -1,12 +1,9 @@
 const ROW_HEIGHT = 50;
-const firstClearMap = {};
-let scrollTop = 0;
-
-const tableWrapper = document.querySelector('.table-wrapper');
+const tableWrapper = document.querySelector(".table-wrapper");
+const virtualSpacer = document.getElementById("virtual-spacer");
 const clearTable = document.getElementById("clear-table");
 const clearThead = clearTable.querySelector("thead");
 const clearTbody = clearTable.querySelector("tbody");
-const virtualSpacer = document.getElementById("virtual-spacer");
 
 const avoidanceColorMap = Object.fromEntries(
   avoidanceConfig.map(a => [a.name, a.color])
@@ -319,18 +316,44 @@ function sortData() {
 }
 
 /* ================= RENDER ================= */
+
 function renderTable() {
+
   clearThead.textContent = "";
   clearTbody.textContent = "";
 
-  // Build header exactly as before
+  /* ================= BUILD FIRST-CLEAR MAP ================= */
+
+  const firstClearMap = {};
+
+  filteredData.forEach(row => {
+
+    const game = row[1];
+    const rawDate = row[0];
+    const type = row[8];
+
+    if (type === "M" || type === "T") return;
+
+    const date = rawDate ? new Date(rawDate) : null;
+    if (!date) return;
+
+    if (!firstClearMap[game] || date < firstClearMap[game].date) {
+      firstClearMap[game] = { row, date };
+    }
+  });
+
+  /* ================= HEADER ================= */
+
   const headerRow = document.createElement("tr");
+
   const numberTh = document.createElement("th");
   numberTh.textContent = "#";
   headerRow.appendChild(numberTh);
 
   headers.forEach((h, index) => {
-    if ([3, 8, 9].includes(index)) return;
+
+    if (index === 3 || index === 8 || index === 9) return;
+
     const th = document.createElement("th");
     th.textContent = h;
 
@@ -343,8 +366,13 @@ function renderTable() {
     if (index === 6) columnKey = "time";
 
     if (columnKey) {
+
       th.style.cursor = "pointer";
-      if (columnKey === currentSort) th.textContent += currentOrder === "asc" ? " ▲" : " ▼";
+
+      if (columnKey === currentSort) {
+        th.textContent += currentOrder === "asc" ? " ▲" : " ▼";
+      }
+
       th.onclick = () => {
         if (currentSort === columnKey) {
           currentOrder = currentOrder === "asc" ? "desc" : "asc";
@@ -352,93 +380,135 @@ function renderTable() {
           currentSort = columnKey;
           currentOrder = "asc";
         }
+
         sortData();
         renderTable();
       };
     }
+
     headerRow.appendChild(th);
   });
 
   clearThead.appendChild(headerRow);
 
-  // Set total scroll height
-  const totalHeight = filteredData.length * ROW_HEIGHT;
+  /* ================= PRECOMPUTE ROW METADATA ================= */
+
+  const rowMeta = [];
+  let lastGame = null;
+  let gameCounter = 1;
+
+  filteredData.forEach((row, index) => {
+
+    const game = row[1];
+    const type = row[8];
+
+    const isFirstClear =
+      currentSort === "game" &&
+      clearMode === "all" &&
+      firstClearMap[game]?.row === row;
+
+    const hasDivider =
+      currentSort === "game" &&
+      index > 0 &&
+      filteredData[index - 1][1] !== game;
+
+    let displayNumber;
+
+    if (currentSort === "game" && clearMode === "all") {
+
+      if (game !== lastGame) {
+        gameCounter = 1;
+        lastGame = game;
+      }
+
+      if (type === "M") displayNumber = "M";
+      else if (type === "T") displayNumber = "T";
+      else displayNumber = gameCounter++;
+
+    } else {
+      displayNumber = index + 1;
+    }
+
+    rowMeta.push({
+      row,
+      isFirstClear,
+      hasDivider,
+      displayNumber
+    });
+  });
+
+  /* ================= VIRTUALIZATION ================= */
+
+  const totalHeight = rowMeta.length * ROW_HEIGHT;
   virtualSpacer.style.height = totalHeight + "px";
 
-  // Render only visible rows
   function renderVisibleRows() {
+
     clearTbody.textContent = "";
 
+    const scrollTop = tableWrapper.scrollTop;
     const startIdx = Math.floor(scrollTop / ROW_HEIGHT);
-    const visibleCount = Math.ceil(tableWrapper.clientHeight / ROW_HEIGHT) + 5; // +5 buffer
-    const endIdx = Math.min(startIdx + visibleCount, filteredData.length);
+    const visibleCount =
+      Math.ceil(tableWrapper.clientHeight / ROW_HEIGHT) + 5;
+
+    const endIdx =
+      Math.min(startIdx + visibleCount, rowMeta.length);
 
     const fragment = document.createDocumentFragment();
 
-    let lastGame = null;
-    let gameCounter = 1;
+    for (let i = startIdx; i < endIdx; i++) {
 
-    for (let rowIndex = startIdx; rowIndex < endIdx; rowIndex++) {
-      const row = filteredData[rowIndex];
-      const tr = createRow(row, rowIndex, lastGame, gameCounter);
-      if (currentSort === "game" && clearMode === "all") {
-        const game = row[1];
-        if (game !== lastGame) {
-          gameCounter = 1;
-          lastGame = game;
-        }
-        if (!["M","T"].includes(row[8])) gameCounter++;
-      }
+      const { row, isFirstClear, hasDivider, displayNumber } = rowMeta[i];
+
+      const tr = createRow(row, displayNumber);
+
+      if (isFirstClear) tr.classList.add("first-clear-row");
+      if (hasDivider) tr.classList.add("game-divider");
+
       fragment.appendChild(tr);
     }
 
-    clearTbody.style.transform = `translateY(${startIdx * ROW_HEIGHT}px)`;
+    clearTbody.style.transform =
+      `translateY(${startIdx * ROW_HEIGHT}px)`;
+
     clearTbody.appendChild(fragment);
   }
 
-  // Listen to scroll
-  tableWrapper.onscroll = () => {
-    scrollTop = tableWrapper.scrollTop;
-    renderVisibleRows();
-  };
+  tableWrapper.onscroll = renderVisibleRows;
 
   renderVisibleRows();
+
   updateRowCount();
   updateFilterSummary();
 }
 
-function createRow(row, rowIndex, lastGame, gameCounter) {
+function createRow(row, displayNumber) {
+
   const tr = document.createElement("tr");
-  const game = row[1];
   const type = row[8];
 
-  // First-clear highlight
-  if (currentSort === "game" && clearMode === "all" && firstClearMap[game]?.row === row) {
-    tr.classList.add("first-clear-row");
-  }
-
-  if (currentSort === "game" && rowIndex > 0) {
-    const prevGame = filteredData[rowIndex - 1][1];
-    if (game !== prevGame) tr.classList.add("game-divider");
-  }
-
-  // Number column
-  let displayNumber;
-  if (currentSort === "game" && clearMode === "all") {
-    if (game !== lastGame) gameCounter = 1;
-    displayNumber = ["M","T"].includes(type) ? type : gameCounter;
-  } else displayNumber = rowIndex + 1;
+  /* ===== NUMBER COLUMN ===== */
 
   const numberTd = document.createElement("td");
   numberTd.textContent = displayNumber;
-  if (displayNumber === "M") numberTd.classList.add("maker-number");
-  if (displayNumber === "T") numberTd.classList.add("tester-number");
+
+  if (displayNumber === "M") {
+    numberTd.classList.add("maker-number");
+  }
+  else if (displayNumber === "T") {
+    numberTd.classList.add("tester-number");
+  }
+
   tr.appendChild(numberTd);
 
+  /* ===== DATA COLUMNS ===== */
+
   for (let index = 0; index < row.length; index++) {
-    if ([3,8,9].includes(index)) continue;
-    const td = document.createElement("td");
+
+    if (index === 3 || index === 8 || index === 9) continue;
+
     const cell = row[index];
+    const td = document.createElement("td");
 
     if ([0,1,2,4].includes(index)) {
       td.className = "clickable-cell";
@@ -446,21 +516,40 @@ function createRow(row, rowIndex, lastGame, gameCounter) {
       td.dataset.value = cell;
     }
 
-    // DATE
-    if (index === 0) td.textContent = cell ? formatDateYYYYMMDD(cell) : "-";
+    /* ===== DATE ===== */
 
-    // GAME
+    if (index === 0) {
+
+      if (!cell) {
+        td.textContent = "-";
+      } else {
+        const formatted = formatDateYYYYMMDD(cell);
+        td.textContent = formatted;
+        td.dataset.value = formatted;
+      }
+    }
+
+    /* ===== GAME ===== */
+
     else if (index === 1) {
+
+      const gameName = cell;
+
       const wrapper = document.createElement("div");
       wrapper.className = "game-cell-wrapper";
+
       const nameSpan = document.createElement("span");
-      nameSpan.textContent = cell;
+      nameSpan.textContent = gameName;
       nameSpan.className = "ahof-game-link";
+
       wrapper.appendChild(nameSpan);
 
-      const variantConfig = GAME_VARIANTS[cell];
+      const variantConfig = GAME_VARIANTS[gameName];
+
       if (variantConfig) {
+
         const version = row[variantConfig.columnIndex];
+
         if (version) {
           const badge = document.createElement("span");
           badge.className = "variant-badge";
@@ -473,10 +562,13 @@ function createRow(row, rowIndex, lastGame, gameCounter) {
       td.appendChild(wrapper);
 
       const secretStyle = SecretManager.getSecretStyle(cell);
+
       if (secretStyle) {
         td.style.backgroundColor = secretStyle.backgroundColor;
-        td.style.color = getContrastTextColor(secretStyle.backgroundColor);
-      } else {
+        td.style.color =
+          getContrastTextColor(secretStyle.backgroundColor);
+      }
+      else {
         const style = gameStyleMap[cell];
         if (style) {
           td.style.backgroundColor = style.backgroundColor;
@@ -485,37 +577,58 @@ function createRow(row, rowIndex, lastGame, gameCounter) {
       }
     }
 
-    // COUNTRY
+    /* ===== COUNTRY ===== */
+
     else if (index === 2 && cell) {
+
       const flag = document.createElement("span");
-      flag.className = `fi fi-${cell.toLowerCase()} flag-icon`;
+      flag.className =
+        `fi fi-${cell.toLowerCase()} flag-icon`;
+
       td.appendChild(flag);
     }
 
-    // PLAYER
+    /* ===== PLAYER ===== */
+
     else if (index === 4) {
+
       const wrapper = document.createElement("div");
       wrapper.className = "player-cell";
+
       const avatar = document.createElement("img");
       avatar.className = "avatar-img";
       avatar.loading = "lazy";
       avatar.decoding = "async";
       avatar.referrerPolicy = "no-referrer";
-      avatar.src = row[3] ? `https://images.hsingh.app/?url=${row[3]}&w=28&output=webp` : "assets/images/default.webp";
-      avatar.width = 28; avatar.height = 28; avatar.alt = "Avatar";
-      avatar.onerror = () => avatar.src = "assets/images/default.webp";
-      wrapper.appendChild(avatar);
+      avatar.src = row[3]
+        ? "https://images.hsingh.app/?url=" + row[3] + "&w=28&output=webp"
+        : "assets/images/default.webp";
+      avatar.width = "28";
+      avatar.height = "28";
+      avatar.alt = "Avatar";
+      avatar.onerror = () =>
+        avatar.src = "assets/images/default.webp";
 
       const name = document.createElement("span");
       name.textContent = cell;
+
+      wrapper.appendChild(avatar);
       wrapper.appendChild(name);
 
-      if (["M","T"].includes(type)) {
+      if (type === "M" || type === "T") {
+
         const badge = document.createElement("span");
-        badge.className = `role-badge ${type === "M" ? "maker-badge" : "tester-badge"}`;
+        badge.className =
+          `role-badge ${type === "M"
+            ? "maker-badge"
+            : "tester-badge"}`;
         badge.textContent = type;
 
-        if (row[4] === "PlasmaNapkin" && row[1] === "I Wanna Wane" && type === "M") {
+        if (
+          row[4] === "PlasmaNapkin" &&
+          row[1] === "I Wanna Wane" &&
+          type === "M"
+        ) {
           badge.dataset.secret = "curveWAH";
           badge.style.cursor = "pointer";
         }
@@ -526,10 +639,14 @@ function createRow(row, rowIndex, lastGame, gameCounter) {
       td.appendChild(wrapper);
     }
 
-    // DEATH / TIME
-    else if ([5,6].includes(index)) td.textContent = cell ?? "-";
+    /* ===== DEATH / TIME ===== */
 
-    // VIDEO
+    else if (index === 5 || index === 6) {
+      td.textContent = cell ? cell : "-";
+    }
+
+    /* ===== VIDEO ===== */
+
     else if (index === 7 && cell?.startsWith("http")) {
       const a = document.createElement("a");
       a.href = cell;

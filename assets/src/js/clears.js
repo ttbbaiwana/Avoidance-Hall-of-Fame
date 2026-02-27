@@ -1,4 +1,5 @@
 const ROW_HEIGHT = 50;
+const firstClearMap = {};
 let scrollTop = 0;
 
 const tableWrapper = document.querySelector('.table-wrapper');

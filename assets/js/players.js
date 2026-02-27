@@ -37,7 +37,7 @@ function renderPlayers(data) {
   data.forEach(row => {
 
     const country = row[0];
-    const avatarUrl = row[1];
+    const avatarUrl = "https://images.hsingh.app/?url=" + row[1] + "&w=48&output=webp" || "assets/images/Default.jpg";;
     const player = row[2];
     const channels = row.slice(3, 7).filter(Boolean);
     const socials = row[7];
@@ -54,6 +54,9 @@ function renderPlayers(data) {
     avatar.loading = "lazy";
     avatar.referrerPolicy = "no-referrer";
     avatar.src = avatarUrl || "assets/images/Default.jpg";
+    avatar.width = "48";
+    avatar.height = "48";
+    avatar.alt = "Avatar";
     avatar.onerror = () => avatar.src = "assets/images/Default.jpg";
 
     const flag = document.createElement("span");

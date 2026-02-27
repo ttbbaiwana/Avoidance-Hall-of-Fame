@@ -1,7 +1,6 @@
-const API_URL = API_CONFIG.BASE_URL;
-
 let playersFullData = [];
 let playersFilteredData = [];
+let playersNameIndex = [];
 let playersExactMatchMode = false;
 
 /* ================= FETCH ================= */
@@ -11,6 +10,12 @@ fetch("data/players.json")
   .then(json => {
     playersFullData = json.data;
     playersFilteredData = [...playersFullData];
+
+    playersNameIndex = [...new Set(
+      playersFullData
+        .map(row => String(row[2] ?? "").trim())
+        .filter(Boolean)
+    )].sort();
 
     populateCountryDropdown();
     setupPlayersSearch();
@@ -37,7 +42,9 @@ function renderPlayers(data) {
   data.forEach(row => {
 
     const country = row[0];
-    const avatarUrl = "https://images.hsingh.app/?url=" + row[1] + "&w=48&output=webp" || "assets/images/default.webp";
+    const avatarUrl = row[1]
+      ? "https://images.hsingh.app/?url=" + row[1] + "&w=48&output=webp"
+      : "assets/images/default.webp";
     const player = row[2];
     const channels = row.slice(3, 7).filter(Boolean);
     const socials = row[7];
@@ -62,8 +69,6 @@ function renderPlayers(data) {
     const flag = document.createElement("span");
     flag.classList.add("fi", `fi-${country.toLowerCase()}`);
     flag.classList.add("flag-icon", "clickable-flag");
-    flag.loading = "lazy";
-    flag.onerror = () => flag.remove();
 
     flag.addEventListener("click", () => {
       const columnSelect = document.getElementById("players-search-column");
@@ -244,15 +249,8 @@ function setupPlayersAutocomplete() {
       list.classList.add("hidden");
       return;
     }
-    
-    const source = [
-      ...new Set(
-        playersFullData
-          .map(row => String(row[2] ?? ""))
-          .filter(name => name !== "")
-      )
-    ].sort();
 
+    const source = playersNameIndex;
     const startsWith = [];
     const includes = [];
 

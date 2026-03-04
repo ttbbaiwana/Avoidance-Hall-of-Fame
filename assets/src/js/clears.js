@@ -118,6 +118,13 @@ clearTbody.addEventListener("click", (e) => {
     return;
   }
 
+  // Joe teaser reveal
+  if (e.target.dataset.joeReveal === "true") {
+    SecretManager.revealJoeSecret();
+    applyFilter();
+    return;
+  }
+
   const clickableCell = e.target.closest(".clickable-cell");
 
   if (!clickableCell?.dataset.filterIndex) return;
@@ -330,6 +337,26 @@ function renderTable() {
   clearThead.textContent = "";
   clearTbody.textContent = "";
 
+  let joeTeaserRow = null;
+
+  if (
+    SecretManager.isJoeTeaserActive &&
+    SecretManager.isJoeTeaserActive(currentSort)
+  ) {
+    joeTeaserRow = [
+      "0000-00-00",
+      "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????",
+      "",
+      "",
+      "Joe",
+      "-",
+      "-",
+      "-",
+      "",
+      ""
+    ];
+  }
+
   const fragment = document.createDocumentFragment();
 
   /* ===== Build first-clear map ===== */
@@ -496,15 +523,6 @@ function renderTable() {
       }
       
       else if (index === 1) {
-        
-        const gameName = cell;
-        
-        const wrapper = document.createElement("div");
-        wrapper.className = "game-cell-wrapper";
-      
-        const nameSpan = document.createElement("span");
-        nameSpan.textContent = gameName;
-        nameSpan.className = "ahof-game-link";
 
         // Joe teaser special styling
         if (row.__joeTeaser) {
@@ -515,7 +533,16 @@ function renderTable() {
           tr.appendChild(td);
           continue;
         }
+        
+        const gameName = cell;
+        
+        const wrapper = document.createElement("div");
+        wrapper.className = "game-cell-wrapper";
       
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = gameName;
+        nameSpan.className = "ahof-game-link";
+        
         wrapper.appendChild(nameSpan);
       
         const variantConfig = GAME_VARIANTS[gameName];
@@ -621,6 +648,39 @@ function renderTable() {
 
     fragment.appendChild(tr);
   });
+
+  if (joeTeaserRow) {
+
+    const tr = document.createElement("tr");
+    tr.classList.add("joe-teaser-row");
+  
+    // # column
+    const numberTd = document.createElement("td");
+    numberTd.textContent = "?";
+    tr.appendChild(numberTd);
+  
+    joeTeaserRow.forEach((cell, index) => {
+  
+      if (index === 3 || index === 8 || index === 9) return;
+  
+      const td = document.createElement("td");
+  
+      if (index === 1) {
+        td.textContent = joeTeaserRow[1];
+        td.style.backgroundColor = "#ffee00";
+        td.style.color = getContrastTextColor("#ffee00");
+        td.style.cursor = "pointer";
+        td.dataset.joeReveal = "true";
+      }
+      else {
+        td.textContent = cell || "-";
+      }
+  
+      tr.appendChild(td);
+    });
+  
+    fragment.appendChild(tr);
+  }
 
   clearTbody.appendChild(fragment);
 

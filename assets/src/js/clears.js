@@ -321,10 +321,6 @@ function sortData() {
     }
 
   });
-
-  if (fakeRow) {
-    filteredData.push(fakeRow);
-  }
 }
 
 /* ================= RENDER ================= */

@@ -682,6 +682,90 @@ body {
     background: currentColor
 }
 
+.joe-teaser-row {
+    position: relative;
+    animation: joeFlicker 1.8s infinite;
+}
+
+.joe-teaser-row td {
+    background: #ffee00 !important;
+    color: #000 !important;
+    font-weight: 700;
+    position: relative;
+    overflow: hidden;
+}
+
+.joe-teaser-row:hover {
+    background: none !important;
+}
+
+.joe-teaser-row td::before,
+.joe-teaser-row td::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.joe-teaser-row td::before {
+    color: #ff0033;
+    transform: translate(-1px, 0);
+    mix-blend-mode: multiply;
+    animation: joeGlitch1 0.4s infinite linear alternate-reverse;
+}
+
+.joe-teaser-row td::after {
+    color: #00ccff;
+    transform: translate(1px, 0);
+    mix-blend-mode: multiply;
+    animation: joeGlitch2 0.4s infinite linear alternate-reverse;
+}
+
+@keyframes joeGlitch1 {
+    0% { transform: translate(-1px, 0); }
+    20% { transform: translate(-2px, 1px); }
+    40% { transform: translate(-1px, -1px); }
+    60% { transform: translate(-3px, 0); }
+    80% { transform: translate(-1px, 1px); }
+    100% { transform: translate(-2px, -1px); }
+}
+
+@keyframes joeGlitch2 {
+    0% { transform: translate(1px, 0); }
+    20% { transform: translate(2px, -1px); }
+    40% { transform: translate(1px, 1px); }
+    60% { transform: translate(3px, 0); }
+    80% { transform: translate(1px, -1px); }
+    100% { transform: translate(2px, 1px); }
+}
+
+@keyframes joeFlicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        opacity: 0.85;
+    }
+}
+
+.joe-teaser-row::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.08),
+        rgba(0,0,0,0.08) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+}
+
 .fib,.fi {
     background-size: contain;
     background-position: 50%;

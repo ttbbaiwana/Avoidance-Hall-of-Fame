@@ -170,9 +170,13 @@ const SecretManager = (() => {
   
       const headerText = e.target.textContent.replace(/ ▲| ▼/, "");
   
-      if (headerText === "Player" && isGrowthMemoriesSearchActive()) {
-        state.joeState = "teaser";
-        hooks.applyFilter();
+      if (headerText === "Player") {
+        if (state.joeState === "unlocked") return;
+      
+        if (isGrowthMemoriesSearchActive()) {
+          state.joeState = "teaser";
+          hooks.applyFilter();
+        }
       }
     });
   }

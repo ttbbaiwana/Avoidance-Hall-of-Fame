@@ -1191,46 +1191,50 @@ function renderJoeTeaser() {
 
   const table = document.createElement("table");
   table.className = "joe-bottom-table ahof-table";
+  table.style.tableLayout = "fixed";
+
+  const realHeaderCells = document.querySelectorAll("#clear-table thead th");
+  const colgroup = document.createElement("colgroup");
+
+  realHeaderCells.forEach(th => {
+    const col = document.createElement("col");
+    col.style.width = th.getBoundingClientRect().width + "px";
+    colgroup.appendChild(col);
+  });
+
+  table.appendChild(colgroup);
 
   const tr = document.createElement("tr");
 
-  // # column
-  const numberTd = document.createElement("td");
-  numberTd.textContent = "?";
-  tr.appendChild(numberTd);
-
   const cells = [
-    "????-??-??", // Date
-    "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????", // Game
-    "", // Country
-    null, // Player (handled separately)
-    "-", // Death
-    "-", // Time
-    "-"  // Video
+    "?",
+    "????-??-??",
+    "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????",
+    "",
+    "Joe",
+    "-",
+    "-",
+    "-"
   ];
 
   cells.forEach((cell, index) => {
 
     const td = document.createElement("td");
 
-    // GAME COLUMN (index 1)
-    if (index === 1) {
+    if (index === 2) {
       td.textContent = cell;
       td.style.cursor = "pointer";
-      td.dataset.joeReveal = "true";
+
+      td.addEventListener("click", () => {
+        SecretManager.revealJoeSecret();
+        applyFilter();
+      });
+
       tr.appendChild(td);
       return;
     }
 
-    // COUNTRY COLUMN (index 2)
-    if (index === 2) {
-      td.textContent = "";
-      tr.appendChild(td);
-      return;
-    }
-
-    // PLAYER COLUMN (index 3)
-    if (index === 3) {
+    if (index === 4) {
 
       const wrapper = document.createElement("div");
       wrapper.className = "player-cell";
@@ -1240,7 +1244,6 @@ function renderJoeTeaser() {
       avatar.src = "assets/images/default.webp";
       avatar.width = "28";
       avatar.height = "28";
-      avatar.alt = "Avatar";
 
       const name = document.createElement("span");
       name.textContent = "Joe";

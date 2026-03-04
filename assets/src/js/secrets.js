@@ -181,6 +181,14 @@ const SecretManager = (() => {
     state.joeState = "unlocked";
   }
 
+  function isJoeTeaserActive(currentSort) {
+    if (state.joeState !== "teaser") return false;
+    if (!isGrowthMemoriesSearchActive()) return false;
+    if (currentSort !== "player") return false;
+  
+    return true;
+  }
+
   /* ================= APPLY SECRETS ================= */
 
   function applySecrets(column, data, fullData) {
@@ -227,33 +235,6 @@ const SecretManager = (() => {
       );
     }
     
-    if (
-      state.joeState === "teaser" &&
-      isGrowthMemoriesSearchActive() &&
-      sortState.sort === "player"
-    ) {
-    
-    const fakeRow = [
-      "????-??-??",
-      "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????",
-      "",
-      "",
-      "Joe",
-      "-",
-      "-",
-      "-",
-      "",
-      ""
-    ];
-      
-    Object.defineProperty(fakeRow, "__joeTeaser", {
-      value: true,
-      enumerable: false
-    });
-    
-    return [...data, fakeRow];
-    }
-    
     return data;
   }
   
@@ -285,7 +266,8 @@ const SecretManager = (() => {
     getSecretStyle,
     resetSecrets,
     isSecretModeActive,
-    revealJoeSecret
+    revealJoeSecret,
+    isJoeTeaserActive
   };
 
 })();

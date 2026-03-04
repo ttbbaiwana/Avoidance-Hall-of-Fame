@@ -526,10 +526,8 @@ function renderTable() {
 
         // Joe teaser special styling
         if (row.__joeTeaser) {
-          td.textContent = row[1];
-          td.style.backgroundColor = "#ffee00";
-          td.style.color = getContrastTextColor("#ffee00");
-        
+          td.textContent = joeTeaserRow[1];
+          td.setAttribute("data-text", joeTeaserRow[1]);
           tr.appendChild(td);
           continue;
         }
@@ -673,7 +671,9 @@ function renderTable() {
         td.dataset.joeReveal = "true";
       }
       else {
-        td.textContent = cell || "-";
+        const text = cell || "-";
+        td.textContent = text;
+        td.setAttribute("data-text", text);
       }
   
       tr.appendChild(td);

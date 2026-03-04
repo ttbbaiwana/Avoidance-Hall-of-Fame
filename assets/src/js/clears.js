@@ -130,11 +130,18 @@ clearTbody.addEventListener("click", (e) => {
 
   const selectedColumn = columnMap[columnIndex];
   
-  if (
-    selectedColumn === "game" &&
-    SecretManager.isSecretGame(value)
-  ) {
-    return;
+  if (selectedColumn === "game") {
+    if (
+      value === "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????"
+    ) {
+      SecretManager.revealJoeSecret();
+      applyFilter();
+      return;
+    }
+  
+    if (SecretManager.isSecretGame(value)) {
+      return;
+    }
   }
   
   if (
@@ -219,9 +226,22 @@ function sortData() {
     death: 5,
     time: 6
   };
-
+  
+  const isFakeJoeRow = row =>
+    row[1] === "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????";
+  
   const col = sortMap[currentSort];
 
+  let fakeRow = null;
+
+  filteredData = filteredData.filter(row => {
+    if (isFakeJoeRow(row)) {
+      fakeRow = row;
+      return false;
+    }
+    return true;
+  });
+  
   filteredData.sort((a, b) => {
 
     const valA = a[col];
@@ -310,6 +330,10 @@ function sortData() {
     }
 
   });
+
+  if (fakeRow) {
+    filteredData.push(fakeRow);
+  }
 }
 
 /* ================= RENDER ================= */

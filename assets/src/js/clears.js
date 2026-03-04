@@ -80,7 +80,7 @@ fetch("data/clear-list.json")
     applyUrlFilters();
 
     sortData();
-    ();
+    renderTable();
 
     document.getElementById("loader").classList.add("hidden");
     clearTable.classList.remove("hidden");

@@ -46,7 +46,12 @@ const GAME_VARIANTS = {
     versions: ["K2W", "NPM"],
     defaultPreference: ["K2W", "NPM"],
     columnIndex: 9
-  }
+  },
+  "I wanna be the LoveTrap - Big Kid": {
+    versions: ["PC", "Mobile"],
+    defaultPreference: ["PC", "Mobile"],
+    columnIndex: 9
+  },
 };
 
 let fullData = [];

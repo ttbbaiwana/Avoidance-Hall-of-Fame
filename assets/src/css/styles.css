@@ -414,6 +414,7 @@ body {
   overflow-x: auto;
   border: 1px solid #ddd;
   min-height: 0;
+  position: relative;
 }
 
 .filter-bar {
@@ -683,42 +684,50 @@ body {
 }
 
 #joe-teaser-container {
-    position: sticky;
-    bottom: 0;
-    z-index: 5;
-}
-
-.joe-teaser-row {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    background: #ffee00;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-    animation: joeSubtleFlicker 4s infinite;
-}
-
-.joe-teaser-row td {
-    padding: 6px 8px;
-    border-top: 2px solid #000;
-    text-align: center;
-    font-weight: 600;
-    position: relative;
-}
-
-.joe-teaser-row td::after {
-    content: attr(data-text);
     position: absolute;
-    left: 1px;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    color: rgba(255,0,0,0.25);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
     pointer-events: none;
 }
 
-@keyframes joeSubtleFlicker {
-    0%, 95%, 100% { opacity: 1; }
-    97% { opacity: 0.92; }
+.joe-bottom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffee00;
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+    pointer-events: auto;
+}
+
+.joe-bottom-table td {
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: 600;
+    border-top: 2px solid #000;
+}
+
+.joe-bottom-table .player-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.joe-bottom-table .avatar-img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.joe-bottom-table {
+    animation: joeSoftPulse 4s infinite;
+}
+
+@keyframes joeSoftPulse {
+    0%, 100% { opacity: 1; }
+    96% { opacity: 0.92; }
 }
 
 .fib,.fi {

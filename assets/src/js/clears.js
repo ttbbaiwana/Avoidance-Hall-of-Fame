@@ -118,13 +118,13 @@ clearTbody.addEventListener("click", (e) => {
     return;
   }
 
-  // Joe teaser reveal
-  if (e.target.dataset.joeReveal === "true") {
+  // Joe bottom reveal
+  if (e.target.closest("[data-joe-reveal='true']")) {
     SecretManager.revealJoeSecret();
     applyFilter();
     return;
   }
-
+  
   const clickableCell = e.target.closest(".clickable-cell");
 
   if (!clickableCell?.dataset.filterIndex) return;
@@ -1190,34 +1190,70 @@ function renderJoeTeaser() {
   }
 
   const table = document.createElement("table");
-  table.className = "joe-teaser-row ahof-table";
+  table.className = "joe-bottom-table ahof-table";
 
   const tr = document.createElement("tr");
 
-  const rowData = [
-    "?",
-    "????-??-??",
-    "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????",
-    "",
-    "Joe",
-    "-",
-    "-",
-    "-"
+  // # column
+  const numberTd = document.createElement("td");
+  numberTd.textContent = "?";
+  tr.appendChild(numberTd);
+
+  const cells = [
+    "????-??-??", // Date
+    "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????", // Game
+    "", // Country
+    null, // Player (handled separately)
+    "-", // Death
+    "-", // Time
+    "-"  // Video
   ];
 
-  rowData.forEach((text, index) => {
+  cells.forEach((cell, index) => {
 
     const td = document.createElement("td");
 
-    const value = text || "-";
-    td.textContent = value;
-    td.setAttribute("data-text", value);
-
-    if (index === 2) {
+    // GAME COLUMN (index 1)
+    if (index === 1) {
+      td.textContent = cell;
       td.style.cursor = "pointer";
       td.dataset.joeReveal = "true";
+      tr.appendChild(td);
+      return;
     }
 
+    // COUNTRY COLUMN (index 2)
+    if (index === 2) {
+      td.textContent = "";
+      tr.appendChild(td);
+      return;
+    }
+
+    // PLAYER COLUMN (index 3)
+    if (index === 3) {
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "player-cell";
+
+      const avatar = document.createElement("img");
+      avatar.className = "avatar-img";
+      avatar.src = "assets/images/default.webp";
+      avatar.width = "28";
+      avatar.height = "28";
+      avatar.alt = "Avatar";
+
+      const name = document.createElement("span");
+      name.textContent = "Joe";
+
+      wrapper.appendChild(avatar);
+      wrapper.appendChild(name);
+
+      td.appendChild(wrapper);
+      tr.appendChild(td);
+      return;
+    }
+
+    td.textContent = cell || "-";
     tr.appendChild(td);
   });
 

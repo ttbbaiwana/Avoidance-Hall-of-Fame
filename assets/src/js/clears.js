@@ -80,7 +80,7 @@ fetch("data/clear-list.json")
     applyUrlFilters();
 
     sortData();
-    renderTable();
+    ();
 
     document.getElementById("loader").classList.add("hidden");
     clearTable.classList.remove("hidden");
@@ -461,7 +461,7 @@ function renderTable() {
       }
     }
     else {
-      displayNumber = rowIndex + 1;
+      displayNumber = row.__joeTeaser ? "?" : rowIndex + 1;
     }
     
     const numberTd = document.createElement("td");
@@ -483,7 +483,7 @@ function renderTable() {
       const cell = row[index];
       const td = document.createElement("td");
 
-      if ([0,1,2,4].includes(index)) {
+      if ([0,1,2,4].includes(index) && !row.__joeTeaser) {
         td.className = "clickable-cell";
         td.dataset.filterIndex = index;
         td.dataset.value = cell;
@@ -509,6 +509,16 @@ function renderTable() {
         const nameSpan = document.createElement("span");
         nameSpan.textContent = gameName;
         nameSpan.className = "ahof-game-link";
+
+        // Joe teaser special styling
+        if (row.__joeTeaser) {
+          td.textContent = row[1];
+          td.style.backgroundColor = "#ffee00";
+          td.style.color = getContrastTextColor("#ffee00");
+        
+          tr.appendChild(td);
+          continue;
+        }
       
         wrapper.appendChild(nameSpan);
       

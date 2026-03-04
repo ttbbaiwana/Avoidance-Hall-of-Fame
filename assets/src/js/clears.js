@@ -92,7 +92,11 @@ fetch("data/clear-list.json")
         input: document.getElementById("search-input").value.trim()
       }),
       getColumnSelect: () =>
-        document.getElementById("search-column")
+        document.getElementById("search-column"),
+      getSortState: () => ({
+        sort: currentSort,
+        order: currentOrder
+      })
     });
 
   })
@@ -227,20 +231,7 @@ function sortData() {
     time: 6
   };
   
-  const isFakeJoeRow = row =>
-    row[1] === "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????";
-  
   const col = sortMap[currentSort];
-
-  let fakeRow = null;
-
-  filteredData = filteredData.filter(row => {
-    if (isFakeJoeRow(row)) {
-      fakeRow = row;
-      return false;
-    }
-    return true;
-  });
   
   filteredData.sort((a, b) => {
 

@@ -54,8 +54,7 @@ const SecretManager = (() => {
     rumaActive: false,
     curveWAHActive: false,
     oiiaAvailable: false,
-    joeState: null,
-    joeSortActive: false
+    joeState: null
   };
   
   let hooks = null;
@@ -170,21 +169,10 @@ const SecretManager = (() => {
       if (e.target.tagName !== "TH") return;
   
       const headerText = e.target.textContent.replace(/ ▲| ▼/, "");
-      
-      if (headerText === "Player") {
   
-        if (isGrowthMemoriesSearchActive()) {
-          state.joeState = "teaser";
-          state.joeSortActive = true;
-          hooks.applyFilter();
-        }
-  
-        return;
-      }
-      
-      if (state.joeState === "teaser") {
-        state.joeState = null;
-        state.joeSortActive = false;
+      if (headerText === "Player" && isGrowthMemoriesSearchActive()) {
+        state.joeState = "teaser";
+        hooks.applyFilter();
       }
     });
   }
@@ -231,6 +219,8 @@ const SecretManager = (() => {
     }
 
     // Yellow Head Joe
+    const sortState = hooks.getSortState();
+    
     if (state.joeState === "unlocked") {
       return fullData.filter(row =>
         row[1] === SECRET_GAMES.joe.name
@@ -239,24 +229,29 @@ const SecretManager = (() => {
     
     if (
       state.joeState === "teaser" &&
-      state.joeSortActive &&
-      isGrowthMemoriesSearchActive()
+      isGrowthMemoriesSearchActive() &&
+      sortState.sort === "player"
     ) {
     
-      const fakeRow = [
-        "????-??-??",
-        "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????",
-        "",
-        "",
-        "Joe",
-        "-",
-        "-",
-        "-",
-        "",
-        ""
-      ];
+    const fakeRow = [
+      "????-??-??",
+      "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????",
+      "",
+      "",
+      "Joe",
+      "-",
+      "-",
+      "-",
+      "",
+      ""
+    ];
       
-      return [...data, fakeRow];
+    Object.defineProperty(fakeRow, "__joeTeaser", {
+      value: true,
+      enumerable: false
+    });
+    
+    return [...data, fakeRow];
     }
     
     return data;
@@ -266,6 +261,7 @@ const SecretManager = (() => {
   function resetSecrets() {
     state.rumaActive = false;
     state.curveWAHActive = false;
+    state.joeState = null;
   }
 
   function isSecretModeActive() {

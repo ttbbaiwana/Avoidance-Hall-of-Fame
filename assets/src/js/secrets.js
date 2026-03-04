@@ -16,6 +16,10 @@ const SecretManager = (() => {
     oiia: {
       name: "I wanna OIIAOIIA",
       color: "#c67a5e"
+    },
+    joe: {
+      name: "I wanna be the Music2 - yellow head joe 《EXHAUST》 Perfect",
+      color: "#ffee00"
     }
   };
   
@@ -49,7 +53,9 @@ const SecretManager = (() => {
   const state = {
     rumaActive: false,
     curveWAHActive: false,
-    oiiaAvailable: false
+    oiiaAvailable: false,
+    joeState: null,
+    joeSortActive: false
   };
   
   let hooks = null;
@@ -59,6 +65,7 @@ const SecretManager = (() => {
   function init(config) {
     hooks = config;
     setupRumaHeaderSecret();
+    setupJoeSecret();
   }
 
   /* ================= RUMA SECRET ================= */
@@ -145,6 +152,47 @@ const SecretManager = (() => {
     }
   }
 
+  /* ================= JOE SECRET ================= */
+  
+  function isGrowthMemoriesSearchActive() {
+    if (!isInitialized()) return false;
+    const { column, input } = hooks.getSearchState();
+    return (
+      column === "game" &&
+      input === "I wanna be the Music2 - Growth Memories《INFINITE》 Perfect"
+    );
+  }
+
+  function setupJoeSecret() {
+  
+    document.addEventListener("click", (e) => {
+  
+      if (e.target.tagName !== "TH") return;
+  
+      const headerText = e.target.textContent.replace(/ ▲| ▼/, "");
+      
+      if (headerText === "Player") {
+  
+        if (isGrowthMemoriesSearchActive()) {
+          state.joeState = "teaser";
+          state.joeSortActive = true;
+          hooks.applyFilter();
+        }
+  
+        return;
+      }
+      
+      if (state.joeState === "teaser") {
+        state.joeState = null;
+        state.joeSortActive = false;
+      }
+    });
+  }
+
+  function revealJoeSecret() {
+    state.joeState = "unlocked";
+  }
+
   /* ================= APPLY SECRETS ================= */
 
   function applySecrets(column, data, fullData) {
@@ -181,7 +229,36 @@ const SecretManager = (() => {
         row[1] === SECRET_GAMES.curveWAH.name
       );
     }
-  
+
+    // Yellow Head Joe
+    if (state.joeState === "unlocked") {
+      return fullData.filter(row =>
+        row[1] === SECRET_GAMES.joe.name
+      );
+    }
+    
+    if (
+      state.joeState === "teaser" &&
+      state.joeSortActive &&
+      isGrowthMemoriesSearchActive()
+    ) {
+    
+      const fakeRow = [
+        "????-??-??",
+        "? ????? ?? ??? ?????? ? ?????? ???? ??? ????????? ???????",
+        "",
+        "",
+        "Joe",
+        "-",
+        "-",
+        "-",
+        "",
+        ""
+      ];
+      
+      return [...data, fakeRow];
+    }
+    
     return data;
   }
   
@@ -211,7 +288,8 @@ const SecretManager = (() => {
     getSecretGameNames,
     getSecretStyle,
     resetSecrets,
-    isSecretModeActive
+    isSecretModeActive,
+    revealJoeSecret
   };
 
 })();

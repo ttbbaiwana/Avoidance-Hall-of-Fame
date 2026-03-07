@@ -376,8 +376,8 @@ function renderTable() {
   const headerRow = document.createElement("tr");
   const numberTh = document.createElement("th");
   
-  if (currentSort === "death" && SecretManager.isFinalDestinationSearchActive() && !SecretManager.isExoticActive()) {
-    numberTh.textContent = "💀";
+  if (currentSort === "game" && SecretManager.isAngerTheBirdSearchActive() && !SecretManager.isKvezinoActive()) {
+    numberTh.textContent = "🐦";
     numberTh.style.cursor = "pointer";
   } else {
     numberTh.textContent = "#";

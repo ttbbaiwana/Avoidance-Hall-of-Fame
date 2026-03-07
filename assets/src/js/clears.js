@@ -390,6 +390,8 @@ function renderTable() {
     if (index === 3 || index === 8 || index === 9) return;
 
     const th = document.createElement("th");
+    th.textContent = h;
+    
     let columnKey = null;
     
     if (index === 0) columnKey = "date";

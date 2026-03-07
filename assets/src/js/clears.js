@@ -376,7 +376,7 @@ function renderTable() {
   const headerRow = document.createElement("tr");
   const numberTh = document.createElement("th");
   
-  if (currentSort === "death" && SecretManager.isFinalDestinationSearchActive()) {
+  if (currentSort === "death" && SecretManager.isFinalDestinationSearchActive() && !SecretManager.isExoticActive()) {
     numberTh.textContent = "💀";
     numberTh.style.cursor = "pointer";
   } else {

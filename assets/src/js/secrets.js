@@ -21,9 +21,9 @@ const SecretManager = (() => {
       name: "I wanna be the Music2 - yellow head joe 《EXHAUST》 Perfect",
       color: "#ffee00"
     },
-    exotic: {
-      name: "I Wanna Maker - Exotic Death",
-      color: "#b7b7b7"
+    kvezino: {
+      name: "Kvezino Demise - EX",
+      color: "#ef594c"
     }
   };
   
@@ -59,7 +59,7 @@ const SecretManager = (() => {
     curveWAHActive: false,
     oiiaAvailable: false,
     joeState: null,
-    exoticActive: false
+    kvezinoActive: false
   };
   
   let hooks = null;
@@ -70,7 +70,7 @@ const SecretManager = (() => {
     hooks = config;
     setupRumaHeaderSecret();
     setupJoeSecret();
-    setupExoticDeathSecret();
+    setupKvezinoSecret();
   }
 
   /* ================= RUMA SECRET ================= */
@@ -199,17 +199,17 @@ const SecretManager = (() => {
     return true;
   }
 
-  /* ================= EXOTIC DEATH SECRET ================= */
-  function isFinalDestinationSearchActive() {
+  /* ================= KVEZINO DEMISE SECRET ================= */
+  function isAngerTheBirdSearchActive() {
     if (!isInitialized()) return false;
     const { column, input } = hooks.getSearchState();
     return (
       column === "game" &&
-      input === "I Wanna Maker - Final Destination"
+      input === "I wanna Anger the Bird - EX"
     );
   }
 
-  function setupExoticDeathSecret() {
+  function setupKvezinoSecret() {
   
     document.addEventListener("click", (e) => {
   
@@ -218,18 +218,18 @@ const SecretManager = (() => {
       const { sort } = hooks.getSortState();
   
       if (
-        e.target.textContent === "💀" &&
-        sort === "death" &&
-        isFinalDestinationSearchActive()
+        e.target.textContent === "🐦" &&
+        sort === "game" &&
+        isAngerTheBirdSearchActive()
       ) {
-        state.exoticActive = !state.exoticActive;
+        state.kvezinoActive = !state.kvezinoActive;
         hooks.applyFilter();
       }
     });
   }
 
-  function isExoticActive() {
-    return state.exoticActive;
+  function isKvezinoActive() {
+    return state.kvezinoActive;
   }
 
   /* ================= APPLY SECRETS ================= */
@@ -278,10 +278,10 @@ const SecretManager = (() => {
       );
     }
 
-    // Exotic Death
-    if (state.exoticActive && isFinalDestinationSearchActive()) {
+    // Kvezino Demise
+    if (state.kvezinoActive && isAngerTheBirdSearchActive()) {
       return fullData.filter(row =>
-        row[1] === SECRET_GAMES.exotic.name
+        row[1] === SECRET_GAMES.kvezino.name
       );
     }
         
@@ -293,7 +293,7 @@ const SecretManager = (() => {
     state.rumaActive = false;
     state.curveWAHActive = false;
     state.joeState = null;
-    state.exoticActive = false;
+    state.kvezinoActive = false;
   }
 
   function isSecretModeActive() {
@@ -319,8 +319,8 @@ const SecretManager = (() => {
     isSecretModeActive,
     revealJoeSecret,
     isJoeTeaserActive,
-    isFinalDestinationSearchActive,
-    isExoticActive
+    isAngerTheBirdSearchActive,
+    isKvezinoActive
   };
 
 })();

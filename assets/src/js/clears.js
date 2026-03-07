@@ -374,9 +374,15 @@ function renderTable() {
   /* ===== HEADER ===== */
 
   const headerRow = document.createElement("tr");
-
   const numberTh = document.createElement("th");
-  numberTh.textContent = "#";
+  
+  if (currentSort === "death" && SecretManager.isFinalDestinationSearchActive()) {
+    numberTh.textContent = "💀";
+    numberTh.style.cursor = "pointer";
+  } else {
+    numberTh.textContent = "#";
+  }
+  
   headerRow.appendChild(numberTh);
 
   headers.forEach((h, index) => {
@@ -392,13 +398,6 @@ function renderTable() {
     if (index === 4) columnKey = "player";
     if (index === 5) columnKey = "death";
     if (index === 6) columnKey = "time";
-    
-    if (index === 0 && currentSort === "death" && SecretManager.isFinalDestinationSearchActive()) {
-      th.textContent = "💀";
-      th.style.cursor = "pointer";
-    } else {
-      th.textContent = h;
-    }
     
     if (columnKey) {
 

@@ -20,6 +20,10 @@ const SecretManager = (() => {
     joe: {
       name: "I wanna be the Music2 - yellow head joe 《EXHAUST》 Perfect",
       color: "#ffee00"
+    },
+    exotic: {
+      name: "I Wanna Maker - Exotic Death",
+      color: "#b7b7b7"
     }
   };
   
@@ -54,7 +58,8 @@ const SecretManager = (() => {
     rumaActive: false,
     curveWAHActive: false,
     oiiaAvailable: false,
-    joeState: null
+    joeState: null,
+    exoticActive: false
   };
   
   let hooks = null;
@@ -65,6 +70,7 @@ const SecretManager = (() => {
     hooks = config;
     setupRumaHeaderSecret();
     setupJoeSecret();
+    setupExoticDeathSecret();
   }
 
   /* ================= RUMA SECRET ================= */
@@ -193,10 +199,63 @@ const SecretManager = (() => {
     return true;
   }
 
+  /* ================= EXOTIC DEATH SECRET ================= */
+  function isFinalDestinationSearchActive() {
+    if (!isInitialized()) return false;
+    const { column, input } = hooks.getSearchState();
+    return (
+      column === "game" &&
+      input === "I Wanna Maker - Final Destination"
+    );
+  }
+
+  function setupExoticDeathSecret() {
+  
+    document.addEventListener("mouseover", (e) => {
+  
+      if (e.target.tagName !== "TH") return;
+  
+      const { sort } = hooks.getSortState();
+  
+      if (
+        e.target.textContent === "#" &&
+        sort === "death" &&
+        isFinalDestinationSearchActive()
+      ) {
+        e.target.textContent = "💀";
+        e.target.style.cursor = "pointer";
+      }
+    });
+  
+    document.addEventListener("mouseout", (e) => {
+  
+      if (e.target.tagName !== "TH") return;
+  
+      if (e.target.textContent === "💀") {
+        e.target.textContent = "#";
+      }
+    });
+  
+    document.addEventListener("click", (e) => {
+  
+      if (e.target.tagName !== "TH") return;
+  
+      if (
+        e.target.textContent === "💀" &&
+        isFinalDestinationSearchActive()
+      ) {
+        state.exoticActive = !state.exoticActive;
+        hooks.applyFilter();
+      }
+    });
+  }
+
   /* ================= APPLY SECRETS ================= */
 
   function applySecrets(column, data, fullData) {
     if (!isInitialized()) return data;
+    const sortState = hooks.getSortState();
+    
     updateOiiaAvailability();
   
     // OIIA
@@ -231,14 +290,19 @@ const SecretManager = (() => {
     }
 
     // Yellow Head Joe
-    const sortState = hooks.getSortState();
-    
     if (state.joeState === "unlocked") {
       return fullData.filter(row =>
         row[1] === SECRET_GAMES.joe.name
       );
     }
-    
+
+    // Exotic Death
+    if (state.exoticActive && isFinalDestinationSearchActive()) {
+      return fullData.filter(row =>
+        row[1] === SECRET_GAMES.exotic.name
+      );
+    }
+        
     return data;
   }
   
@@ -247,6 +311,7 @@ const SecretManager = (() => {
     state.rumaActive = false;
     state.curveWAHActive = false;
     state.joeState = null;
+    state.exoticActive = false;
   }
 
   function isSecretModeActive() {

@@ -211,37 +211,15 @@ const SecretManager = (() => {
 
   function setupExoticDeathSecret() {
   
-    document.addEventListener("mouseover", (e) => {
+    document.addEventListener("click", (e) => {
   
       if (e.target.tagName !== "TH") return;
   
       const { sort } = hooks.getSortState();
   
       if (
-        e.target.textContent === "#" &&
-        sort === "death" &&
-        isFinalDestinationSearchActive()
-      ) {
-        e.target.textContent = "💀";
-        e.target.style.cursor = "pointer";
-      }
-    });
-  
-    document.addEventListener("mouseout", (e) => {
-  
-      if (e.target.tagName !== "TH") return;
-  
-      if (e.target.textContent === "💀") {
-        e.target.textContent = "#";
-      }
-    });
-  
-    document.addEventListener("click", (e) => {
-  
-      if (e.target.tagName !== "TH") return;
-  
-      if (
         e.target.textContent === "💀" &&
+        sort === "death" &&
         isFinalDestinationSearchActive()
       ) {
         state.exoticActive = !state.exoticActive;
@@ -336,7 +314,8 @@ const SecretManager = (() => {
     resetSecrets,
     isSecretModeActive,
     revealJoeSecret,
-    isJoeTeaserActive
+    isJoeTeaserActive,
+    isFinalDestinationSearchActive
   };
 
 })();

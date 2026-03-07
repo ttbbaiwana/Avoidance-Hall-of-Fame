@@ -228,6 +228,10 @@ const SecretManager = (() => {
     });
   }
 
+  function isExoticActive() {
+    return state.exoticActive;
+  }
+
   /* ================= APPLY SECRETS ================= */
 
   function applySecrets(column, data, fullData) {
@@ -315,7 +319,8 @@ const SecretManager = (() => {
     isSecretModeActive,
     revealJoeSecret,
     isJoeTeaserActive,
-    isFinalDestinationSearchActive
+    isFinalDestinationSearchActive,
+    isExoticActive
   };
 
 })();

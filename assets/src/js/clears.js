@@ -399,16 +399,7 @@ function renderTable() {
     } else {
       th.textContent = h;
     }
-
-    let columnKey = null;
-
-    if (index === 0) columnKey = "date";
-    if (index === 1) columnKey = "game";
-    if (index === 2) columnKey = "country";
-    if (index === 4) columnKey = "player";
-    if (index === 5) columnKey = "death";
-    if (index === 6) columnKey = "time";
-
+    
     if (columnKey) {
 
       th.style.cursor = "pointer";

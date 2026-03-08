@@ -1,10 +1,3 @@
-const hamburger = document.getElementById("hamburger-btn");
-const navMenu = document.getElementById("nav-menu");
-
-hamburger.addEventListener("click", () => {
-  navMenu.classList.toggle("show");
-});
-
 document.addEventListener("DOMContentLoaded", () => {
   loadHeader();
 });
@@ -17,7 +10,18 @@ function loadHeader() {
       if (!placeholder) return;
 
       placeholder.innerHTML = data;
+
       highlightActiveLink();
+      
+      const hamburger = document.getElementById("hamburger-btn");
+      const navMenu = document.getElementById("nav-menu");
+
+      if (hamburger && navMenu) {
+        hamburger.addEventListener("click", () => {
+          navMenu.classList.toggle("show");
+        });
+      }
+
     })
     .catch(err => {
       console.error("Error loading header:", err);

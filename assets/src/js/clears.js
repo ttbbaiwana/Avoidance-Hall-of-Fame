@@ -873,17 +873,25 @@ function setupSearch() {
   });
 
   clearBtn.addEventListener("click", () => {
-  
+    
+    const variantContainer = document.getElementById("variant-toggle-container");
+    variantContainer.innerHTML = "";
+    variantContainer.classList.add("hidden");
+    
     input.value = "";
     countrySelect.value = "";
     columnSelect.value = "game";
     exactMatchMode = false;
-  
+    
     countrySelect.classList.add("hidden");
     input.classList.remove("hidden");
-  
+    
     updateSearchPlaceholder();
     SecretManager.resetSecrets();
+    document
+      .querySelectorAll('input[name="variant-toggle"]')
+      .forEach(r => r.checked = false);
+    
     applyFilter();
   });
 }

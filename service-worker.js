@@ -1,12 +1,15 @@
-const CACHE_NAME = "ahof-static-v1";
+const CACHE_NAME = "ahof-static-v1.1";
 
 const STATIC_ASSETS = [
   "/",
   "/assets/dist/css/styles.min.css",
+  "/assets/dist/js/ahof.min.js",
   "/assets/dist/js/config.min.js",
   "/assets/dist/js/layout.min.js",
   "/assets/dist/js/secrets.min.js",
   "/assets/dist/js/clears.min.js",
+  "/assets/dist/js/players.min.js",
+  "/assets/dist/js/rate.min.js",
   "/assets/images/default.webp"
 ];
 

@@ -50,7 +50,7 @@ const avoidanceConfig = [
   { name: "Soulless", color: "#990000" },
   { name: "I wanna be the Battlegrounds - Ao Stage", color: "#bdbd02" },
   { name: "EMPEROR SY MK-III", color: "#134f5c" },
-  { name: "I wanna be the Charisma Breaker - No Dot", color: "#cc0000" },
+  { name: "I wanna be the Charisma Breaker!!大会版", color: "#cc0000" },
   { name: "I wanna melt the snow", color: "#fdc06a" },
   { name: "I wanna Kardia - Extra", color: "#3a3a5a" },
   { name: "I wanna Kardia", color: "#3a3a5a" },

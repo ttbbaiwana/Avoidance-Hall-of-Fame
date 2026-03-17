@@ -1,4 +1,4 @@
-const CACHE_NAME = "ahof-static-v1.3";
+const CACHE_NAME = "ahof-static-v2";
 
 const STATIC_ASSETS = [
   "./",
@@ -41,8 +41,10 @@ self.addEventListener("fetch", event => {
   const request = event.request;
 
   // Fetch JSON fresh
-  if (request.url.includes("/data/") && request.url.endsWith(".json")) {
-    event.respondWith(fetch(request));
+  if (url.pathname.includes("/data/") && url.pathname.endsWith(".json")) {
+    event.respondWith(
+      fetch(request, { cache: "no-store" })
+    );
     return;
   }
 

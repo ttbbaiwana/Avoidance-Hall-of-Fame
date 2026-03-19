@@ -1,4 +1,4 @@
-const CACHE_NAME = "ahof-static-v2.1";
+const CACHE_NAME = "ahof-static-v3";
 
 const STATIC_ASSETS = [
   "./",
@@ -35,6 +35,7 @@ self.addEventListener("activate", event => {
   );
 });
 
+/*
 // Fetch handling
 self.addEventListener("fetch", event => {
 

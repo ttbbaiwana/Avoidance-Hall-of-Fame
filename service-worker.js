@@ -1,4 +1,4 @@
-const CACHE_NAME = "ahof-static-v2";
+const CACHE_NAME = "ahof-static-v2.1";
 
 const STATIC_ASSETS = [
   "./",

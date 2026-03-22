@@ -7,6 +7,7 @@ const avoidanceConfig = [
   { name: "I Wanna Touhikea", color: "#bf3fe3" },
   { name: "I Wanna Debut", color: "#2ed863" },
   { name: "Immature Lime", color: "#7efe54" },
+  { name: "I wanna see the まゆむしチャンネル Crazy ver", color: "#4a0083" },
   { name: "I wanna be the Music2 - BLACK or WHITE? 《EXHAUST》 Perfect", color: "#000000" },
   { name: "Splatter Fate", color: "#38761d" },
   { name: "Galaxy Collapse", color: "#999999" },

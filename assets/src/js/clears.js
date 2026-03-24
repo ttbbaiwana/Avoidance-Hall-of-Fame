@@ -251,30 +251,34 @@ function sortData() {
     const valB = b[col];
     
     if (currentSort === "date") {
-      const dA = new Date(valA);
-      const dB = new Date(valB);
-      return currentOrder === "asc" ? dA - dB : dB - dA;
+      return currentOrder === "asc"
+        ? valA > valB ? 1 : -1
+        : valA < valB ? 1 : -1;
     }
 
     if (currentSort === "game") {
-
+    
       const diffA = avoidanceDifficultyMap[valA];
       const diffB = avoidanceDifficultyMap[valB];
-
+      
       if (diffA === undefined && diffB === undefined) {
-        return new Date(a[0]) - new Date(b[0]);
+        return currentOrder === "asc"
+          ? a[0].localeCompare(b[0])
+          : b[0].localeCompare(a[0]);
       }
-
+    
       if (diffA === undefined) return 1;
       if (diffB === undefined) return -1;
-
+    
       if (diffA !== diffB) {
         return currentOrder === "asc"
           ? diffA - diffB
           : diffB - diffA;
       }
-
-      return new Date(a[0]) - new Date(b[0]);
+      
+      return currentOrder === "asc"
+        ? a[0].localeCompare(b[0])
+        : b[0].localeCompare(a[0]);
     }
 
     if (currentSort === "country") {
@@ -349,21 +353,14 @@ function renderTable() {
   const firstClearMap = {};
   
   filteredData.forEach(row => {
-  
+    const date = row[0];
     const game = row[1];
-    const rawDate = row[0];
     const type = row[8];
   
     if (type === "M" || type === "T") return;
-  
-    const date = rawDate ? new Date(rawDate) : null;
-  
+    
     if (!date) return;
-  
-    if (
-      !firstClearMap[game] ||
-      date < firstClearMap[game].date
-    ) {
+    if (!firstClearMap[game] || dateStr < firstClearMap[game].date) {
       firstClearMap[game] = {
         row,
         date
@@ -750,9 +747,8 @@ function applyClearMode() {
   const gameMap = {};
 
   filteredData.forEach(row => {
-
+    const date = row[0];
     const game = row[1];
-    const date = new Date(row[0]);
     const type = row[8];
 
     const isMakerOrTester = type === "M" || type === "T";
@@ -769,7 +765,7 @@ function applyClearMode() {
       return;
     }
 
-    const existingDate = new Date(gameMap[game][0]);
+    const existingDate = gameMap[game][0];
 
     if (clearMode === "first") {
       if (

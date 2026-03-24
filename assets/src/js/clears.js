@@ -360,7 +360,7 @@ function renderTable() {
     if (type === "M" || type === "T") return;
     
     if (!date) return;
-    if (!firstClearMap[game] || dateStr < firstClearMap[game].date) {
+    if (!firstClearMap[game] || date < firstClearMap[game].date) {
       firstClearMap[game] = {
         row,
         date

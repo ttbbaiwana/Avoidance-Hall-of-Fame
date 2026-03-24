@@ -257,28 +257,24 @@ function sortData() {
     }
 
     if (currentSort === "game") {
-    
+
       const diffA = avoidanceDifficultyMap[valA];
       const diffB = avoidanceDifficultyMap[valB];
       
       if (diffA === undefined && diffB === undefined) {
-        return currentOrder === "asc"
-          ? a[0].localeCompare(b[0])
-          : b[0].localeCompare(a[0]);
+        return a[0].localeCompare(b[0]);
       }
-    
+
       if (diffA === undefined) return 1;
       if (diffB === undefined) return -1;
-    
+
       if (diffA !== diffB) {
         return currentOrder === "asc"
           ? diffA - diffB
           : diffB - diffA;
       }
-      
-      return currentOrder === "asc"
-        ? a[0].localeCompare(b[0])
-        : b[0].localeCompare(a[0]);
+
+      return a[0].localeCompare(b[0]);
     }
 
     if (currentSort === "country") {
@@ -293,8 +289,6 @@ function sortData() {
       return currentOrder === "asc"
         ? valA.localeCompare(valB)
         : valB.localeCompare(valA);
-
-      return a[0].localeCompare(b[0]);
     }
 
     if (currentSort === "player") {

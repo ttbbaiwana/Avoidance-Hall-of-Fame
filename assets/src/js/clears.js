@@ -293,6 +293,8 @@ function sortData() {
       return currentOrder === "asc"
         ? valA.localeCompare(valB)
         : valB.localeCompare(valA);
+
+      return a[0].localeCompare(b[0]);
     }
 
     if (currentSort === "player") {

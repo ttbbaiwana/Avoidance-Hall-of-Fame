@@ -653,24 +653,20 @@ function applyFilter() {
       row[2] === countrySelect.value
     );
   } 
-  else if (column === "date") {  
+  else if (column === "date") {
     const fromValue = document.getElementById("date-from").value;
     const toValue = document.getElementById("date-to").value;
   
     if (fromValue || toValue) {
-  
-      const fromDate = fromValue ? new Date(fromValue) : null;
-      const toDate = toValue ? new Date(toValue) : null;
-  
       filteredData = filteredData.filter(row => {
-  
+
         if (!row[0]) return false;
-  
-        const rowDate = new Date(row[0]);
-  
-        if (fromDate && rowDate < fromDate) return false;
-        if (toDate && rowDate > toDate) return false;
-  
+        
+        const rowDateStr = row[0].slice(0, 10);
+      
+        if (fromValue && rowDateStr < fromValue) return false;
+        if (toValue && rowDateStr > toValue) return false;
+      
         return true;
       });
     }

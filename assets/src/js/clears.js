@@ -1091,6 +1091,11 @@ function applyExactFilter(columnIndex, value) {
   const dateFrom = document.getElementById("date-from");
   const dateTo = document.getElementById("date-to");
 
+  dateFrom.value = "";
+  dateTo.value = "";
+  dateFrom.classList.add("hidden");
+  dateTo.classList.add("hidden");
+
   const columnMap = {
     0: "date",
     1: "game",
@@ -1106,10 +1111,13 @@ function applyExactFilter(columnIndex, value) {
   updateSearchPlaceholder();
 
   if (selectedColumn === "country") {  
+    
     input.classList.add("hidden");
     countrySelect.classList.remove("hidden");
     countrySelect.value = value;
+    
   } else if (selectedColumn === "date") {
+    
     input.classList.add("hidden");
     countrySelect.classList.add("hidden");
   
@@ -1118,7 +1126,9 @@ function applyExactFilter(columnIndex, value) {
   
     dateFrom.value = value;
     dateTo.value = value;
+    
   } else {
+    
     countrySelect.classList.add("hidden");
     input.classList.remove("hidden");
     input.value = value;

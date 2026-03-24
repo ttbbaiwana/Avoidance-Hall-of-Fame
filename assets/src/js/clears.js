@@ -865,6 +865,16 @@ function setupSearch() {
   const columnSelect = document.getElementById("search-column");
   const countrySelect = document.getElementById("country-select");
   const clearBtn = document.getElementById("clear-search");
+
+  const currentYear = new Date().getFullYear();
+  const minDate = "2010-01-01";
+  const maxDate = `${currentYear}-12-31`;
+  
+  dateFrom.min = minDate;
+  dateFrom.max = maxDate;
+  
+  dateTo.min = minDate;
+  dateTo.max = maxDate;
   
   updateSearchPlaceholder();
 
@@ -923,6 +933,8 @@ function setupSearch() {
     document.getElementById("date-from").value = "";
     document.getElementById("date-to").value = "";
     
+    dateFrom.classList.add("hidden");
+    dateTo.classList.add("hidden");
     countrySelect.classList.add("hidden");
     input.classList.remove("hidden");
     

@@ -860,10 +860,12 @@ function updateSearchPlaceholder() {
 function setupSearch() {
 
   const input = document.getElementById("search-input");
+  const dateFrom = document.getElementById("date-from");
+  const dateTo = document.getElementById("date-to");
   const columnSelect = document.getElementById("search-column");
   const countrySelect = document.getElementById("country-select");
   const clearBtn = document.getElementById("clear-search");
-
+  
   updateSearchPlaceholder();
 
   document.querySelectorAll('input[name="clear-mode"]').forEach(radio => {
@@ -884,8 +886,6 @@ function setupSearch() {
   });
 
   columnSelect.addEventListener("change", () => {
-    const dateFrom = document.getElementById("date-from");
-    const dateTo = document.getElementById("date-to");
     input.value = "";
     countrySelect.value = "";
     

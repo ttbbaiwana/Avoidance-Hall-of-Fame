@@ -652,10 +652,30 @@ function applyFilter() {
     filteredData = filteredData.filter(row =>
       row[2] === countrySelect.value
     );
-  }
-
+  } 
+  else if (column === "date") {  
+    const fromValue = document.getElementById("date-from").value;
+    const toValue = document.getElementById("date-to").value;
+  
+    if (fromValue || toValue) {
+  
+      const fromDate = fromValue ? new Date(fromValue) : null;
+      const toDate = toValue ? new Date(toValue) : null;
+  
+      filteredData = filteredData.filter(row => {
+  
+        if (!row[0]) return false;
+  
+        const rowDate = new Date(row[0]);
+  
+        if (fromDate && rowDate < fromDate) return false;
+        if (toDate && rowDate > toDate) return false;
+  
+        return true;
+      });
+    }
+  } 
   else if (column !== "country" && query) {
-
     const columnIndexMap = {
       date: 0,
       game: 1,
@@ -799,6 +819,15 @@ function updateFilterSummary() {
   }
 
   const selectedColumn = columnSelect.value;
+
+  if (selectedColumn === "date") {
+    const from = document.getElementById("date-from").value;
+    const to = document.getElementById("date-to").value;
+  
+    if (from || to) {
+      parts.push(`Date = ${from || "Any"} → ${to || "Any"}`);
+    }
+  }
   
   if (selectedColumn === "player" && input.value.trim() !== "") {
     parts.push(`Player = ${input.value.trim()}`);
@@ -855,33 +884,48 @@ function setupSearch() {
   });
 
   columnSelect.addEventListener("change", () => {
-  
+    const dateFrom = document.getElementById("date-from");
+    const dateTo = document.getElementById("date-to");
     input.value = "";
     countrySelect.value = "";
-  
+    
     if (columnSelect.value === "country") {
       input.classList.add("hidden");
       countrySelect.classList.remove("hidden");
+      dateFrom.classList.add("hidden");
+      dateTo.classList.add("hidden");
+    }
+    else if (columnSelect.value === "date") {
+      input.classList.add("hidden");
+      countrySelect.classList.add("hidden");
+      dateFrom.classList.remove("hidden");
+      dateTo.classList.remove("hidden");
     }
     else {
       countrySelect.classList.add("hidden");
       input.classList.remove("hidden");
+      dateFrom.classList.add("hidden");
+      dateTo.classList.add("hidden");
       updateSearchPlaceholder();
     }
     
     applyFilter();
   });
-
-  clearBtn.addEventListener("click", () => {
   
+  dateFrom.addEventListener("change", applyFilter);
+  dateTo.addEventListener("change", applyFilter);
+  
+  clearBtn.addEventListener("click", () => {
     input.value = "";
     countrySelect.value = "";
     columnSelect.value = "game";
     exactMatchMode = false;
-  
+    document.getElementById("date-from").value = "";
+    document.getElementById("date-to").value = "";
+    
     countrySelect.classList.add("hidden");
     input.classList.remove("hidden");
-  
+    
     updateSearchPlaceholder();
     SecretManager.resetSecrets();
     applyFilter();

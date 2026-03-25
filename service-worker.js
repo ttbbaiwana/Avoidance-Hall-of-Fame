@@ -36,7 +36,6 @@ self.addEventListener("activate", event => {
 });
 
 /*
-// Fetch handling
 self.addEventListener("fetch", event => {
 
   const request = event.request;
@@ -57,3 +56,4 @@ self.addEventListener("fetch", event => {
   );
 
 });
+*/

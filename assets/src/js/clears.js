@@ -447,14 +447,11 @@ function renderTable() {
     const game = row[1];
     const type = row[8];
     
-    if (
-      currentSort === "game" && clearMode === "all" &&
-      isGameGroupingAllowed && firstClearMap[game]?.row === row
-    ) {
+    if (currentSort === "game" && clearMode === "all" && isGameGroupingAllowed && firstClearMap[game]?.row === row) {
       tr.classList.add("first-clear-row");
     }
 
-    if (currentSort === "game" && isGameGroupingAllowed && rowIndex > 0)
+    if (currentSort === "game" && isGameGroupingAllowed && rowIndex > 0) {
       const prevGame = filteredData[rowIndex - 1][1];
       if (game !== prevGame) {
         tr.classList.add("game-divider");

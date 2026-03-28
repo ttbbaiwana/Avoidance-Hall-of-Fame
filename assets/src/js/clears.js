@@ -342,6 +342,20 @@ function renderTable() {
   clearThead.textContent = "";
   clearTbody.textContent = "";
   
+  const columnSelect = document.getElementById("search-column");
+  const input = document.getElementById("search-input");
+  const countrySelect = document.getElementById("country-select");
+  const dateFrom = document.getElementById("date-from");
+  const dateTo = document.getElementById("date-to");
+  const selectedColumn = columnSelect.value;
+  const hasTextQuery = input.value.trim() !== "";
+  const hasCountry = countrySelect.value !== "";
+  const hasDateRange = dateFrom.value || dateTo.value;
+  const isGameGroupingAllowed =
+    (!hasTextQuery && !hasCountry && !hasDateRange) ||
+    (selectedColumn === "game" && hasTextQuery) ||
+    (selectedColumn === "country" && hasCountry);
+  
   const fragment = document.createDocumentFragment();
 
   /* ===== Build first-clear map ===== */
@@ -434,14 +448,13 @@ function renderTable() {
     const type = row[8];
     
     if (
-      currentSort === "game" &&
-      clearMode === "all" &&
-      firstClearMap[game]?.row === row
+      currentSort === "game" && clearMode === "all" &&
+      isGameGroupingAllowed && firstClearMap[game]?.row === row
     ) {
       tr.classList.add("first-clear-row");
     }
 
-    if (currentSort === "game" && rowIndex > 0) {
+    if (currentSort === "game" && isGameGroupingAllowed && rowIndex > 0)
       const prevGame = filteredData[rowIndex - 1][1];
       if (game !== prevGame) {
         tr.classList.add("game-divider");
@@ -450,7 +463,7 @@ function renderTable() {
 
     let displayNumber;
     
-    if (currentSort === "game" && clearMode === "all") {
+    if (currentSort === "game" && clearMode === "all" && isGameGroupingAllowed) {
     
       if (game !== lastGame) {
         gameCounter = 1;

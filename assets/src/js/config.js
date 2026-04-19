@@ -188,6 +188,7 @@ const COUNTRY_NAMES = {
   KW: "Kuwait",
   KZ: "Kazakhstan",
   LV: "Latvia",
+  MD: "Moldova",
   MX: "Mexico",
   NL: "Netherlands",
   NZ: "New Zealand",

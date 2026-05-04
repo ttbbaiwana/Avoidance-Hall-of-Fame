@@ -139,7 +139,6 @@ const avoidanceConfig = [
   { name: "I wanna be the Darkness", color: "#3f3fc0" },
   { name: "I wanna Wonderful Rush", color: "#8b42b6" },
   { name: "I Wanna Kill The Kamilia 3 v2.0 - EX Dotkid", color: "#2a912b" },
-  { name: "I wanna kill the Happil - Boshy/Dark Boshy", color: "#434343" },
   { name: "I Wanna Be The Hell Needle - Avoidance", color: "#e11313" },
   { name: "Infernal Beings", color: "#6f1aa7" },
   { name: "I wanna know the everlasting stories", color: "#84fdfd" },

@@ -9,6 +9,7 @@ const avoidanceConfig = [
   { name: "Immature Lime", color: "#7efe54" },
   { name: "I wanna see the まゆむしチャンネル Crazy ver", color: "#4a0083" },
   { name: "I wanna be the Music2 - BLACK or WHITE? 《EXHAUST》 Perfect", color: "#000000" },
+  { name: "I Wanna Kill The Happil II v0.3.0 - The Gay", color: "#fcd1bc" },
   { name: "Splatter Fate", color: "#38761d" },
   { name: "Galaxy Collapse", color: "#999999" },
   { name: "I Wanna Goodbye The Destruction State v1.03", color: "#8b42b6" },

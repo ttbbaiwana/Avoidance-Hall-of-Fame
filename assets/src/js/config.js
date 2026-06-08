@@ -14,6 +14,7 @@ const avoidanceConfig = [
   { name: "Galaxy Collapse", color: "#999999" },
   { name: "I Wanna Goodbye The Destruction State v1.03", color: "#8b42b6" },
   { name: "VOX Diamond Absolute", color: "#ff6d01" },
+  { name: "I wanna be the Sensei", color: "#fdfee1" },
   { name: "I wanna break the Series Z 3 EX - Entrance", color: "#ffffff" },
   { name: "I wanna defeat the crazy destination", color: "#cccccc" },
   { name: "I Wanna Defeat The Legendary Burger", color: "#0b5394" },

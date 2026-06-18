@@ -2,6 +2,7 @@ const avoidanceConfig = [
   { name: "Soulless Hard Mode", color: "#3a4052" },
   { name: "I wanna be the Last TIS", color: "#999999" },
   { name: "I wanna be the Music2 - Ninur 《INFINITE》 Perfect", color: "#f751a1" },
+  { name: "I wanna be the Music2 - 桜前線異常ナシ《INFINITE》 Perfect", color: "#6fd5ff" },
   { name: "I wanna be the Music2 - シュレーディンガーの猫《INFINITE》 Perfect", color: "#a06ac3" },
   { name: "I wanna be the Music2 - ロンゲーナカンタータ 《INFINITE》 Perfect", color: "#463476" },
   { name: "I Wanna Touhikea", color: "#bf3fe3" },

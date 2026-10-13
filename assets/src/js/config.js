@@ -38,6 +38,7 @@ const avoidanceConfig = [
   { name: "Schwarlitz's Requiem", color: "#9b870c" },
   { name: "I wanna be the MHC", color: "#1155cc" },
   { name: "I wanna be the Future Dominators", color: "#c90000" },
+  { name: "I wanna QuRaSi", color: "#999999" },
   { name: "I wanna be the Destruction State", color: "#9900ff" },
   { name: "Classical VIP", color: "#6a6a6a" },
   { name: "Invincible Alien", color: "#ff0000" },

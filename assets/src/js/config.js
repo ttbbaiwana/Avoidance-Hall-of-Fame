@@ -21,6 +21,7 @@ const avoidanceConfig = [
   { name: "I wanna defeat the crazy destination", color: "#cccccc" },
   { name: "I Wanna Defeat The Legendary Burger", color: "#0b5394" },
   { name: "I Wanna Maker - Cosmic Back Entrance", color: "#b4a7d6" },
+  { name: "I Wanna Immortal Smoke On The Moon", color: "#800000" },
   { name: "I wanna be the Replica", color: "#f85454" },
   { name: "CN (Crazy nighT)", color: "#eb0000" },
   { name: "I wanna Innovation Explosion", color: "#000000" },
